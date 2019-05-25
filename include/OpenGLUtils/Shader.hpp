@@ -12,6 +12,9 @@
 
 #include "Utils/MathTypes.hpp"
 
+#undef near
+#undef far
+
 
 class Shader {
 public:

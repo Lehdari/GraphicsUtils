@@ -41,6 +41,10 @@ if(NOT EIGEN3_INCLUDE_DIR)
 endif()
 
 
+# Add absolute path to resource directory
+add_definitions(-DRES_PATH="${CMAKE_CURRENT_LIST_DIR}/res/")
+
+
 # Add subdirectories
 add_subdirectory(include)
 add_subdirectory(src)

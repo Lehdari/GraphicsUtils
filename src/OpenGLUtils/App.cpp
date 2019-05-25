@@ -75,19 +75,13 @@ App::App(const App::Settings &settings) :
     glClearColor(0.2f, 0.2f, 0.2f, 1.f);
     glEnable(GL_DEPTH_TEST);
 
-#if 0
     // Initialize resources
-    _meshShader.load(std::string(RES_PATH) + "shaders/VS_Simple.glsl",
+    _shader.load(std::string(RES_PATH) + "shaders/VS_Simple.glsl",
         std::string(RES_PATH) + "shaders/FS_Simple.glsl");
-    _meshShader.addUniform("objectToWorld");
-    _meshShader.addUniform("normalToWorld");
-    _meshShader.addUniform("worldToClip");
-    _meshShader.addUniform("Color");
-
-    _lineShader.load(std::string(RES_PATH) + "shaders/VS_Lines.glsl",
-        std::string(RES_PATH) + "shaders/FS_Lines.glsl");
-    _lineShader.addUniform("modelToClip");
-#endif // 0
+    _shader.addUniform("objectToWorld");
+    _shader.addUniform("normalToWorld");
+    _shader.addUniform("worldToClip");
+    _shader.addUniform("Color");
 
     _camera.lookAt(
         Vec3f(0.0f, 1500.0f, 2500.0f),
