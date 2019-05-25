@@ -1,0 +1,3 @@
+add_subdirectory(OpenGLUtils)
+
+set(OPENGLUTILS_HEADERS ${OPENGLUTILS_HEADERS} PARENT_SCOPE)

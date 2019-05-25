@@ -1,0 +1,6 @@
+file(GLOB SUB_SOURCES "*.cpp")
+
+set(TEST_SOURCES
+    ${TEST_SOURCES}
+    ${SUB_SOURCES}
+    PARENT_SCOPE)
