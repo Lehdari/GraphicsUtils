@@ -96,7 +96,7 @@ App::App(const App::Settings &settings) :
 
     _meshes.emplace_back();
     auto& mesh = _meshes.back();
-    mesh.loadFromObj(std::string(RES_PATH) + "models/teapot.obj");
+    mesh.loadFromObj(std::string(RES_PATH) + "models/bunny.obj");
 }
 
 App::~App()
