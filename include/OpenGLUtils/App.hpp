@@ -10,7 +10,7 @@
 #include <SDL.h>
 
 #include "Utils/MathUtils.hpp"
-
+#include "Camera.hpp"
 
 class App {
 public:
@@ -105,7 +105,7 @@ private:
     bool                _quit; // flag for quitting the application
     uint32_t            _lastTicks;
     uint32_t            _frameTicks;
-
+    Camera              _camera;
     // Window event handling loop
     void handleEvents(SDL_Event& event);
     void render(void);

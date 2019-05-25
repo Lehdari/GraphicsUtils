@@ -87,18 +87,19 @@ App::App(const App::Settings &settings) :
     _lineShader.load(std::string(RES_PATH) + "shaders/VS_Lines.glsl",
         std::string(RES_PATH) + "shaders/FS_Lines.glsl");
     _lineShader.addUniform("modelToClip");
+#endif // 0
 
     _camera.lookAt(
-        Vec3GLf(0.0f, 1500.0f, 2500.0f),
-        Vec3GLf(0.0f, 500.0f, 0.0f),
-        Vec3GLf(0.0f, 1.0f, 0.0f));
+        Vec3f(0.0f, 1500.0f, 2500.0f),
+        Vec3f(0.0f, 500.0f, 0.0f),
+        Vec3f(0.0f, 1.0f, 0.0f));
 
     _camera.projection(
         _settings.camera.fov,
         (float)_settings.window.width / (float)_settings.window.height,
         _settings.camera.near,
         _settings.camera.far);
-#endif
+
 }
 
 App::~App()
