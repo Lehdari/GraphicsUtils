@@ -7,7 +7,6 @@
 
 
 #include <string>
-#include <vec3f.h>
 #include <SDL.h>
 
 #include "Utils/MathUtils.hpp"
@@ -56,17 +55,17 @@ public:
     };
 
     struct CameraSettings {
-        vm::vec3f   pos;
-        vm::vec3f   target;
-        vm::vec3f   up;
+        Vec3f   pos;
+        Vec3f   target;
+        Vec3f   up;
         float       fov;
         float       near;
         float       far;
 
         explicit CameraSettings(
-            const vm::vec3f& pos = vm::vec3f(0.f, 20.f, 40.f),
-            const vm::vec3f& target = vm::vec3f(0.f, 0.f, 0.f),
-            const vm::vec3f& up = vm::vec3f(0.f, 1.f, 0.f),
+            const Vec3f& pos = Vec3f(0.f, 20.f, 40.f),
+            const Vec3f& target = Vec3f(0.f, 0.f, 0.f),
+            const Vec3f& up = Vec3f(0.f, 1.f, 0.f),
             float fov = 60.f * PI / 180.f,
             float near = 100.f,
             float far = 10000.f):
