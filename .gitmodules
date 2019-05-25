@@ -1,0 +1,3 @@
+[submodule "ext/vecmat"]
+	path = ext/vecmat
+	url = git@github.com:tkln/vecmat.git

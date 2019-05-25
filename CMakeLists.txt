@@ -4,6 +4,7 @@ project(GraphicsUtils)
 set(CMAKE_CXX_STANDARD 17)
 
 
+add_subdirectory(ext)
 add_subdirectory(include)
 add_subdirectory(src)
 
