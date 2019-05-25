@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.12)
 project(GraphicsUtils)
 
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 # Set library output directories to binary directory
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 
 # Find SDL 2
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
@@ -21,13 +24,11 @@ endif()
 
 find_package(SDL2 REQUIRED)
 
-# Find OpenGL
-set(OpenGL_GL_PREFERENCE GLVND)
-find_package(OpenGL REQUIRED)
 
 # Find OpenGL
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
+
 
 # Find Eigen
 find_package(Eigen3 REQUIRED)
@@ -38,6 +39,7 @@ if(NOT EIGEN3_INCLUDE_DIR)
         message(FATAL_ERROR "Please set EIGEN3_INCLUDE_DIR environment variable to point to Eigen 3 installation directory.")
     endif()
 endif()
+
 
 # Add subdirectories
 add_subdirectory(include)
