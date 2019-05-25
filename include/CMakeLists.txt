@@ -1,3 +1,5 @@
 add_subdirectory(OpenGLUtils)
+add_subdirectory(Utils)
 
 set(OPENGLUTILS_HEADERS ${OPENGLUTILS_HEADERS} PARENT_SCOPE)
+set(UTILS_HEADERS ${UTILS_HEADERS} PARENT_SCOPE)

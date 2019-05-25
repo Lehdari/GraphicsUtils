@@ -2,19 +2,61 @@ cmake_minimum_required(VERSION 3.14)
 project(GraphicsUtils)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-add_subdirectory(ext)
+# Find SDL 2
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+
+if(WIN32)
+    set(SDL2_PATH $ENV{SDL2_DIR})
+    if(NOT SDL2_PATH)
+        message(FATAL_ERROR "Please set SDL2_DIR environment variable to point to SDL 2 installation directory.")
+    endif()
+endif()
+
+find_package(SDL2 REQUIRED)
+
+
+# Find OpenGL
+set(OpenGL_GL_PREFERENCE GLVND)
+find_package(OpenGL REQUIRED)
+
+
+# Add subdirectories
 add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(ext)
 
 
+# Configure OpenGLUtils library
 add_library(OpenGLUtils STATIC ${OPENGLUTILS_SOURCES})
+
 target_include_directories(OpenGLUtils
     PUBLIC
-        include)
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/ext/vecmat
+        ${SDL2_INCLUDE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/OpenGLUtils)
 
+target_link_libraries(OpenGLUtils
+    PUBLIC
+        gl3w
+        imgui
+        ${SDL2_LIBRARY}
+)
+
+
+# Configure GraphicsUtilsTest executable
 add_executable(GraphicsUtilsTest ${TEST_SOURCES})
+
 target_include_directories(GraphicsUtilsTest
     PUBLIC
-        include)
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+target_link_libraries(GraphicsUtilsTest
+    PUBLIC
+        OpenGLUtils)

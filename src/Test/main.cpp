@@ -5,6 +5,6 @@
 #include "OpenGLUtils/App.hpp"
 
 
-int main(void) {
+int main(int argv, char** args) {
     return 0;
 }

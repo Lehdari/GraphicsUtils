@@ -1,0 +1,6 @@
+file(GLOB SUB_HEADERS "*.hpp")
+
+set(UTILS_HEADERS
+    ${UTILS_HEADERS}
+    ${SUB_HEADERS}
+    PARENT_SCOPE)

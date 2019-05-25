@@ -1,3 +1,6 @@
 [submodule "ext/vecmat"]
 	path = ext/vecmat
 	url = git@github.com:tkln/vecmat.git
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = git@github.com:ocornut/imgui.git

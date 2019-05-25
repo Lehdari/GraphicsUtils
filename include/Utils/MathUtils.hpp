@@ -1,0 +1,12 @@
+//
+// Created by Lehdari on 25.5.2019.
+//
+
+#ifndef GRAPHICSUTILS_MATHUTILS_HPP
+#define GRAPHICSUTILS_MATHUTILS_HPP
+
+
+#define PI 3.14159265359
+
+
+#endif //GRAPHICSUTILS_MATHUTILS_HPP
