@@ -67,8 +67,8 @@ public:
         float       far;
 
         explicit CameraSettings(
-            const Vec3f& pos = Vec3f(0.f, 20.f, 40.f),
-            const Vec3f& target = Vec3f(0.f, 0.f, 0.f),
+            const Vec3f& pos = Vec3f(0.f, 2.0f, 5.0f),
+            const Vec3f& target = Vec3f(0.f, 1.f, 0.f),
             const Vec3f& up = Vec3f(0.f, 1.f, 0.f),
             float fov = 60.f * PI / 180.f,
             float near = 0.1f,

@@ -84,9 +84,9 @@ App::App(const App::Settings &settings) :
     _shader.addUniform("Color");
 
     _camera.lookAt(
-        Vec3f(0.0f, 2.5f, 10.0f),
-        Vec3f(0.0f, 1.5f, 0.0f),
-        Vec3f(0.0f, 1.0f, 0.0f));
+        _settings.camera.pos,
+        _settings.camera.target,
+        _settings.camera.up);
 
     _camera.projection(
         _settings.camera.fov,
