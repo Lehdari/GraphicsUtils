@@ -93,10 +93,6 @@ App::App(const App::Settings &settings) :
         (float)_settings.window.width / (float)_settings.window.height,
         _settings.camera.near,
         _settings.camera.far);
-
-    _meshes.emplace_back();
-    auto& mesh = _meshes.back();
-    mesh.loadFromObj(std::string(RES_PATH) + "models/bunny.obj");
 }
 
 App::~App()
@@ -127,6 +123,11 @@ void App::loop(void)
         _frameTicks = curTicks - _lastTicks;
         _lastTicks = curTicks;
     }
+}
+
+void App::addMesh(Mesh&& mesh)
+{
+    _meshes.push_back(std::move(mesh));
 }
 
 

@@ -102,6 +102,8 @@ public:
 
     void loop(void);
 
+    void addMesh(Mesh&& mesh);
+
 private:
     Settings            _settings;
     SDL_Window*         _window;
