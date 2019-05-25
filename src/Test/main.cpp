@@ -6,5 +6,8 @@
 
 
 int main(int argv, char** args) {
+    App app;
+    app.loop();
+
     return 0;
 }
