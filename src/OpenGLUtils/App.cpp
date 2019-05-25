@@ -84,8 +84,8 @@ App::App(const App::Settings &settings) :
     _shader.addUniform("Color");
 
     _camera.lookAt(
-        Vec3f(0.0f, 1500.0f, 2500.0f),
-        Vec3f(0.0f, 500.0f, 0.0f),
+        Vec3f(0.0f, 2.5f, 10.0f),
+        Vec3f(0.0f, 1.5f, 0.0f),
         Vec3f(0.0f, 1.0f, 0.0f));
 
     _camera.projection(
@@ -94,6 +94,9 @@ App::App(const App::Settings &settings) :
         _settings.camera.near,
         _settings.camera.far);
 
+    _meshes.emplace_back();
+    auto& mesh = _meshes.back();
+    mesh.loadFromObj(std::string(RES_PATH) + "models/teapot.obj");
 }
 
 App::~App()
@@ -185,6 +188,10 @@ void App::render(void)
 
     // Render geometry
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    for (auto& mesh : _meshes) {
+        mesh.render(_shader, _camera, Mat4f::Identity());
+    }
 
     // Render imgui
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
