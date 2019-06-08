@@ -31,7 +31,9 @@ find_package(OpenGL REQUIRED)
 
 
 # Find Eigen
-find_package(Eigen3 REQUIRED)
+if (UNIX)
+    find_package(Eigen3 REQUIRED)
+endif()
 
 if(NOT EIGEN3_INCLUDE_DIR)
     set(EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
