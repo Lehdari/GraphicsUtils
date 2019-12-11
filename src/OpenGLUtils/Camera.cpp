@@ -19,6 +19,22 @@ Camera::Camera(void) :
     _cameraToClip(Mat4f::Identity())
 {}
 
+Camera::Camera(const Settings& settings) :
+    _worldToCamera(Mat4f::Identity()),
+    _cameraToClip(Mat4f::Identity())
+{
+    lookAt(
+        settings.pos,
+        settings.target,
+        settings.up);
+
+    projection(
+        settings.fov,
+        settings.aspectRatio,
+        settings.near,
+        settings.far);
+}
+
 void Camera::lookAt(const Vec3f& eye, const Vec3f& target, const Vec3f& up) {
     // Right handed coordinate system
     Vec3f zAxis = (eye - target).normalized();

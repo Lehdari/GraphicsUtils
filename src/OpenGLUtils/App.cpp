@@ -28,7 +28,8 @@ App::App(const App::Settings &settings) :
     _window     (nullptr),
     _quit       (false),
     _lastTicks  (0),
-    _frameTicks (0)
+    _frameTicks (0),
+    _camera     (Camera::Settings())
 {
     int err;
 
@@ -90,17 +91,6 @@ App::App(const App::Settings &settings) :
     _shader.addUniform("normalToWorld");
     _shader.addUniform("worldToClip");
     _shader.addUniform("Color");
-
-    _camera.lookAt(
-        _settings.camera.pos,
-        _settings.camera.target,
-        _settings.camera.up);
-
-    _camera.projection(
-        _settings.camera.fov,
-        (float)_settings.window.width / (float)_settings.window.height,
-        _settings.camera.near,
-        _settings.camera.far);
 }
 
 App::~App()
