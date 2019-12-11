@@ -23,13 +23,15 @@
 using namespace gut;
 
 
-App::App(const App::Settings &settings) :
-    _settings   (settings),
-    _window     (nullptr),
-    _quit       (false),
-    _lastTicks  (0),
-    _frameTicks (0),
-    _camera     (Camera::Settings())
+App::App(const App::Settings &settings,
+    RenderContext* renderContext
+    ) :
+    _settings       (settings),
+    _window         (nullptr),
+    _quit           (false),
+    _lastTicks      (0),
+    _frameTicks     (0),
+    _renderContext  (renderContext)
 {
     int err;
 
@@ -83,14 +85,6 @@ App::App(const App::Settings &settings) :
     glViewport(0, 0, _settings.window.width, _settings.window.height);
     glClearColor(0.2f, 0.2f, 0.2f, 1.f);
     glEnable(GL_DEPTH_TEST);
-
-    // Initialize resources
-    _shader.load(std::string(RES_PATH) + "shaders/VS_Simple.glsl",
-        std::string(RES_PATH) + "shaders/FS_Simple.glsl");
-    _shader.addUniform("objectToWorld");
-    _shader.addUniform("normalToWorld");
-    _shader.addUniform("worldToClip");
-    _shader.addUniform("Color");
 }
 
 App::~App()
@@ -110,91 +104,39 @@ void App::loop(void)
 {
     // Application main loop
     while (!_quit) {
+        // Event handling
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            handleEvents(event);
+            if (_settings.handleEvents != nullptr)
+                _settings.handleEvents(event, _quit);
         }
 
-        render();
+        // Initialize imgui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame(_window);
+        ImGui::NewFrame();
+
+        // Generate draw data
+        ImGui::Render();
+
+        // User-defined render
+        if (_renderContext != nullptr && _settings.render != nullptr)
+            _settings.render(*_renderContext);
+
+        // Render imgui
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // Swap draw and display buffers
+        SDL_GL_SwapWindow(_window);
+
         uint32_t curTicks = SDL_GetTicks();
         _frameTicks = curTicks - _lastTicks;
         _lastTicks = curTicks;
     }
 }
 
-void App::addMesh(Mesh&& mesh)
+void App::setRenderContext(RenderContext* context)
 {
-    _meshes.push_back(std::move(mesh));
-}
-
-
-void App::handleEvents(SDL_Event& event)
-{
-    // Handle SDL events
-    switch (event.type) {
-        case SDL_QUIT:
-            _quit = true;
-            break;
-
-        case SDL_KEYDOWN:
-            // Skip events if imgui widgets are being modified
-            if (ImGui::IsAnyItemActive())
-                return;
-            switch (event.key.keysym.sym) {
-                case SDLK_ESCAPE:
-                    _quit = true;
-                    break;
-
-                default:
-                    break;
-            }
-            break;
-#if 0
-        case SDL_WINDOWEVENT:
-            switch (event.window.event) {
-                case SDL_WINDOWEVENT_RESIZED:
-                case SDL_WINDOWEVENT_SIZE_CHANGED:
-                    _settings.window.width = event.window.data1;
-                    _settings.window.height = event.window.data2;
-                    glViewport(0, 0, _settings.window.width, _settings.window.height);
-                    _camera.projection(
-                        _settings.camera.fov,
-                        (float)_settings.window.width / (float)_settings.window.height,
-                        _settings.camera.near,
-                        _settings.camera.far);
-                    break;
-
-                default:
-                    break;
-            }
-            break;
-#endif
-        default:
-            break;
-    }
-}
-
-void App::render(void)
-{
-    // Initialize imgui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(_window);
-    ImGui::NewFrame();
-
-    // Generate draw data
-    ImGui::Render();
-
-    // Render geometry
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    for (auto& mesh : _meshes) {
-        mesh.render(_shader, _camera, Mat4f::Identity());
-    }
-
-    // Render imgui
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    // Swap draw and display buffers
-    SDL_GL_SwapWindow(_window);
+    _renderContext = context;
 }

@@ -17,9 +17,7 @@
 
 #include "Utils/MathUtils.hpp"
 #include "Utils/TypeUtils.hpp"
-#include "Camera.hpp"
-#include "Shader.hpp"
-#include "Mesh.hpp"
+#include "RenderContext.hpp"
 
 
 namespace gut {
@@ -70,21 +68,33 @@ namespace gut {
             WindowSettings window;
             GLSettings gl;
 
+            // Function pointers for event handling and rendering
+            void (*handleEvents)(SDL_Event& event, bool& quit);
+            void (*render)(RenderContext& context);
+
+
             explicit Settings(
-                const WindowSettings& window = WindowSettings(),
-                const GLSettings& gl = GLSettings()) :
-                window(window),
-                gl(gl)
+                const WindowSettings& window            = WindowSettings(),
+                const GLSettings& gl                    = GLSettings(),
+                void (*handleEvents)(SDL_Event&, bool&) = nullptr,
+                void (*render)(RenderContext&)          = nullptr
+                ) :
+                window          (window),
+                gl              (gl),
+                handleEvents    (handleEvents),
+                render          (render)
             {}
         };
 
-        explicit App(const Settings& settings = Settings());
+        explicit App(
+            const Settings& settings = Settings(),
+            RenderContext* renderContext = nullptr);
 
         ~App();
 
         void loop(void);
 
-        void addMesh(Mesh&& mesh);
+        void setRenderContext(RenderContext* context);
 
     private:
         Settings _settings;
@@ -94,14 +104,7 @@ namespace gut {
         uint32_t _lastTicks;
         uint32_t _frameTicks;
 
-        Shader _shader;
-        Camera _camera;
-        Vector<Mesh> _meshes;
-
-        // Window event handling loop
-        void handleEvents(SDL_Event& event);
-
-        void render(void);
+        RenderContext*  _renderContext;
     };
 
 } // namespace gut
