@@ -1,9 +1,15 @@
 //
-// Created by Miika Lehtimäki on 25.6.2018.
+// Project: GraphicsUtils
+// File: MathTypes.hpp
+//
+// Copyright (c) 2019 Miika 'Lehdari' Lehtimäki
+// You may use, distribute and modify this code under the terms
+// of the licence specified in file LICENSE which is distributed
+// with this source code package.
 //
 
-#ifndef MATHTYPES_HPP
-#define MATHTYPES_HPP
+#ifndef GRAPHICSUTILS_MATHTYPES_HPP
+#define GRAPHICSUTILS_MATHTYPES_HPP
 
 
 #include <Eigen/Dense>
@@ -25,4 +31,4 @@ using Mat3d = Eigen::Matrix3d;
 using Mat4d = Eigen::Matrix4d;
 
 
-#endif //MATHTYPES_HPP
+#endif //GRAPHICSUTILS_MATHTYPES_HPP

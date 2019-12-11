@@ -1,9 +1,15 @@
 //
-// Created by Lehdari on 23.7.2018.
+// Project: GraphicsUtils
+// File: TypeUtils.hpp
+//
+// Copyright (c) 2019 Miika 'Lehdari' Lehtimäki
+// You may use, distribute and modify this code under the terms
+// of the licence specified in file LICENSE which is distributed
+// with this source code package.
 //
 
-#ifndef INC_2DTEST_TYPEUTILS_HPP
-#define INC_2DTEST_TYPEUTILS_HPP
+#ifndef GRAPHICSUTILS_TYPEUTILS_HPP
+#define GRAPHICSUTILS_TYPEUTILS_HPP
 
 
 #include "MathTypes.hpp"
@@ -55,4 +61,4 @@ template <typename T>
 using Vector2D = Vector<Vector<T>>;
 
 
-#endif //INC_2DTEST_TYPEUTILS_HPP
+#endif //GRAPHICSUTILS_TYPEUTILS_HPP

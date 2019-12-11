@@ -1,9 +1,15 @@
 //
-// Created by Lehdari on 23.7.2018.
+// Project: GraphicsUtils
+// File: MathUtils.hpp
+//
+// Copyright (c) 2019 Miika 'Lehdari' Lehtimäki
+// You may use, distribute and modify this code under the terms
+// of the licence specified in file LICENSE which is distributed
+// with this source code package.
 //
 
-#ifndef INC_2DTEST_MATHUTILS_HPP
-#define INC_2DTEST_MATHUTILS_HPP
+#ifndef GRAPHICSUTILS_MATHUTILS_HPP
+#define GRAPHICSUTILS_MATHUTILS_HPP
 
 
 #include "MathTypes.hpp"
@@ -35,4 +41,4 @@ inline float rnd(float min = 0.0f, float max = 1.0f)
 void fitPlane(Vec3f& p, Vec3f& n, const Vector<Vec3f>& points);
 
 
-#endif //INC_2DTEST_MATHUTILS_HPP
+#endif //GRAPHICSUTILS_MATHUTILS_HPP
