@@ -16,33 +16,37 @@
 #undef far
 
 
-class Shader {
-public:
-    Shader();
+namespace gut {
 
-    Shader(const Shader&) = delete;
-    Shader(Shader&&) = delete;
-    Shader operator=(const Shader&) = delete;
-    Shader operator=(Shader&&) = delete;
+    class Shader {
+    public:
+        Shader();
 
-    ~Shader();
+        Shader(const Shader&) = delete;
+        Shader(Shader&&) = delete;
+        Shader operator=(const Shader&) = delete;
+        Shader operator=(Shader&&) = delete;
 
-    void load(const std::string& vsFileName, const std::string& fsFileName);
+        ~Shader();
 
-    void addUniform(const std::string& name);
+        void load(const std::string& vsFileName, const std::string& fsFileName);
 
-    void setUniform(const std::string& name, float uniform) const;
-    void setUniform(const std::string& name, const Vec3f& uniform) const;
-    void setUniform(const std::string& name, const Vec4f& uniform) const;
-    void setUniform(const std::string& name, const Mat3f& uniform) const;
-    void setUniform(const std::string& name, const Mat4f& uniform) const;
+        void addUniform(const std::string& name);
 
-    void use() const;
+        void setUniform(const std::string& name, float uniform) const;
+        void setUniform(const std::string& name, const Vec3f& uniform) const;
+        void setUniform(const std::string& name, const Vec4f& uniform) const;
+        void setUniform(const std::string& name, const Mat3f& uniform) const;
+        void setUniform(const std::string& name, const Mat4f& uniform) const;
 
-private:
-    GLuint                                  _programId;
-    std::unordered_map<std::string, GLint>  _uniformPositions;
-};
+        void use() const;
+
+    private:
+        GLuint                                  _programId;
+        std::unordered_map<std::string, GLint>  _uniformPositions;
+    };
+
+} // namespace gut
 
 
 #endif //GRAPHICSUTILS_SHADER_HPP

@@ -15,6 +15,9 @@
 #include <cctype>
 
 
+using namespace gut;
+
+
 Mesh::Mesh(void) :
     _vertexArrayObjectId(0),
     _positionBufferId(0),

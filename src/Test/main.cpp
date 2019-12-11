@@ -5,6 +5,9 @@
 #include "OpenGLUtils/App.hpp"
 
 
+using namespace gut;
+
+
 int main(int argv, char** args)
 {
     App app;

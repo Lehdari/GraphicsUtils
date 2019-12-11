@@ -9,33 +9,42 @@
 #include "Utils/MathTypes.hpp"
 #include "GL/gl3w.h"
 
-class Shader;
-class Camera;
+namespace gut {
 
-class Mesh {
-public:
-    Mesh(void);
-    ~Mesh(void);
+    class Shader;
+    class Camera;
 
-    Mesh(const Mesh& other)             = delete;
-    Mesh(Mesh&& other);
-    Mesh& operator=(const Mesh& other)  = delete;
-    Mesh& operator=(Mesh&& other)       = delete;
+    class Mesh {
+    public:
+        Mesh(void);
 
-    void loadFromObj(const std::string& fileName);
-    void render(const Shader& shader,
-                const Camera& camera,
-                const Mat4f& orientation,
-                const Vec3f& color = Vec3f(1.0f, 1.0f, 1.0f)) const;
+        ~Mesh(void);
 
-private:
-    GLuint _vertexArrayObjectId;
-    unsigned _nIndices;
+        Mesh(const Mesh& other) = delete;
 
-    GLuint _positionBufferId;
-    GLuint _normalBufferId;
-    GLuint _elementBufferId;
+        Mesh(Mesh&& other);
 
-};
+        Mesh& operator=(const Mesh& other) = delete;
+
+        Mesh& operator=(Mesh&& other) = delete;
+
+        void loadFromObj(const std::string& fileName);
+
+        void render(const Shader& shader,
+                    const Camera& camera,
+                    const Mat4f& orientation,
+                    const Vec3f& color = Vec3f(1.0f, 1.0f, 1.0f)) const;
+
+    private:
+        GLuint _vertexArrayObjectId;
+        unsigned _nIndices;
+
+        GLuint _positionBufferId;
+        GLuint _normalBufferId;
+        GLuint _elementBufferId;
+
+    };
+
+} // namespace gut
 
 #endif //GRAPHICSUTILS_MESH_HPP

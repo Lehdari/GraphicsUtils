@@ -8,6 +8,9 @@
 #include <memory>
 
 
+using namespace gut;
+
+
 Shader::Shader() :
     _programId              (0)
 { }

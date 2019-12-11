@@ -4,6 +4,10 @@
 
 #include "Camera.hpp"
 
+
+using namespace gut;
+
+
 Camera::Camera(void) :
     _worldToCamera(Mat4f::Identity()),
     _cameraToClip(Mat4f::Identity())

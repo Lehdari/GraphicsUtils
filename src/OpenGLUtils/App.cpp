@@ -4,7 +4,6 @@
 
 #include "App.hpp"
 
-
 #include <GL/gl3w.h>
 
 #include <imgui.h>
@@ -13,6 +12,9 @@
 
 #include <cmath>
 #include <functional>
+
+
+using namespace gut;
 
 
 App::App(const App::Settings &settings) :
