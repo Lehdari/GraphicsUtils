@@ -25,35 +25,39 @@ using namespace gut;
 
 
 Mesh::Mesh(void) :
-    _vertexArrayObjectId(0),
-    _positionBufferId(0),
-    _normalBufferId(0),
-    _elementBufferId(0)
+    _vertexArrayObjectId    (0),
+    _positionBufferId       (0),
+    _normalBufferId         (0),
+    _elementBufferId        (0),
+    _nIndices               (0),
+    _usingNormals           (false)
 {}
 
 Mesh::Mesh(Mesh&& other) :
-    _vertexArrayObjectId (other._vertexArrayObjectId),
-    _nIndices (other._nIndices),
-    _positionBufferId (other._positionBufferId),
-    _normalBufferId (other._normalBufferId),
-    _elementBufferId (other._elementBufferId)
-
+    _vertexArrayObjectId    (other._vertexArrayObjectId),
+    _positionBufferId       (other._positionBufferId),
+    _normalBufferId         (other._normalBufferId),
+    _elementBufferId        (other._elementBufferId),
+    _nIndices               (other._nIndices),
+    _usingNormals           (other._usingNormals)
 {
     other._vertexArrayObjectId = 0;
-    other._nIndices = 0;
     other._positionBufferId = 0;
     other._normalBufferId = 0;
     other._elementBufferId = 0;
+    other._nIndices = 0;
+    other._usingNormals = false;
 }
 
 Mesh::~Mesh(void) {
-    glDeleteVertexArrays(1, &_vertexArrayObjectId);
-    glDeleteBuffers(1, &_positionBufferId);
-    glDeleteBuffers(1, &_normalBufferId);
-    glDeleteBuffers(1, &_elementBufferId);
+    reset();
 }
 
-void Mesh::loadFromObj(const std::string& fileName) {
+void Mesh::loadFromObj(const std::string& fileName)
+{
+    // release the used resources
+    reset();
+
     std::vector<std::array<float, 4>> positions;
     std::vector<std::array<float, 3>> normals;
     std::vector<unsigned> indices;
@@ -118,11 +122,10 @@ void Mesh::loadFromObj(const std::string& fileName) {
 
     std::map<std::array<unsigned, 3>, unsigned> createdVertices;
 
-    bool usingNormals = tempNormals.size() > 0;
-    bool usingIndexing = true;
+    _usingNormals = tempNormals.size() > 0;
 
     for (auto& indexArray : tempIndexArrays) {
-        if (usingNormals && (indexArray[6] == 0 || indexArray[7] == 0 || indexArray[8] == 0))
+        if (_usingNormals && (indexArray[6] == 0 || indexArray[7] == 0 || indexArray[8] == 0))
             throw "VertexData: invalid index data (normals)";
 
         std::array<unsigned, 3> v1 = { indexArray[0], indexArray[3], indexArray[6] };
@@ -131,7 +134,7 @@ void Mesh::loadFromObj(const std::string& fileName) {
 
         if (createdVertices[v1] == 0) {
             positions.push_back(tempPositions.at(indexArray[0]-1));
-            if (usingNormals)
+            if (_usingNormals)
                 normals.push_back(tempNormals.at(indexArray[6]-1));
 
             createdVertices[v1] = positions.size()-1;
@@ -140,7 +143,7 @@ void Mesh::loadFromObj(const std::string& fileName) {
 
         if (createdVertices[v2] == 0) {
             positions.push_back(tempPositions.at(indexArray[1]-1));
-            if (usingNormals)
+            if (_usingNormals)
                 normals.push_back(tempNormals.at(indexArray[7]-1));
 
             createdVertices[v2] = positions.size()-1;
@@ -149,7 +152,7 @@ void Mesh::loadFromObj(const std::string& fileName) {
 
         if (createdVertices[v3] == 0) {
             positions.push_back(tempPositions.at(indexArray[2]-1));
-            if (usingNormals)
+            if (_usingNormals)
                 normals.push_back(tempNormals.at(indexArray[8]-1));
 
             createdVertices[v3] = positions.size()-1;
@@ -168,7 +171,7 @@ void Mesh::loadFromObj(const std::string& fileName) {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
 
-    if (usingNormals) {
+    if (_usingNormals) {
         glGenBuffers(1, &_normalBufferId);
         glBindBuffer(GL_ARRAY_BUFFER, _normalBufferId);
         glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(std::array<float, 3>), &normals[0], GL_STATIC_DRAW);
@@ -176,11 +179,6 @@ void Mesh::loadFromObj(const std::string& fileName) {
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
     }
 
-    if (usingIndexing) {
-        _nIndices = indices.size();
-        glGenBuffers(1, &_elementBufferId);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferId);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nIndices * sizeof(unsigned), &indices[0], GL_STATIC_DRAW);
     }
 
     //  unbind the VAO so it won't be changed outside this function
@@ -195,7 +193,8 @@ void Mesh::render(
 {
     shader.use();
     shader.setUniform("objectToWorld", orientation);
-    shader.setUniform("normalToWorld", Mat3f(Mat4f(orientation.inverse().transpose()).block<3,3>(0,0)));
+    if (_usingNormals)
+        shader.setUniform("normalToWorld", Mat3f(Mat4f(orientation.inverse().transpose()).block<3,3>(0,0)));
     shader.setUniform("worldToClip", camera.getWorldToClip());
     shader.setUniform("Color", color);
 
@@ -204,4 +203,23 @@ void Mesh::render(
     glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
 
     glBindVertexArray(0);
+}
+
+void Mesh::reset()
+{
+    if (_vertexArrayObjectId != 0)
+        glDeleteVertexArrays(1, &_vertexArrayObjectId);
+    if (_positionBufferId != 0)
+        glDeleteBuffers(1, &_positionBufferId);
+    if (_normalBufferId != 0)
+        glDeleteBuffers(1, &_normalBufferId);
+    if (_elementBufferId != 0)
+        glDeleteBuffers(1, &_elementBufferId);
+
+    _vertexArrayObjectId = 0;
+    _positionBufferId = 0;
+    _normalBufferId = 0;
+    _elementBufferId = 0;
+    _nIndices = 0;
+    _usingNormals = false;
 }

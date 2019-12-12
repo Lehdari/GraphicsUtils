@@ -42,13 +42,16 @@ namespace gut {
                     const Vec3f& color = Vec3f(1.0f, 1.0f, 1.0f)) const;
 
     private:
-        GLuint _vertexArrayObjectId;
-        unsigned _nIndices;
+        GLuint      _vertexArrayObjectId;
+        GLuint      _positionBufferId;
+        GLuint      _normalBufferId;
+        GLuint      _elementBufferId;
 
-        GLuint _positionBufferId;
-        GLuint _normalBufferId;
-        GLuint _elementBufferId;
+        uint64_t    _nIndices;
+        bool        _usingNormals;
 
+        // Function for releasing the OpenGL handles
+        void reset();
     };
 
 } // namespace gut
