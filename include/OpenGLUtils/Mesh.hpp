@@ -27,9 +27,9 @@ namespace gut {
         ~Mesh(void);
 
         Mesh(const Mesh& other) = delete;
-        Mesh(Mesh&& other);
+        Mesh(Mesh&& other) noexcept;
         Mesh& operator=(const Mesh& other) = delete;
-        Mesh& operator=(Mesh&& other) = delete;
+        Mesh& operator=(Mesh&& other) noexcept;
 
         // Load mesh from obj file
         void loadFromObj(const std::string& fileName);

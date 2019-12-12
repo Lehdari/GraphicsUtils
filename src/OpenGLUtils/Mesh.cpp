@@ -33,7 +33,7 @@ Mesh::Mesh(void) :
     _usingNormals           (false)
 {}
 
-Mesh::Mesh(Mesh&& other) :
+Mesh::Mesh(Mesh&& other) noexcept :
     _vertexArrayObjectId    (other._vertexArrayObjectId),
     _positionBufferId       (other._positionBufferId),
     _normalBufferId         (other._normalBufferId),
@@ -47,6 +47,25 @@ Mesh::Mesh(Mesh&& other) :
     other._elementBufferId = 0;
     other._nIndices = 0;
     other._usingNormals = false;
+}
+
+Mesh& Mesh::operator=(Mesh&& other) noexcept
+{
+    _vertexArrayObjectId    = other._vertexArrayObjectId;
+    _positionBufferId       = other._positionBufferId;
+    _normalBufferId         = other._normalBufferId;
+    _elementBufferId        = other._elementBufferId;
+    _nIndices               = other._nIndices;
+    _usingNormals           = other._usingNormals;
+
+    other._vertexArrayObjectId = 0;
+    other._positionBufferId = 0;
+    other._normalBufferId = 0;
+    other._elementBufferId = 0;
+    other._nIndices = 0;
+    other._usingNormals = false;
+
+    return *this;
 }
 
 Mesh::~Mesh(void) {
