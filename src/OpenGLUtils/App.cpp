@@ -31,6 +31,7 @@ App::App(const App::Settings &settings,
     _quit           (false),
     _lastTicks      (0),
     _frameTicks     (0),
+    _appContext     (*this),
     _renderContext  (renderContext)
 {
     int err;
@@ -109,7 +110,7 @@ void App::loop(void)
         while (SDL_PollEvent(&event) != 0) {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (_settings.handleEvents != nullptr)
-                _settings.handleEvents(event, _quit);
+                _settings.handleEvents(event, _appContext);
         }
 
         // Initialize imgui frame
@@ -122,7 +123,7 @@ void App::loop(void)
 
         // User-defined render
         if (_renderContext != nullptr && _settings.render != nullptr)
-            _settings.render(*_renderContext);
+            _settings.render(*_renderContext, _appContext);
 
         // Render imgui
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

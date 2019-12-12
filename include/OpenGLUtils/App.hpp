@@ -64,20 +64,37 @@ namespace gut {
             {}
         };
 
+        // Struct for App context to be passed to pipeline functions
+        struct Context {
+            WindowSettings* windowSettings;
+            GLSettings*     glSettings;
+            SDL_Window*     window;
+            SDL_GLContext*  glContext;
+            bool*           quit;
+
+            Context(App& app) :
+                windowSettings  (&app._settings.window),
+                glSettings      (&app._settings.gl),
+                window          (app._window),
+                glContext       (&app._glCtx),
+                quit            (&app._quit)
+            {}
+        };
+
         struct Settings {
             WindowSettings window;
             GLSettings gl;
 
-            // Function pointers for event handling and rendering
-            void (*handleEvents)(SDL_Event& event, bool& quit);
-            void (*render)(RenderContext& context);
+            // Pipeline function pointers for event handling and rendering
+            void (*handleEvents)(SDL_Event& event, App::Context& appContext);
+            void (*render)(RenderContext& context, App::Context& appContext);
 
 
             explicit Settings(
-                const WindowSettings& window            = WindowSettings(),
-                const GLSettings& gl                    = GLSettings(),
-                void (*handleEvents)(SDL_Event&, bool&) = nullptr,
-                void (*render)(RenderContext&)          = nullptr
+                const WindowSettings& window                                = WindowSettings(),
+                const GLSettings& gl                                        = GLSettings(),
+                void (*handleEvents)(SDL_Event&, App::Context& appContext)  = nullptr,
+                void (*render)(RenderContext&, App::Context& appContext)    = nullptr
                 ) :
                 window          (window),
                 gl              (gl),
@@ -97,13 +114,14 @@ namespace gut {
         void setRenderContext(RenderContext* context);
 
     private:
-        Settings _settings;
-        SDL_Window *_window;
-        SDL_GLContext _glCtx;
-        bool _quit; // flag for quitting the application
-        uint32_t _lastTicks;
-        uint32_t _frameTicks;
+        Settings        _settings;
+        SDL_Window*     _window;
+        SDL_GLContext   _glCtx;
+        bool            _quit; // flag for quitting the application
+        uint32_t        _lastTicks;
+        uint32_t        _frameTicks;
 
+        App::Context    _appContext;
         RenderContext*  _renderContext;
     };
 

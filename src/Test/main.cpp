@@ -18,12 +18,12 @@
 using namespace gut;
 
 
-void handleEvents(SDL_Event& event, bool& quit)
+void handleEvents(SDL_Event& event, App::Context& appContext)
 {
     // Handle SDL events
     switch (event.type) {
         case SDL_QUIT:
-            quit = true;
+            *appContext.quit = true;
             break;
 
         case SDL_KEYDOWN:
@@ -32,7 +32,7 @@ void handleEvents(SDL_Event& event, bool& quit)
                 return;
             switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:
-                    quit = true;
+                    *appContext.quit = true;
                     break;
 
                 default:
@@ -45,13 +45,13 @@ void handleEvents(SDL_Event& event, bool& quit)
     }
 }
 
-void render(RenderContext& context)
+void render(RenderContext& renderContext, App::Context& appContext)
 {
     // Render geometry
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto& mesh : context.meshes) {
-        mesh.render(context.shader, context.camera, Mat4f::Identity());
+    for (auto& mesh : renderContext.meshes) {
+        mesh.render(renderContext.shader, renderContext.camera, Mat4f::Identity());
     }
 }
 
