@@ -15,6 +15,7 @@
 #include "Utils/MathTypes.hpp"
 #include "GL/gl3w.h"
 
+
 namespace gut {
 
     class Shader;
@@ -23,15 +24,11 @@ namespace gut {
     class Mesh {
     public:
         Mesh(void);
-
         ~Mesh(void);
 
         Mesh(const Mesh& other) = delete;
-
         Mesh(Mesh&& other);
-
         Mesh& operator=(const Mesh& other) = delete;
-
         Mesh& operator=(Mesh&& other) = delete;
 
         // Load mesh from obj file
@@ -49,7 +46,7 @@ namespace gut {
         // Render the mesh
         void render(const Shader& shader,
                     const Camera& camera,
-                    const Mat4f& orientation,
+                    const Mat4f& orientation = Mat4f::Identity(),
                     const Vec3f& color = Vec3f(1.0f, 1.0f, 1.0f)) const;
 
     private:
@@ -66,5 +63,6 @@ namespace gut {
     };
 
 } // namespace gut
+
 
 #endif //GRAPHICSUTILS_MESH_HPP
