@@ -64,7 +64,8 @@ target_include_directories(OpenGLUtils
         ${SDL2_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/OpenGLUtils)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/OpenGLUtils
+        ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb)
 
 target_link_libraries(OpenGLUtils
     PUBLIC
