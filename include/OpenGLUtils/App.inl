@@ -1,6 +1,6 @@
 //
 // Project: GraphicsUtils
-// File: App.cpp
+// File: App.inl
 //
 // Copyright (c) 2019 Miika 'Lehdari' Lehtimäki
 // You may use, distribute and modify this code under the terms
@@ -8,23 +8,11 @@
 // with this source code package.
 //
 
-#include "App.hpp"
 
-#include <GL/gl3w.h>
-
-#include <imgui.h>
-#include <imgui_impl_sdl.h>
-#include <imgui_impl_opengl3.h>
-
-#include <cmath>
-#include <functional>
-
-
-using namespace gut;
-
-
-App::App(const App::Settings &settings,
-    RenderContext* renderContext
+template <typename T_RenderContext>
+App<T_RenderContext>::App(
+    const App::Settings &settings,
+    T_RenderContext* renderContext
     ) :
     _settings       (settings),
     _window         (nullptr),
@@ -88,7 +76,8 @@ App::App(const App::Settings &settings,
     glEnable(GL_DEPTH_TEST);
 }
 
-App::~App()
+template <typename T_RenderContext>
+App<T_RenderContext>::~App()
 {
     // Destroy imgui
     ImGui_ImplOpenGL3_Shutdown();
@@ -101,7 +90,8 @@ App::~App()
     SDL_Quit();
 }
 
-void App::loop(void)
+template <typename T_RenderContext>
+void App<T_RenderContext>::loop(void)
 {
     // Application main loop
     while (!_quit) {
@@ -137,7 +127,8 @@ void App::loop(void)
     }
 }
 
-void App::setRenderContext(RenderContext* context)
+template <typename T_RenderContext>
+void App<T_RenderContext>::setRenderContext(T_RenderContext* renderContext)
 {
-    _renderContext = context;
+    _renderContext = renderContext;
 }

@@ -14,6 +14,11 @@
 
 #include <string>
 #include <SDL.h>
+#include <GL/gl3w.h>
+
+#include <imgui.h>
+#include <imgui_impl_sdl.h>
+#include <imgui_impl_opengl3.h>
 
 #include "Utils/MathUtils.hpp"
 #include "Utils/TypeUtils.hpp"
@@ -22,6 +27,7 @@
 
 namespace gut {
 
+    template <typename T_RenderContext = gut::RenderContext>
     class App {
     public:
         // Settings for the application
@@ -86,15 +92,14 @@ namespace gut {
             GLSettings gl;
 
             // Pipeline function pointers for event handling and rendering
-            void (*handleEvents)(SDL_Event& event, App::Context& appContext);
-            void (*render)(RenderContext& context, App::Context& appContext);
-
+            void (*handleEvents)(SDL_Event& event, Context& appContext);
+            void (*render)(T_RenderContext& context, Context& appContext);
 
             explicit Settings(
-                const WindowSettings& window                                = WindowSettings(),
-                const GLSettings& gl                                        = GLSettings(),
-                void (*handleEvents)(SDL_Event&, App::Context& appContext)  = nullptr,
-                void (*render)(RenderContext&, App::Context& appContext)    = nullptr
+                const WindowSettings& window                            = WindowSettings(),
+                const GLSettings& gl                                    = GLSettings(),
+                void (*handleEvents)(SDL_Event&, Context& appContext)   = nullptr,
+                void (*render)(T_RenderContext&, Context& appContext)   = nullptr
                 ) :
                 window          (window),
                 gl              (gl),
@@ -105,25 +110,27 @@ namespace gut {
 
         explicit App(
             const Settings& settings = Settings(),
-            RenderContext* renderContext = nullptr);
+            T_RenderContext* renderContext = nullptr);
 
         ~App();
 
         void loop(void);
 
-        void setRenderContext(RenderContext* context);
+        void setRenderContext(T_RenderContext* renderContext);
 
     private:
-        Settings        _settings;
-        SDL_Window*     _window;
-        SDL_GLContext   _glCtx;
-        bool            _quit; // flag for quitting the application
-        uint32_t        _lastTicks;
-        uint32_t        _frameTicks;
+        Settings            _settings;
+        SDL_Window*         _window;
+        SDL_GLContext       _glCtx;
+        bool                _quit; // flag for quitting the application
+        uint32_t            _lastTicks;
+        uint32_t            _frameTicks;
 
-        App::Context    _appContext;
-        RenderContext*  _renderContext;
+        App::Context        _appContext;
+        T_RenderContext*    _renderContext;
     };
+
+    #include "App.inl"
 
 } // namespace gut
 

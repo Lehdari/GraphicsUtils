@@ -20,6 +20,8 @@
 
 
 #define PI 3.14159265359
+#undef near
+#undef far
 
 
 inline double cubicInterpolate (const double (&p)[4], double x)

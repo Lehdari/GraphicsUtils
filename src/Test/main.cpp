@@ -9,6 +9,7 @@
 //
 
 #include "OpenGLUtils/App.hpp"
+#include "OpenGLUtils/RenderContext.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
@@ -17,8 +18,11 @@
 
 using namespace gut;
 
+// Alias for the app type
+using A_App = App<RenderContext>;
 
-void handleEvents(SDL_Event& event, App::Context& appContext)
+// Pipeline function for the event handling
+void handleEvents(SDL_Event& event, A_App::Context& appContext)
 {
     // Handle SDL events
     switch (event.type) {
@@ -45,7 +49,8 @@ void handleEvents(SDL_Event& event, App::Context& appContext)
     }
 }
 
-void render(RenderContext& renderContext, App::Context& appContext)
+// Pipeline function for rendering
+void render(RenderContext& renderContext, A_App::Context& appContext)
 {
     // Render geometry
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -58,11 +63,11 @@ void render(RenderContext& renderContext, App::Context& appContext)
 int main(int argv, char** args)
 {
     // Setup app and render context
-    App::Settings appSettings;
+    A_App::Settings appSettings;
     appSettings.handleEvents = &handleEvents;
     appSettings.render = &render;
     RenderContext context;
-    App app(appSettings);
+    A_App app(appSettings);
     app.setRenderContext(&context);
 
     // Load shader
