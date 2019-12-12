@@ -76,7 +76,6 @@ int main(int argv, char** args)
     context.shader.addUniform("objectToWorld");
     context.shader.addUniform("normalToWorld");
     context.shader.addUniform("worldToClip");
-    context.shader.addUniform("Color");
 
     // Load mesh
     Mesh bunny;

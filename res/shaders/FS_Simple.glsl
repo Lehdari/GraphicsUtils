@@ -1,14 +1,12 @@
-/**
-
-    Automaatio- ja Systeemitekniikan killan robok�siprojekti
-    FS_Simple.glsl
-
-    @version    0.1
-    @author     Miika 'LehdaRi' Lehtim�ki
-    @date       2015-04-18
-
-**/
-
+//
+// Project: GraphicsUtils
+// File: VS_Simple.glsl
+//
+// Copyright (c) 2019 Miika 'Lehdari' Lehtimäki
+// You may use, distribute and modify this code under the terms
+// of the licence specified in file LICENSE which is distributed
+// with this source code package.
+//
 
 #version 330
 

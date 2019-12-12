@@ -46,8 +46,7 @@ namespace gut {
         // Render the mesh
         void render(const Shader& shader,
                     const Camera& camera,
-                    const Mat4f& orientation = Mat4f::Identity(),
-                    const Vec3f& color = Vec3f(1.0f, 1.0f, 1.0f)) const;
+                    const Mat4f& orientation = Mat4f::Identity()) const;
 
     private:
         GLuint      _vertexArrayObjectId;

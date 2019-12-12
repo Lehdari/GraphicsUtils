@@ -1,14 +1,12 @@
-/**
-
-    Automaatio- ja Systeemitekniikan killan robok‰siprojekti
-    VS_Simple.glsl
-
-    @version    0.1
-    @author     Miika 'LehdaRi' Lehtim‰ki
-    @date       2015-04-18
-
-**/
-
+//
+// Project: GraphicsUtils
+// File: VS_Simple.glsl
+//
+// Copyright (c) 2019 Miika 'Lehdari' Lehtim√§ki
+// You may use, distribute and modify this code under the terms
+// of the licence specified in file LICENSE which is distributed
+// with this source code package.
+//
 
 #version 330
 
@@ -22,11 +20,10 @@ out vec3 col;
 uniform mat4 objectToWorld;
 uniform mat3 normalToWorld;
 uniform mat4 worldToClip;
-uniform vec3 Color;
 
 void main() {
     pos = (objectToWorld * vec4(position, 1.0)).xyz;
     norm = normalize(normalToWorld * normal);
-    col = Color;
+    col = vec3(1.0, 1.0, 1.0);
     gl_Position = worldToClip * vec4(pos, 1.0);
 }

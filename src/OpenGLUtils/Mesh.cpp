@@ -236,15 +236,13 @@ void Mesh::loadFromVertexData(
 void Mesh::render(
     const Shader& shader,
     const Camera& camera,
-    const Mat4f& orientation,
-    const Vec3f& color) const
+    const Mat4f& orientation) const
 {
     shader.use();
     shader.setUniform("objectToWorld", orientation);
     if (_usingNormals)
         shader.setUniform("normalToWorld", Mat3f(Mat4f(orientation.inverse().transpose()).block<3,3>(0,0)));
     shader.setUniform("worldToClip", camera.getWorldToClip());
-    shader.setUniform("Color", color);
 
     glBindVertexArray(_vertexArrayObjectId);
 
