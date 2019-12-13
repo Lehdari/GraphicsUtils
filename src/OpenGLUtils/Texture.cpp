@@ -39,6 +39,38 @@ Texture& Texture::operator=(Texture&& other) noexcept
     return *this;
 }
 
+void Texture::create(int width, int height)
+{
+    create(width, height, _internalFormat);
+}
+
+void Texture::create(int width, int height, GLenum internalFormat)
+{
+    _width = width;
+    _height = height;
+    _internalFormat = internalFormat;
+
+    // Release the used resources
+    reset();
+
+    // Generate new texture
+    glGenTextures(1, &_textureId);
+    glBindTexture(GL_TEXTURE_2D, _textureId);
+
+    // Set filtering and wrapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    // Transfer data to OpenGL and generate mipmaps
+    glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture::loadFromFile(const std::string& fileName)
 {
     loadFromFile(fileName, _internalFormat);

@@ -28,6 +28,10 @@ namespace gut {
         Texture& operator=(const Texture& other) = delete;
         Texture& operator=(Texture&& other) noexcept;
 
+        // Create empty texture
+        void create(int width, int height);
+        void create(int width, int height, GLenum internalFormat);
+
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
         void loadFromFile(const std::string& fileName, GLenum internalFormat);
