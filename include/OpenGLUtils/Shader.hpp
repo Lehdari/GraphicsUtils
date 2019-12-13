@@ -35,8 +35,12 @@ namespace gut {
 
         ~Shader();
 
+        // Load shader from single shader file
+        void load(const std::string& fileName, GLenum shaderType);
+        // Load shader from vertex and fragment shader files
         void load(const std::string& vsFileName, const std::string& fsFileName);
 
+        // Add new uniform (must be called before calling setUniforms);
         void addUniform(const std::string& name);
 
         void setUniform(const std::string& name, float uniform) const;

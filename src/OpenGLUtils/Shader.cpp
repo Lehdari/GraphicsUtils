@@ -21,6 +21,58 @@ Shader::Shader() :
     _programId              (0)
 { }
 
+void Shader::load(const std::string& fileName, GLenum shaderType)
+{
+    FILE* f = fopen(fileName.c_str(), "rb");
+    if (!f)
+        throw "File could not be opened!"; // TODO_EXCEPTION
+
+    fseek(f, 0L, SEEK_END);
+    auto fs = ftell(f);
+    std::unique_ptr<char[]> bufUnique(new char[fs+1]);
+    fseek(f, 0L, SEEK_SET);
+    fread(bufUnique.get(), sizeof(char), fs, f);
+    bufUnique.get()[fs] = '\0';
+    fclose(f);
+    const char* srcPtr = bufUnique.get();
+
+    GLuint objectId = glCreateShader(shaderType);
+
+    glShaderSource(objectId, 1, &srcPtr , NULL);
+    glCompileShader(objectId);
+
+    // Check compile status, throw exception in case of failure
+    GLint compileStatus, infoLogLength;
+    glGetShaderiv(objectId, GL_COMPILE_STATUS, &compileStatus);
+    if (compileStatus == GL_FALSE) {
+        glGetShaderiv(objectId, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        char* infoLog = new char[infoLogLength];
+        glGetShaderInfoLog(objectId, infoLogLength, NULL, &infoLog[0]);
+        fprintf(stderr, "%s", infoLog);
+        throw infoLog; // TODO_EXCEPTION: throw a proper exception
+    }
+
+    _programId = glCreateProgram();
+    glAttachShader(_programId, objectId);
+    glLinkProgram(_programId);
+
+    // Check link status, throw exception in case of failure
+    GLint linkStatus;
+    glGetProgramiv(_programId, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus == GL_FALSE) {
+        glGetProgramiv(_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        char* infoLog = new char[infoLogLength];
+        glGetProgramInfoLog(_programId, infoLogLength, NULL, &infoLog[0]);
+        fprintf(stderr, "%s", infoLog);
+        throw infoLog; // TODO_EXCEPTION: throw a proper exception
+    }
+
+    // Free the used shader object
+    glDeleteShader(objectId);
+}
+
 void Shader::load(const std::string& vsFileName, const std::string& fsFileName)
 {
     FILE* vsf = fopen(vsFileName.c_str(), "rb");
