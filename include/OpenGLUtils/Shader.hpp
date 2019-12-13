@@ -44,6 +44,7 @@ namespace gut {
         void setUniform(const std::string& name, const Vec4f& uniform) const;
         void setUniform(const std::string& name, const Mat3f& uniform) const;
         void setUniform(const std::string& name, const Mat4f& uniform) const;
+        void setUniform(const std::string& name, int uniform) const;
 
         void use() const;
 

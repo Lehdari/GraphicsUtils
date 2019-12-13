@@ -141,6 +141,11 @@ void Shader::setUniform(const std::string& name, const Mat4f& uniform) const
     glUniformMatrix4fv(_uniformPositions.at(name), 1, GL_FALSE, uniform.data());
 }
 
+void Shader::setUniform(const std::string& name, int uniform) const
+{
+    glUniform1i(_uniformPositions.at(name), uniform);
+}
+
 void Shader::use() const
 {
     glUseProgram(_programId);
