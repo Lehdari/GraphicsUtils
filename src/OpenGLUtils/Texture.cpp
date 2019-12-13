@@ -38,7 +38,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
     return *this;
 }
 
-void Texture::loadFromFile(const std::string& fileName)
+void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
 {
     // Load image using STB image
     int w, h, nChannels;
@@ -70,10 +70,10 @@ void Texture::loadFromFile(const std::string& fileName)
     // Transfer data to OpenGL and generate mipmaps
     switch (nChannels) {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
         default:
             break;

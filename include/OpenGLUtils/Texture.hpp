@@ -29,7 +29,7 @@ namespace gut {
         Texture& operator=(Texture&& other) noexcept;
 
         // Load texture from an image file
-        void loadFromFile(const std::string& fileName);
+        void loadFromFile(const std::string& fileName, GLenum internalFormat = GL_RGBA);
 
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
