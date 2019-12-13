@@ -15,8 +15,9 @@
 using namespace gut;
 
 
-Texture::Texture(void) :
-    _textureId  (0)
+Texture::Texture(GLenum internalFormat) :
+    _textureId      (0),
+    _internalFormat (internalFormat)
 {
 }
 
@@ -38,8 +39,15 @@ Texture& Texture::operator=(Texture&& other) noexcept
     return *this;
 }
 
+void Texture::loadFromFile(const std::string& fileName)
+{
+    loadFromFile(fileName, _internalFormat);
+}
+
 void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
 {
+    _internalFormat = internalFormat;
+
     // Load image using STB image
     int w, h, nChannels;
     unsigned char *data = stbi_load(fileName.c_str(), &w, &h, &nChannels, 0);
@@ -70,10 +78,10 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
     // Transfer data to OpenGL and generate mipmaps
     switch (nChannels) {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
         default:
             break;

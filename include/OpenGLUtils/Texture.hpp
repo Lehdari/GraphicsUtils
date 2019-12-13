@@ -20,7 +20,7 @@ namespace gut {
 
     class Texture {
     public:
-        Texture(void);
+        Texture(GLenum internalFormat = GL_RGBA);
         ~Texture(void);
 
         Texture(const Texture& other) = delete;
@@ -29,13 +29,15 @@ namespace gut {
         Texture& operator=(Texture&& other) noexcept;
 
         // Load texture from an image file
-        void loadFromFile(const std::string& fileName, GLenum internalFormat = GL_RGBA);
+        void loadFromFile(const std::string& fileName);
+        void loadFromFile(const std::string& fileName, GLenum internalFormat);
 
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 
     private:
         GLuint  _textureId;
+        GLenum  _internalFormat;
 
         // Release OpenGL handles and reset Texture state
         void reset(void);
