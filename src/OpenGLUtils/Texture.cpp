@@ -49,8 +49,8 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
     _internalFormat = internalFormat;
 
     // Load image using STB image
-    int w, h, nChannels;
-    unsigned char *data = stbi_load(fileName.c_str(), &w, &h, &nChannels, 0);
+    int nChannels;
+    unsigned char *data = stbi_load(fileName.c_str(), &_width, &_height, &nChannels, 0);
 
     if (!data) {
         fprintf(stderr, "Failed to load image %s\n", fileName.c_str());
@@ -78,10 +78,10 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
     // Transfer data to OpenGL and generate mipmaps
     switch (nChannels) {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
         default:
             break;
@@ -103,6 +103,16 @@ void Texture::bind(GLenum textureUnit) const
 void Texture::bindImage(GLuint unit, GLenum access) const
 {
     glBindImageTexture(unit, _textureId, 0, GL_FALSE, 0, access, _internalFormat);
+}
+
+int Texture::width() const
+{
+    return _width;
+}
+
+int Texture::height() const
+{
+    return _height;
 }
 
 void Texture::reset(void)

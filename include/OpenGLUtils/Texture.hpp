@@ -38,9 +38,15 @@ namespace gut {
         // Bind texture to image unit
         void bindImage(GLuint unit, GLenum access = GL_WRITE_ONLY) const;
 
+        // Get dimensions
+        int width() const;
+        int height() const;
+
     private:
         GLuint  _textureId;
         GLenum  _internalFormat;
+        int     _width;
+        int     _height;
 
         // Release OpenGL handles and reset Texture state
         void reset(void);
