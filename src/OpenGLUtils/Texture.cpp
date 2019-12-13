@@ -100,6 +100,11 @@ void Texture::bind(GLenum textureUnit) const
     glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 
+void Texture::bindImage(GLuint unit, GLenum access) const
+{
+    glBindImageTexture(unit, _textureId, 0, GL_FALSE, 0, access, _internalFormat);
+}
+
 void Texture::reset(void)
 {
     if (_textureId != 0)

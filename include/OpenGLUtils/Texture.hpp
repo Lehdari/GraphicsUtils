@@ -35,6 +35,9 @@ namespace gut {
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 
+        // Bind texture to image unit
+        void bindImage(GLuint unit, GLenum access = GL_WRITE_ONLY) const;
+
     private:
         GLuint  _textureId;
         GLenum  _internalFormat;
