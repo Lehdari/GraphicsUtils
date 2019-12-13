@@ -52,9 +52,14 @@ namespace gut {
 
         void use() const;
 
+        // Dispatch for compute shaders
+        void dispatch(GLuint nGroupsX, GLuint nGroupsY, GLuint nGroupsZ) const;
+
     private:
         GLuint                                  _programId;
         std::unordered_map<std::string, GLint>  _uniformPositions;
+        //flag indicating whether the sahder is compute shader
+        bool                                    _computeShader;
     };
 
 } // namespace gut

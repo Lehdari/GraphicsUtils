@@ -18,8 +18,10 @@ using namespace gut;
 
 
 Shader::Shader() :
-    _programId              (0)
-{ }
+    _programId      (0),
+    _computeShader  (false)
+{
+}
 
 void Shader::load(const std::string& fileName, GLenum shaderType)
 {
@@ -71,6 +73,10 @@ void Shader::load(const std::string& fileName, GLenum shaderType)
 
     // Free the used shader object
     glDeleteShader(objectId);
+
+    // Set compute shader flag
+    if (shaderType == GL_COMPUTE_SHADER)
+        _computeShader = true;
 }
 
 void Shader::load(const std::string& vsFileName, const std::string& fsFileName)
@@ -201,4 +207,14 @@ void Shader::setUniform(const std::string& name, int uniform) const
 void Shader::use() const
 {
     glUseProgram(_programId);
+}
+
+void Shader::dispatch(GLuint nGroupsX, GLuint nGroupsY, GLuint nGroupsZ) const
+{
+    if (!_computeShader)
+        return;
+
+    glUseProgram(_programId);
+    glDispatchCompute(nGroupsX, nGroupsY, nGroupsZ);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
