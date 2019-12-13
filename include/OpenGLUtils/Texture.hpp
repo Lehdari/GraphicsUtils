@@ -32,6 +32,9 @@ namespace gut {
         void loadFromFile(const std::string& fileName);
         void loadFromFile(const std::string& fileName, GLenum internalFormat);
 
+        // Set filtering
+        void setFiltering(GLenum minFilter, GLenum magFilter);
+
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 

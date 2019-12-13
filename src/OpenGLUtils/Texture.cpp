@@ -94,6 +94,15 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
     stbi_image_free(data);
 }
 
+void Texture::setFiltering(GLenum minFilter, GLenum magFilter)
+{
+    glBindTexture(GL_TEXTURE_2D, _textureId);
+
+    // Set filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+}
+
 void Texture::bind(GLenum textureUnit) const
 {
     glActiveTexture(textureUnit);
