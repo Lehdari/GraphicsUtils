@@ -108,12 +108,13 @@ void App<T_RenderContext>::loop(void)
         ImGui_ImplSDL2_NewFrame(_window);
         ImGui::NewFrame();
 
-        // Generate draw data
-        ImGui::Render();
 
         // User-defined render
         if (_renderContext != nullptr && _settings.render != nullptr)
             _settings.render(*_renderContext, _appContext);
+
+        // Generate draw data
+        ImGui::Render();
 
         // Render imgui
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
