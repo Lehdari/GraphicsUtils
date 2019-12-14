@@ -122,6 +122,8 @@ void App<T_RenderContext>::loop(void)
         // Swap draw and display buffers
         SDL_GL_SwapWindow(_window);
 
+        SDL_Delay(1000/_settings.window.framerateLimit);
+
         uint32_t curTicks = SDL_GetTicks();
         _frameTicks = curTicks - _lastTicks;
         _lastTicks = curTicks;
