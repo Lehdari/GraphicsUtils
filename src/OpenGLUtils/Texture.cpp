@@ -135,6 +135,15 @@ void Texture::setFiltering(GLenum minFilter, GLenum magFilter)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
+void Texture::setWrapping(GLenum sWrap, GLenum tWrap)
+{
+    glBindTexture(GL_TEXTURE_2D, _textureId);
+
+    // Set filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sWrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tWrap);
+}
+
 void Texture::bind(GLenum textureUnit) const
 {
     glActiveTexture(textureUnit);

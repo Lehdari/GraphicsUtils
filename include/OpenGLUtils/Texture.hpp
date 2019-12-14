@@ -39,6 +39,9 @@ namespace gut {
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
 
+        // Set wrapping
+        void setWrapping(GLenum sWrap, GLenum tWrap);
+
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 
