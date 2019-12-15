@@ -150,9 +150,9 @@ void Texture::bind(GLenum textureUnit) const
     glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 
-void Texture::bindImage(GLuint unit, GLenum access) const
+void Texture::bindImage(GLuint unit, GLint level, GLenum access) const
 {
-    glBindImageTexture(unit, _textureId, 0, GL_FALSE, 0, access, _internalFormat);
+    glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _internalFormat);
 }
 
 int Texture::width() const

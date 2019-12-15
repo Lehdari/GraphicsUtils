@@ -46,7 +46,7 @@ namespace gut {
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 
         // Bind texture to image unit
-        void bindImage(GLuint unit, GLenum access = GL_WRITE_ONLY) const;
+        void bindImage(GLuint unit, GLint level = 0, GLenum access = GL_WRITE_ONLY) const;
 
         // Get dimensions
         int width() const;
