@@ -15,8 +15,9 @@
 using namespace gut;
 
 
-Texture::Texture(GLenum internalFormat) :
+Texture::Texture(GLenum target, GLenum internalFormat) :
     _textureId      (0),
+    _target         (target),
     _internalFormat (internalFormat)
 {
 }
@@ -41,13 +42,14 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 void Texture::create(int width, int height)
 {
-    create(width, height, _internalFormat);
+    create(width, height, _target, _internalFormat);
 }
 
-void Texture::create(int width, int height, GLenum internalFormat)
+void Texture::create(int width, int height, GLenum target, GLenum internalFormat)
 {
     _width = width;
     _height = height;
+    _target = target;
     _internalFormat = internalFormat;
 
     // Release the used resources
@@ -55,31 +57,29 @@ void Texture::create(int width, int height, GLenum internalFormat)
 
     // Generate new texture
     glGenTextures(1, &_textureId);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(_target, _textureId);
 
     // Set filtering and wrapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
-    glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(_target);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(_target, 0);
 }
 
 void Texture::loadFromFile(const std::string& fileName)
 {
-    loadFromFile(fileName, _internalFormat);
+    loadFromFile(fileName, _target, _internalFormat);
 }
 
-void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
+void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat)
 {
-    _internalFormat = internalFormat;
-
     // Load image using STB image
     int nChannels;
     unsigned char *data = stbi_load(fileName.c_str(), &_width, &_height, &nChannels, 0);
@@ -94,33 +94,36 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
         return;
     }
 
+    _target = target;
+    _internalFormat = internalFormat;
+
     // Release the used resources
     reset();
 
     // Generate new texture
     glGenTextures(1, &_textureId);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(_target, _textureId);
 
     // Set filtering and wrapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
     switch (nChannels) {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
         default:
             break;
     }
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(_target);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(_target, 0);
 
     // Release stb resources
     stbi_image_free(data);
@@ -128,26 +131,26 @@ void Texture::loadFromFile(const std::string& fileName, GLenum internalFormat)
 
 void Texture::setFiltering(GLenum minFilter, GLenum magFilter)
 {
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(_target, _textureId);
 
     // Set filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
 void Texture::setWrapping(GLenum sWrap, GLenum tWrap)
 {
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(_target, _textureId);
 
     // Set filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sWrap);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tWrap);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_S, sWrap);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_T, tWrap);
 }
 
 void Texture::bind(GLenum textureUnit) const
 {
     glActiveTexture(textureUnit);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(_target, _textureId);
 }
 
 void Texture::bindImage(GLuint unit, GLint level, GLenum access) const

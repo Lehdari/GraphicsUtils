@@ -20,7 +20,7 @@ namespace gut {
 
     class Texture {
     public:
-        Texture(GLenum internalFormat = GL_RGBA);
+        Texture(GLenum target = GL_TEXTURE_2D, GLenum internalFormat = GL_RGBA);
         ~Texture(void);
 
         Texture(const Texture& other) = delete;
@@ -28,13 +28,13 @@ namespace gut {
         Texture& operator=(const Texture& other) = delete;
         Texture& operator=(Texture&& other) noexcept;
 
-        // Create empty texture
+        // Create empty 2D texture
         void create(int width, int height);
-        void create(int width, int height, GLenum internalFormat);
+        void create(int width, int height, GLenum target, GLenum internalFormat);
 
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
-        void loadFromFile(const std::string& fileName, GLenum internalFormat);
+        void loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat);
 
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
@@ -55,6 +55,7 @@ namespace gut {
     private:
         GLuint  _textureId;
         GLenum  _internalFormat;
+        GLenum  _target;
         int     _width;
         int     _height;
 
