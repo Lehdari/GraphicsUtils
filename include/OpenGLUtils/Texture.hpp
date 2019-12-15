@@ -31,6 +31,9 @@ namespace gut {
         // Create empty 2D texture
         void create(int width, int height);
         void create(int width, int height, GLenum target, GLenum internalFormat);
+        // Create empty 3D texture
+        void create(int width, int height, int depth);
+        void create(int width, int height, int depth, GLenum target, GLenum internalFormat);
 
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
@@ -51,13 +54,15 @@ namespace gut {
         // Get dimensions
         int width() const;
         int height() const;
+        int depth() const;
 
     private:
         GLuint  _textureId;
-        GLenum  _internalFormat;
         GLenum  _target;
+        GLenum  _internalFormat;
         int     _width;
         int     _height;
+        int     _depth;
 
         // Release OpenGL handles and reset Texture state
         void reset(void);

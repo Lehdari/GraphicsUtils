@@ -18,7 +18,10 @@ using namespace gut;
 Texture::Texture(GLenum target, GLenum internalFormat) :
     _textureId      (0),
     _target         (target),
-    _internalFormat (internalFormat)
+    _internalFormat (internalFormat),
+    _width          (0),
+    _height         (0),
+    _depth          (0)
 {
 }
 
@@ -67,6 +70,40 @@ void Texture::create(int width, int height, GLenum target, GLenum internalFormat
 
     // Transfer data to OpenGL and generate mipmaps
     glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    glGenerateMipmap(_target);
+
+    glBindTexture(_target, 0);
+}
+
+void Texture::create(int width, int height, int depth)
+{
+    create(width, height, depth, _target, _internalFormat);
+}
+
+void Texture::create(int width, int height, int depth, GLenum target, GLenum internalFormat)
+{
+    _width = width;
+    _height = height;
+    _depth = depth;
+    _target = target;
+    _internalFormat = internalFormat;
+
+    // Release the used resources
+    reset();
+
+    // Generate new texture
+    glGenTextures(1, &_textureId);
+    glBindTexture(_target, _textureId);
+
+    // Set filtering and wrapping
+    glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Transfer data to OpenGL and generate mipmaps
+    glTexImage3D(_target, 0, _internalFormat, _width, _height, _depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glGenerateMipmap(_target);
 
@@ -155,7 +192,10 @@ void Texture::bind(GLenum textureUnit) const
 
 void Texture::bindImage(GLuint unit, GLint level, GLenum access) const
 {
-    glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _internalFormat);
+    if (_depth > 0)
+        glBindImageTexture(unit, _textureId, level, GL_TRUE, 0, access, _internalFormat);
+    else
+        glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _internalFormat);
 }
 
 int Texture::width() const
@@ -166,6 +206,11 @@ int Texture::width() const
 int Texture::height() const
 {
     return _height;
+}
+
+int Texture::depth() const
+{
+    return _depth;
 }
 
 void Texture::reset(void)
