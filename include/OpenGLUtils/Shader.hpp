@@ -50,6 +50,9 @@ namespace gut {
         void setUniform(const std::string& name, const Mat4f& uniform) const;
         void setUniform(const std::string& name, int uniform) const;
 
+        template <std::size_t N>
+        void setUniform(const std::string& name, const std::array<float, N>& uniform) const;
+
         void use() const;
 
         // Dispatch for compute shaders
@@ -61,6 +64,13 @@ namespace gut {
         //flag indicating whether the sahder is compute shader
         bool                                    _computeShader;
     };
+
+
+    template <std::size_t N>
+    void Shader::setUniform(const std::string& name, const std::array<float, N>& uniform) const
+    {
+        glUniform1fv(_uniformPositions.at(name), N, uniform.data());
+    }
 
 } // namespace gut
 
