@@ -50,3 +50,9 @@ target_link_libraries(
         gl3w
         ${SDL2_LIBRARY}
 )
+
+target_compile_definitions(
+        imgui
+    PRIVATE
+        IMGUI_IMPL_OPENGL_LOADER_GL3W
+)
