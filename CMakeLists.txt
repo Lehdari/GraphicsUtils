@@ -87,5 +87,3 @@ target_include_directories(GraphicsUtilsTest
 target_link_libraries(GraphicsUtilsTest
     PUBLIC
         OpenGLUtils)
-
-message("${CMAKE_BINARY_DIR}")
