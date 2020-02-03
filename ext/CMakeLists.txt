@@ -1,7 +1,6 @@
 execute_process(COMMAND git submodule update --init)
 
 
-add_subdirectory(vecmat)
 
 
 add_library(
