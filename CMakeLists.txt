@@ -69,7 +69,6 @@ target_include_directories(OpenGLUtils
 
 target_link_libraries(OpenGLUtils
     PUBLIC
-        gl3w
         imgui
         ${SDL2_LIBRARY}
 )

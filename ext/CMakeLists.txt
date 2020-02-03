@@ -39,12 +39,14 @@ target_include_directories(
 
 target_link_libraries(
         imgui
+    PUBLIC
+        gl3w
     PRIVATE
         ${OPENGL_LIBRARIES}
-        gl3w
         ${SDL2_LIBRARY}
 )
 
+# force gl3w extension loader
 target_compile_definitions(
         imgui
     PRIVATE
