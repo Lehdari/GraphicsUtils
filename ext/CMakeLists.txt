@@ -1,8 +1,17 @@
-add_library(
-        gl3w
-    SHARED
-        imgui/examples/libs/gl3w/GL/gl3w.c
-)
+if(WIN32)
+    # only static linkage is supported for Windows for gl3w and imgui libraries
+    add_library(
+            gl3w
+        STATIC
+            imgui/examples/libs/gl3w/GL/gl3w.c
+    )
+else()
+    add_library(
+            gl3w
+        SHARED
+            imgui/examples/libs/gl3w/GL/gl3w.c
+    )
+endif()
 
 target_include_directories(
         gl3w
@@ -19,15 +28,28 @@ target_link_libraries(
 )
 
 
-add_library(
-        imgui
-    SHARED
-        imgui/imgui.cpp
-        imgui/imgui_draw.cpp
-        imgui/imgui_widgets.cpp
-        imgui/examples/imgui_impl_opengl3.cpp
-        imgui/examples/imgui_impl_sdl.cpp
-)
+if(WIN32)
+    # only static linkage is supported for Windows for gl3w and imgui libraries
+    add_library(
+            imgui
+        STATIC
+            imgui/imgui.cpp
+            imgui/imgui_draw.cpp
+            imgui/imgui_widgets.cpp
+            imgui/examples/imgui_impl_opengl3.cpp
+            imgui/examples/imgui_impl_sdl.cpp
+    )
+else()
+    add_library(
+            imgui
+        SHARED
+            imgui/imgui.cpp
+            imgui/imgui_draw.cpp
+            imgui/imgui_widgets.cpp
+            imgui/examples/imgui_impl_opengl3.cpp
+            imgui/examples/imgui_impl_sdl.cpp
+    )
+endif()
 
 target_include_directories(
         imgui
