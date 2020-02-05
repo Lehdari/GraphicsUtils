@@ -58,10 +58,9 @@ App<T_RenderContext>::App(
         return;
     }
 
-    // Load OpenGL binds
-    err = gl3wInit();
-    if (err) {
-        printf("Error: gl3wInit failed\n");
+    // Load OpenGL extensions
+    if (!gladLoadGL()) {
+        printf("Error: gladLoadGL failed\n");
         return;
     }
 

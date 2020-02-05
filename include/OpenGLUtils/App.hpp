@@ -14,7 +14,7 @@
 
 #include <string>
 #include <SDL.h>
-#include <GL/gl3w.h>
+#include <glad/glad.h>
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>

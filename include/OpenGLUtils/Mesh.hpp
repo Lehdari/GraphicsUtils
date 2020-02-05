@@ -13,7 +13,7 @@
 
 
 #include "Utils/MathTypes.hpp"
-#include "GL/gl3w.h"
+#include <glad/glad.h>
 
 
 namespace gut {

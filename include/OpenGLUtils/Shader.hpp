@@ -14,7 +14,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <GL/gl3w.h>
+#include <glad/glad.h>
 
 #include "Utils/MathTypes.hpp"
 
