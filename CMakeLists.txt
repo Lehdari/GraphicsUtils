@@ -73,6 +73,14 @@ target_link_libraries(OpenGLUtils
         ${SDL2_LIBRARY}
 )
 
+# Cancel SDL stdio redirect when using windows
+if(WIN32)
+    target_link_options(OpenGLUtils
+        PUBLIC
+            -mconsole
+    )
+endif()
+
 
 # Configure GraphicsUtilsTest executable
 add_executable(GraphicsUtilsTest ${TEST_SOURCES})
