@@ -31,6 +31,7 @@ namespace gut {
             VEC4F
         };
 
+        // Container struct storing the vertex data
         struct Container {
             std::string name;
             DataType    type;
@@ -39,6 +40,11 @@ namespace gut {
 
             template <typename T_Data>
             Container(const std::string& name, T_Data* p); // pointer for type deduction
+
+            Container(const Container&) = delete;
+            Container(Container&&);
+            Container& operator=(const Container&) = delete;
+            Container& operator=(Container&&);
 
             ~Container();
         };
