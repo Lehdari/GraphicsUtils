@@ -62,6 +62,12 @@ namespace gut {
         template <typename T_Data>
         Vector<T_Data>* addData(const std::string& name);
 
+        // Get names of the vertex data vectors
+        Vector<std::string> getDataNames() const;
+
+        // Access data container
+        const Container& accessData(const std::string& name) const noexcept;
+
     private:
         Vector<Container>   _containers; // vertex data containers
         Vector<int64_t>     _indices; // mesh indices
