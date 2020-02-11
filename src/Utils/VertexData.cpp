@@ -40,3 +40,21 @@ VertexData::Container& VertexData::Container::operator=(VertexData::Container&& 
 
     return *this;
 }
+
+
+Vector<std::string> VertexData::getDataNames() const
+{
+    Vector<std::string> names;
+
+    for (auto& c : _containers)
+        names.emplace_back(c.name);
+
+    return names;
+}
+
+const VertexData::Container& VertexData::accessData(const std::string& name) const noexcept
+{
+    for (auto& c : _containers)
+        if (c.name == name)
+            return c;
+}
