@@ -54,7 +54,7 @@ add_subdirectory(ext)
 
 
 # Configure OpenGLUtils library
-add_library(OpenGLUtils STATIC ${OPENGLUTILS_SOURCES})
+add_library(OpenGLUtils STATIC ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
 
 target_include_directories(OpenGLUtils
     PUBLIC
@@ -83,7 +83,7 @@ endif()
 
 
 # Configure GraphicsUtilsTest executable
-add_executable(GraphicsUtilsTest ${TEST_SOURCES})
+add_executable(GraphicsUtilsTest ${TEST_HEADERS} ${TEST_SOURCES})
 
 target_include_directories(GraphicsUtilsTest
     PUBLIC
