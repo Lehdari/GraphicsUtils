@@ -33,7 +33,8 @@ inline VertexData::Container::Container(
 
 inline VertexData::Container::~Container()
 {
-    deleter(v);
+    if (deleter != nullptr)
+        deleter(v);
 }
 
 template <typename T_Data>
