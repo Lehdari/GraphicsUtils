@@ -53,6 +53,19 @@ add_subdirectory(src)
 add_subdirectory(ext)
 
 
+# Configure Utils library
+add_library(Utils STATIC ${UTILS_HEADERS} ${UTILS_SOURCES})
+
+target_include_directories(Utils
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${EIGEN3_INCLUDE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Utils
+)
+
+
 # Configure OpenGLUtils library
 add_library(OpenGLUtils STATIC ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
 
@@ -60,15 +73,14 @@ target_include_directories(OpenGLUtils
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        ${CMAKE_CURRENT_SOURCE_DIR}/ext/vecmat
         ${SDL2_INCLUDE_DIR}
-        ${EIGEN3_INCLUDE_DIR}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/OpenGLUtils
         ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb)
 
 target_link_libraries(OpenGLUtils
     PUBLIC
+        Utils
         imgui
         ${SDL2_LIBRARY}
 )

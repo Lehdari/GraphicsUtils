@@ -1,5 +1,7 @@
 add_subdirectory(OpenGLUtils)
+add_subdirectory(Utils)
 add_subdirectory(Test)
 
 set(OPENGLUTILS_SOURCES ${OPENGLUTILS_SOURCES} PARENT_SCOPE)
+set(UTILS_SOURCES ${UTILS_SOURCES} PARENT_SCOPE)
 set(TEST_SOURCES ${TEST_SOURCES} PARENT_SCOPE)
