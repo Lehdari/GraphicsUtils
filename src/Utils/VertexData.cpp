@@ -58,3 +58,13 @@ const VertexData::Container& VertexData::accessData(const std::string& name) con
         if (c.name == name)
             return c;
 }
+
+Vector<int64_t>& VertexData::getIndices() noexcept
+{
+    return _indices;
+}
+
+const Vector<int64_t>& VertexData::getIndices() const noexcept
+{
+    return _indices;
+}
