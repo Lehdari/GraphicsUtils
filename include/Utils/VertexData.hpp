@@ -68,6 +68,10 @@ namespace gut {
         // Access data container
         const Container& accessData(const std::string& name) const noexcept;
 
+        // Access the indices vector
+        Vector<int64_t>& getIndices() noexcept;
+        const Vector<int64_t>& getIndices() const noexcept;
+
     private:
         Vector<Container>   _containers; // vertex data containers
         Vector<int64_t>     _indices; // mesh indices
