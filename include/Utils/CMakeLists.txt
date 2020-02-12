@@ -1,4 +1,4 @@
-file(GLOB SUB_HEADERS "*.hpp")
+file(GLOB SUB_HEADERS "*.hpp" "*.inl")
 
 set(UTILS_HEADERS
     ${UTILS_HEADERS}
