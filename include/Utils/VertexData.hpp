@@ -35,6 +35,7 @@ namespace gut {
         struct Container {
             std::string name;
             DataType    type;
+            int64_t     size; // size of the vector below (to be used in non-type-aware contexts)
             void*       v; // pointer to data vector
             void        (*deleter)(void*);
 
@@ -58,15 +59,23 @@ namespace gut {
         constexpr static DataType getDataTypeId();
 
         // Add vertex data vector
-        // Returns the created vector for data insertion (nullptr in case of failure)
+        // Returns flag indicating whether the vector creation was successful
         template <typename T_Data>
-        Vector<T_Data>* addData(const std::string& name);
+        bool addDataVector(const std::string& name);
 
+        // Same as above but with possibility to move existing vector
+        template <typename T_Data>
+        bool addDataVector(const std::string& name, Vector<T_Data>&& v);
+
+        // Add data to existing data vector (does nothing in case the vector does not exist)
+        template <typename T_Data>
+        void addData(const std::string& name, const Vector<T_Data>& v);
+        
         // Get names of the vertex data vectors
         Vector<std::string> getDataNames() const;
 
-        // Access data container
-        const Container& accessData(const std::string& name) const noexcept;
+        // Access data container (return nullptr if container with such name does not exist)
+        const Container* accessData(const std::string& name) const noexcept;
 
         // Access the indices vector
         Vector<int64_t>& getIndices() noexcept;
