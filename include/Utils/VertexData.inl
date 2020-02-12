@@ -26,6 +26,7 @@ inline VertexData::Container::Container(
 ) :
     name    (name),
     type    (getDataTypeId<T_Data>()),
+    size    (0),
     v       (new Vector<T_Data>),
     deleter (&VertexData::vectorDeleter<T_Data>)
 {
@@ -50,7 +51,7 @@ constexpr VertexData::DataType VertexData::getDataTypeId()
 }
 
 template <typename T_Data>
-inline Vector<T_Data>* VertexData::addData(const std::string& name)
+inline bool VertexData::addDataVector(const std::string& name)
 {
     // Check data type validity
     static_assert(isValidDataType<T_Data>(), "Not a valid vertex data type\n");
@@ -60,13 +61,53 @@ inline Vector<T_Data>* VertexData::addData(const std::string& name)
         if (c.name == name) {
             fprintf(stderr, "ERROR: Vertex data container with name %s already exists\n",
                     name.c_str());
-            return nullptr;
+            return false;
         }
     }
 
     T_Data* p = nullptr; // pointer for constructor type deduction
     _containers.emplace_back(name, p);
-    return static_cast<Vector<T_Data>*>(_containers.back().v);
+    return true;
+}
+
+template <typename T_Data>
+inline bool VertexData::addDataVector(const std::string& name, Vector<T_Data>&& v)
+{
+    // Check data type validity
+    static_assert(isValidDataType<T_Data>(), "Not a valid vertex data type\n");
+
+    // Check if container with same name exists
+    for (auto& c : _containers) {
+        if (c.name == name) {
+            fprintf(stderr, "ERROR: Vertex data container with name %s already exists\n",
+                name.c_str());
+            return false;
+        }
+    }
+
+    T_Data* p = nullptr; // pointer for constructor type deduction
+    _containers.emplace_back(name, p);
+    auto& c = _containers.back();
+    c.size = v.size();
+    *static_cast<Vector<T_Data>*>(c.v) = std::move(v);
+
+    return true;
+}
+
+template <typename T_Data>
+inline void VertexData::addData(const std::string& name, const Vector<T_Data>& v)
+{
+    for (auto& c : _containers) {
+        if (c.name == name) {
+            // Check for correct data type
+            assert(c.type == getDataTypeId<T_Data>());
+            
+            // Add data to back of the vector
+            auto& cv = *static_cast<Vector<T_Data>*>(c.v);
+            cv.insert(cv.end(), v.begin(), v.end());
+            c.size = cv.size();
+        }
+    }
 }
 
 template <typename T_Data>

@@ -17,6 +17,7 @@ using namespace gut;
 VertexData::Container::Container(VertexData::Container&& other) :
     name    (other.name),
     type    (other.type),
+    size    (other.size),
     v       (other.v),
     deleter (other.deleter)
 {
@@ -52,11 +53,13 @@ Vector<std::string> VertexData::getDataNames() const
     return names;
 }
 
-const VertexData::Container& VertexData::accessData(const std::string& name) const noexcept
+const VertexData::Container* VertexData::accessData(const std::string& name) const noexcept
 {
     for (auto& c : _containers)
         if (c.name == name)
-            return c;
+            return &c;
+
+    return nullptr;
 }
 
 Vector<int64_t>& VertexData::getIndices() noexcept
