@@ -43,6 +43,12 @@ VertexData::Container& VertexData::Container::operator=(VertexData::Container&& 
 }
 
 
+VertexData::VertexData() :
+    _maxIndex   (-1),
+    _valid      (false)
+{
+}
+
 Vector<std::string> VertexData::getDataNames() const
 {
     Vector<std::string> names;
@@ -70,4 +76,32 @@ Vector<int64_t>& VertexData::getIndices() noexcept
 const Vector<int64_t>& VertexData::getIndices() const noexcept
 {
     return _indices;
+}
+
+bool VertexData::validate()
+{
+    _maxIndex = -1;
+
+    // Find maximum index
+    for (auto& i : _indices)
+        if (i > _maxIndex)
+            _maxIndex = i;
+
+    // No indices, data not valid
+    if (_maxIndex < 0)
+        return false;
+
+    // Check that all data vectors are at least the size of maximum index
+    for (auto& c : _containers) {
+        if (c.size < _maxIndex)
+            return false;
+    }
+
+    _valid = true;
+    return true;
+}
+
+bool VertexData::isValid() const noexcept
+{
+    return _valid;
 }

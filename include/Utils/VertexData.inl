@@ -67,6 +67,9 @@ inline bool VertexData::addDataVector(const std::string& name)
 
     T_Data* p = nullptr; // pointer for constructor type deduction
     _containers.emplace_back(name, p);
+
+    _valid = false;
+
     return true;
 }
 
@@ -87,9 +90,12 @@ inline bool VertexData::addDataVector(const std::string& name, Vector<T_Data>&& 
 
     T_Data* p = nullptr; // pointer for constructor type deduction
     _containers.emplace_back(name, p);
+
     auto& c = _containers.back();
     c.size = v.size();
     *static_cast<Vector<T_Data>*>(c.v) = std::move(v);
+
+    _valid = false;
 
     return true;
 }
@@ -106,6 +112,8 @@ inline void VertexData::addData(const std::string& name, const Vector<T_Data>& v
             auto& cv = *static_cast<Vector<T_Data>*>(c.v);
             cv.insert(cv.end(), v.begin(), v.end());
             c.size = cv.size();
+
+            _valid = false;
         }
     }
 }

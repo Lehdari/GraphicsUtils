@@ -50,6 +50,8 @@ namespace gut {
             ~Container();
         };
 
+        VertexData();
+
         // Check if given type is valid vertex data type
         template <typename T_Data>
         constexpr static bool isValidDataType();
@@ -81,9 +83,18 @@ namespace gut {
         Vector<int64_t>& getIndices() noexcept;
         const Vector<int64_t>& getIndices() const noexcept;
 
+        // Validate the vertex data, ie. check that all data vectors are long enough
+        // Returns flag indicating whether the vertex data was successfully validated
+        bool validate();
+
+        // Check whether the the vertex data has been validated
+        bool isValid() const noexcept;
+
     private:
         Vector<Container>   _containers; // vertex data containers
         Vector<int64_t>     _indices; // mesh indices
+        int64_t             _maxIndex; // maximum index value (all data vectors have to be this long for validity)
+        bool                _valid; // flag indicating whether the vertexdata has been validated
 
         // Function for deleting the data vectors
         template <typename T_Data>
