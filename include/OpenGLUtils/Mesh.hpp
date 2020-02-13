@@ -35,7 +35,7 @@ namespace gut {
         void loadFromObj(const std::string& fileName);
 
         // Load mesh from raw vertex data arrays
-        void loadFromVertexData(
+        void loadFromRawData(
             const float* positions,
             uint64_t nPositions, // number of vertex positions (size of the positions array / 4)
             const float* normals,

@@ -207,7 +207,7 @@ void Mesh::loadFromObj(const std::string& fileName)
     glBindVertexArray(0);
 }
 
-void Mesh::loadFromVertexData(
+void Mesh::loadFromRawData(
     const float* positions,
     uint64_t nPositions,
     const float* normals,
