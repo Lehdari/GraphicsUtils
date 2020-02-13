@@ -28,7 +28,8 @@ inline VertexData::Container::Container(
     type    (getDataTypeId<T_Data>()),
     size    (0),
     v       (new Vector<T_Data>),
-    deleter (&VertexData::vectorDeleter<T_Data>)
+    deleter (&VertexData::vectorDeleter<T_Data>),
+    copier  (&VertexData::vectorCopier<T_Data>)
 {
 }
 
@@ -123,6 +124,18 @@ inline void VertexData::vectorDeleter(void* v)
 {
     if (v != nullptr)
         delete static_cast<Vector<T_Data>*>(v);
+}
+
+template <typename T_Data>
+inline void* VertexData::vectorCopier(void* v)
+{
+    void* r = nullptr;
+
+    // Copy the vector
+    if (v != nullptr)
+        r = new Vector<T_Data>(*static_cast<Vector<T_Data>*>(v));
+
+    return r;
 }
 
 // Add all valid types

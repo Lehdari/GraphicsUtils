@@ -14,30 +14,80 @@
 using namespace gut;
 
 
-VertexData::Container::Container(VertexData::Container&& other) :
+VertexData::Container::Container(const VertexData::Container& other) :
     name    (other.name),
     type    (other.type),
     size    (other.size),
+    v       (nullptr),
+    deleter (other.deleter),
+    copier  (other.copier)
+{
+    // Check for corrupted object
+    if (deleter == nullptr || copier == nullptr) {
+        name = "";
+        type = DataType::INVALID;
+        size = 0;
+        deleter = nullptr;
+        copier = nullptr;
+        return;
+    }
+
+    v = copier(other.v);
+}
+
+VertexData::Container::Container(VertexData::Container&& other) noexcept :
+    name    (std::move(other.name)),
+    type    (other.type),
+    size    (other.size),
     v       (other.v),
-    deleter (other.deleter)
+    deleter (other.deleter),
+    copier  (other.copier)
 {
     other.name.clear();
     other.type = DataType::INVALID;
     other.v = nullptr;
     other.deleter = nullptr;
+    other.copier = nullptr;
 }
 
-VertexData::Container& VertexData::Container::operator=(VertexData::Container&& other)
+VertexData::Container& VertexData::Container::operator=(const VertexData::Container& other)
 {
     name = other.name;
     type = other.type;
+    size = other.size;
+    v = nullptr;
+    deleter = other.deleter;
+    copier = other.copier;
+
+    // Check for corrupted object
+    if (deleter == nullptr || copier == nullptr) {
+        name = "";
+        type = DataType::INVALID;
+        size = 0;
+        deleter = nullptr;
+        copier = nullptr;
+        return *this;
+    }
+
+    v = copier(other.v);
+    return *this;
+}
+
+VertexData::Container& VertexData::Container::operator=(VertexData::Container&& other) noexcept
+{
+    name = std::move(other.name);
+    type = other.type;
+    size = other.size;
     v = other.v;
     deleter = other.deleter;
+    copier = other.copier;
 
     other.name.clear();
     other.type = DataType::INVALID;
+    other.size = 0;
     other.v = nullptr;
     other.deleter = nullptr;
+    other.copier = nullptr;
 
     return *this;
 }
