@@ -68,9 +68,16 @@ const VertexData::Container* VertexData::accessData(const std::string& name) con
     return nullptr;
 }
 
-Vector<int64_t>& VertexData::getIndices() noexcept
+void VertexData::setIndices(const Vector<int64_t>& indices)
 {
-    return _indices;
+    _indices = indices;
+    _valid = false;
+}
+
+void VertexData::setIndices(Vector<int64_t>&& indices)
+{
+    _indices = indices;
+    _valid = false;
 }
 
 const Vector<int64_t>& VertexData::getIndices() const noexcept
