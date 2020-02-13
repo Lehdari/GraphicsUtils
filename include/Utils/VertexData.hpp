@@ -80,11 +80,11 @@ namespace gut {
         const Container* accessData(const std::string& name) const noexcept;
 
         // Set the indices vector
-        void setIndices(const Vector<int64_t>& indices);
-        void setIndices(Vector<int64_t>&& indices);
+        void setIndices(const Vector<unsigned>& indices);
+        void setIndices(Vector<unsigned>&& indices);
 
         // Access the indices vector
-        const Vector<int64_t>& getIndices() const noexcept;
+        const Vector<unsigned>& getIndices() const noexcept;
 
         // Validate the vertex data, ie. check that all data vectors are long enough
         // Returns flag indicating whether the vertex data was successfully validated
@@ -95,8 +95,8 @@ namespace gut {
 
     private:
         Vector<Container>   _containers; // vertex data containers
-        Vector<int64_t>     _indices; // mesh indices
-        int64_t             _maxIndex; // maximum index value (all data vectors have to be this long for validity)
+        Vector<unsigned>    _indices; // mesh indices
+        unsigned            _maxIndex; // maximum index value (all data vectors have to be this long for validity)
         bool                _valid; // flag indicating whether the vertexdata has been validated
 
         // Function for deleting the data vectors
