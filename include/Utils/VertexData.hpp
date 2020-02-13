@@ -79,8 +79,11 @@ namespace gut {
         // Access data container (return nullptr if container with such name does not exist)
         const Container* accessData(const std::string& name) const noexcept;
 
+        // Set the indices vector
+        void setIndices(const Vector<int64_t>& indices);
+        void setIndices(Vector<int64_t>&& indices);
+
         // Access the indices vector
-        Vector<int64_t>& getIndices() noexcept;
         const Vector<int64_t>& getIndices() const noexcept;
 
         // Validate the vertex data, ie. check that all data vectors are long enough
