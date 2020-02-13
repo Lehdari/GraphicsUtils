@@ -44,7 +44,7 @@ VertexData::Container& VertexData::Container::operator=(VertexData::Container&& 
 
 
 VertexData::VertexData() :
-    _maxIndex   (-1),
+    _maxIndex   (0),
     _valid      (false)
 {
 }
@@ -68,26 +68,26 @@ const VertexData::Container* VertexData::accessData(const std::string& name) con
     return nullptr;
 }
 
-void VertexData::setIndices(const Vector<int64_t>& indices)
+void VertexData::setIndices(const Vector<unsigned>& indices)
 {
     _indices = indices;
     _valid = false;
 }
 
-void VertexData::setIndices(Vector<int64_t>&& indices)
+void VertexData::setIndices(Vector<unsigned>&& indices)
 {
     _indices = indices;
     _valid = false;
 }
 
-const Vector<int64_t>& VertexData::getIndices() const noexcept
+const Vector<unsigned>& VertexData::getIndices() const noexcept
 {
     return _indices;
 }
 
 bool VertexData::validate()
 {
-    _maxIndex = -1;
+    _maxIndex = 0;
 
     // Find maximum index
     for (auto& i : _indices)
