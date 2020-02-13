@@ -10,6 +10,8 @@
 
 #include "OpenGLUtils/App.hpp"
 #include "OpenGLUtils/RenderContext.hpp"
+#include "Utils/VertexData.hpp"
+#include "Utils/LoadMesh.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
@@ -78,8 +80,10 @@ int main(int argv, char** args)
     context.shader.addUniform("worldToClip");
 
     // Load mesh
+    VertexData bunnyData;
+    loadMeshFromOBJ(std::string(RES_PATH) + "models/bunny.obj", bunnyData);
     Mesh bunny;
-    bunny.loadFromObj(std::string(RES_PATH) + "models/bunny.obj");
+    bunny.loadFromVertexData(bunnyData);
     context.meshes.push_back(std::move(bunny));
 
     // Enter application loop
