@@ -37,15 +37,16 @@ namespace gut {
             DataType    type;
             int64_t     size; // size of the vector below (to be used in non-type-aware contexts)
             void*       v; // pointer to data vector
-            void        (*deleter)(void*);
+            void        (*deleter)(void*); // data vector deleter function
+            void*       (*copier)(void*); // data vector copier function
 
             template <typename T_Data>
             Container(const std::string& name, T_Data* p); // pointer for type deduction
 
-            Container(const Container&) = delete;
-            Container(Container&&);
-            Container& operator=(const Container&) = delete;
-            Container& operator=(Container&&);
+            Container(const Container&);
+            Container(Container&&) noexcept;
+            Container& operator=(const Container&);
+            Container& operator=(Container&&) noexcept;
 
             ~Container();
         };
@@ -102,6 +103,10 @@ namespace gut {
         // Function for deleting the data vectors
         template <typename T_Data>
         static void vectorDeleter(void* v);
+
+        // Function for copying the data vectors
+        template <typename T_Data>
+        static void* vectorCopier(void* v);
     };
 
     // Inline template member function declarations in VertexData.inl
