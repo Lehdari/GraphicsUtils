@@ -33,9 +33,6 @@ namespace gut {
         Mesh& operator=(const Mesh& other) = delete;
         Mesh& operator=(Mesh&& other) noexcept;
 
-        // Load mesh from obj file
-        void loadFromObj(const std::string& fileName);
-
         // Load from VertexData
         void loadFromVertexData(const VertexData& vertexData);
 
