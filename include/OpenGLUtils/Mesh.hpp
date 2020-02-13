@@ -20,6 +20,8 @@ namespace gut {
 
     class Shader;
     class Camera;
+    class VertexData;
+
 
     class Mesh {
     public:
@@ -33,6 +35,9 @@ namespace gut {
 
         // Load mesh from obj file
         void loadFromObj(const std::string& fileName);
+
+        // Load from VertexData
+        void loadFromVertexData(const VertexData& vertexData);
 
         // Load mesh from raw vertex data arrays
         void loadFromRawData(
