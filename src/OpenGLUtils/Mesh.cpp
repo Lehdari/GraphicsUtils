@@ -11,6 +11,7 @@
 #include "Mesh.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "Utils/VertexData.hpp"
 
 #include <vector>
 #include <array>
@@ -202,6 +203,76 @@ void Mesh::loadFromObj(const std::string& fileName)
     glGenBuffers(1, &_elementBufferId);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferId);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nIndices * sizeof(unsigned), &indices[0], GL_STATIC_DRAW);
+
+    //  unbind the VAO so it won't be changed outside this function
+    glBindVertexArray(0);
+}
+
+void Mesh::loadFromVertexData(const VertexData& vertexData)
+{
+    if (!vertexData.isValid()) {
+        fprintf(stderr, "ERROR: Invalid VertexData\n"); // TODO logging
+        return;
+    }
+
+    auto* positionContainer = vertexData.accessData("position");
+    if (positionContainer == nullptr) {
+        fprintf(stderr, "ERROR: No position data in VertexData\n"); // TODO logging
+        return;
+    }
+    // Check position data type
+    if (positionContainer->type != VertexData::DataType::VEC4F) {
+        fprintf(stderr, "ERROR: Invalid data type for normal data\n"); // TODO logging
+        return;
+    }
+
+    auto* normalContainer = vertexData.accessData("normal");
+    bool usingNormals = false;
+    if (normalContainer == nullptr) {
+        usingNormals = false;
+    }
+    else {
+        if (normalContainer->type != VertexData::DataType::VEC3F) {
+            fprintf(stderr, "ERROR: Invalid data type for normal data\n"); // TODO logging
+            return;
+        }
+        usingNormals = true;
+    }
+
+    auto& indices = vertexData.getIndices();
+    auto& positions = *static_cast<Vector<Vec4f>*>(positionContainer->v);
+    Vector<Vec3f>* normals = nullptr;
+    if (usingNormals)
+        normals = static_cast<Vector<Vec3f>*>(normalContainer->v);
+
+    // release the used resources
+    reset();
+
+    _nIndices = indices.size();
+    _usingNormals = usingNormals;
+
+    //  create and bind the VAO
+    glGenVertexArrays(1, &_vertexArrayObjectId);
+    glBindVertexArray(_vertexArrayObjectId);
+
+    //  upload the vertex data to GPU and set up the vertex attribute arrays
+    glGenBuffers(1, &_positionBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, _positionBufferId);
+    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(Vec4f), positions.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    if (_usingNormals) {
+        glGenBuffers(1, &_normalBufferId);
+        glBindBuffer(GL_ARRAY_BUFFER, _normalBufferId);
+        glBufferData(GL_ARRAY_BUFFER, normals->size() * sizeof(Vec3f), normals->data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+    }
+
+    glGenBuffers(1, &_elementBufferId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferId);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nIndices * sizeof(unsigned), indices.data(), GL_STATIC_DRAW);
 
     //  unbind the VAO so it won't be changed outside this function
     glBindVertexArray(0);
