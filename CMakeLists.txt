@@ -6,6 +6,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
+# Build options
+option(GUT_BUILD_SHARED_LIBRARIES
+    "Build shared libraries instead of static ones."
+    ON
+)
+
+
 # Set library output directories to binary directory
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -54,7 +61,14 @@ add_subdirectory(ext)
 
 
 # Configure Utils library
-add_library(Utils STATIC ${UTILS_HEADERS} ${UTILS_SOURCES})
+if (${GUT_BUILD_SHARED_LIBRARIES})
+    add_library(Utils SHARED ${UTILS_HEADERS} ${UTILS_SOURCES})
+
+    # Export symbols on Windows shared library
+    set_target_properties(Utils PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    add_library(Utils STATIC ${UTILS_HEADERS} ${UTILS_SOURCES})
+endif()
 
 target_include_directories(Utils
     PUBLIC
@@ -67,7 +81,14 @@ target_include_directories(Utils
 
 
 # Configure OpenGLUtils library
-add_library(OpenGLUtils STATIC ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
+if (${GUT_BUILD_SHARED_LIBRARIES})
+    add_library(OpenGLUtils SHARED ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
+
+    # Export symbols on Windows shared library
+    set_target_properties(OpenGLUtils PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    add_library(OpenGLUtils STATIC ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
+endif()
 
 target_include_directories(OpenGLUtils
     PUBLIC
