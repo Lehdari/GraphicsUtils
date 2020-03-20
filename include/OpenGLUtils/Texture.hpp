@@ -56,6 +56,9 @@ namespace gut {
         int height() const;
         int depth() const;
 
+        // Get texture ID
+        GLuint id() const noexcept;
+
     private:
         GLuint  _textureId;
         GLenum  _target;
