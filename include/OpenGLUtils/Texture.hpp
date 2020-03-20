@@ -59,6 +59,8 @@ namespace gut {
         // Get texture ID
         GLuint id() const noexcept;
 
+        friend class FrameBuffer;
+
     private:
         GLuint  _textureId;
         GLenum  _target;
