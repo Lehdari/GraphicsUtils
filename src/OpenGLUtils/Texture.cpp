@@ -213,6 +213,11 @@ int Texture::depth() const
     return _depth;
 }
 
+GLuint Texture::id() const noexcept
+{
+    return _textureId;
+}
+
 void Texture::reset(void)
 {
     if (_textureId != 0)
