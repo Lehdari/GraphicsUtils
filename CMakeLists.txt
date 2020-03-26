@@ -24,9 +24,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 if(WIN32)
     set(SDL2_PATH $ENV{SDL2_DIR})
+
     if(NOT SDL2_PATH)
         message(FATAL_ERROR "Please set SDL2_DIR environment variable to point to SDL 2 installation directory.")
     endif()
+
 endif()
 
 find_package(SDL2 REQUIRED)
@@ -40,13 +42,12 @@ find_package(OpenGL REQUIRED)
 # Find Eigen
 if (UNIX)
     find_package(Eigen3 REQUIRED)
+else()
+    set(EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
 endif()
 
 if(NOT EIGEN3_INCLUDE_DIR)
-    set(EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
-    if(NOT EIGEN3_INCLUDE_DIR)
-        message(FATAL_ERROR "Please set EIGEN3_INCLUDE_DIR environment variable to point to Eigen 3 installation directory.")
-    endif()
+    message(FATAL_ERROR "Please set EIGEN3_INCLUDE_DIR environment variable to point to Eigen 3 installation directory.")
 endif()
 
 
