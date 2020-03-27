@@ -81,6 +81,25 @@ target_include_directories(gut_utils
 )
 
 
+# Configure gut_image library
+if (${GUT_BUILD_SHARED_LIBRARIES})
+    add_library(gut_image SHARED ${GUT_IMAGE_HEADERS} ${GUT_IMAGE_SOURCES})
+
+    # Export symbols on Windows shared library
+    set_target_properties(gut_image PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    add_library(gut_image STATIC ${GUT_IMAGE_HEADERS} ${GUT_IMAGE_SOURCES})
+endif()
+
+target_include_directories(gut_image
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_image
+)
+
+
 # Configure gut_opengl library
 if (${GUT_BUILD_SHARED_LIBRARIES})
     add_library(gut_opengl SHARED ${GUT_OPENGL_HEADERS} ${GUT_OPENGL_SOURCES})
@@ -104,6 +123,7 @@ target_include_directories(gut_opengl
 target_link_libraries(gut_opengl
     PUBLIC
         gut_utils
+        gut_image
         imgui
         ${SDL2_LIBRARY}
 )
