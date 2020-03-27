@@ -11,7 +11,7 @@
 #include "Mesh.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
-#include "Utils/VertexData.hpp"
+#include "gut_utils/VertexData.hpp"
 
 #include <vector>
 #include <array>

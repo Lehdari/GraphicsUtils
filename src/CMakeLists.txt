@@ -1,7 +1,7 @@
-add_subdirectory(OpenGLUtils)
-add_subdirectory(Utils)
-add_subdirectory(Test)
+add_subdirectory(gut_opengl)
+add_subdirectory(gut_utils)
+add_subdirectory(gut_test)
 
-set(OPENGLUTILS_SOURCES ${OPENGLUTILS_SOURCES} PARENT_SCOPE)
-set(UTILS_SOURCES ${UTILS_SOURCES} PARENT_SCOPE)
-set(TEST_SOURCES ${TEST_SOURCES} PARENT_SCOPE)
+set(GUT_OPENGL_SOURCES ${GUT_OPENGL_SOURCES} PARENT_SCOPE)
+set(GUT_UTILS_SOURCES ${GUT_UTILS_SOURCES} PARENT_SCOPE)
+set(GUT_TEST_SOURCES ${GUT_TEST_SOURCES} PARENT_SCOPE)

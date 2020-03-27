@@ -1,5 +1,5 @@
-add_subdirectory(OpenGLUtils)
-add_subdirectory(Utils)
+add_subdirectory(gut_opengl)
+add_subdirectory(gut_utils)
 
-set(OPENGLUTILS_HEADERS ${OPENGLUTILS_HEADERS} PARENT_SCOPE)
-set(UTILS_HEADERS ${UTILS_HEADERS} PARENT_SCOPE)
+set(GUT_OPENGL_HEADERS ${GUT_OPENGL_HEADERS} PARENT_SCOPE)
+set(GUT_UTILS_HEADERS ${GUT_UTILS_HEADERS} PARENT_SCOPE)

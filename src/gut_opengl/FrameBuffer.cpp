@@ -8,7 +8,7 @@
 // with this source code package.
 //
 
-#include <OpenGLUtils/FrameBuffer.hpp>
+#include <gut_opengl/FrameBuffer.hpp>
 
 #include "FrameBuffer.hpp"
 

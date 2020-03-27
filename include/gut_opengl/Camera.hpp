@@ -12,8 +12,8 @@
 #define GRAPHICSUTILS_CAMERA_HPP
 
 
-#include "Utils/MathTypes.hpp"
-#include "Utils/MathUtils.hpp"
+#include "gut_utils/MathTypes.hpp"
+#include "gut_utils/MathUtils.hpp"
 
 
 namespace gut {

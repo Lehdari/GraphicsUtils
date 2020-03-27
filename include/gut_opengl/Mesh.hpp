@@ -12,7 +12,7 @@
 #define GRAPHICSUTILS_MESH_HPP
 
 
-#include "Utils/MathTypes.hpp"
+#include "gut_utils/MathTypes.hpp"
 #include <glad/glad.h>
 
 

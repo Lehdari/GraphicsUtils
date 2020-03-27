@@ -61,70 +61,73 @@ add_subdirectory(src)
 add_subdirectory(ext)
 
 
-# Configure Utils library
+# Configure gut_utils library
 if (${GUT_BUILD_SHARED_LIBRARIES})
-    add_library(Utils SHARED ${UTILS_HEADERS} ${UTILS_SOURCES})
+    add_library(gut_utils SHARED ${GUT_UTILS_HEADERS} ${GUT_UTILS_SOURCES})
 
     # Export symbols on Windows shared library
-    set_target_properties(Utils PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set_target_properties(gut_utils PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 else()
-    add_library(Utils STATIC ${UTILS_HEADERS} ${UTILS_SOURCES})
+    add_library(gut_utils STATIC ${GUT_UTILS_HEADERS} ${GUT_UTILS_SOURCES})
 endif()
 
-target_include_directories(Utils
+target_include_directories(gut_utils
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         ${EIGEN3_INCLUDE_DIR}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_utils
 )
 
 
-# Configure OpenGLUtils library
+# Configure gut_opengl library
 if (${GUT_BUILD_SHARED_LIBRARIES})
-    add_library(OpenGLUtils SHARED ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
+    add_library(gut_opengl SHARED ${GUT_OPENGL_HEADERS} ${GUT_OPENGL_SOURCES})
 
     # Export symbols on Windows shared library
-    set_target_properties(OpenGLUtils PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set_target_properties(gut_opengl PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 else()
-    add_library(OpenGLUtils STATIC ${OPENGLUTILS_HEADERS} ${OPENGLUTILS_SOURCES})
+    add_library(gut_opengl STATIC ${GUT_OPENGL_HEADERS} ${GUT_OPENGL_SOURCES})
 endif()
 
-target_include_directories(OpenGLUtils
+target_include_directories(gut_opengl
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         ${SDL2_INCLUDE_DIR}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/OpenGLUtils
-        ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_opengl
+        ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb
+)
 
-target_link_libraries(OpenGLUtils
+target_link_libraries(gut_opengl
     PUBLIC
-        Utils
+        gut_utils
         imgui
         ${SDL2_LIBRARY}
 )
 
 # Cancel SDL stdio redirect when using windows
 if(WIN32)
-    target_link_options(OpenGLUtils
+    target_link_options(gut_opengl
         PUBLIC
             -mconsole
     )
 endif()
 
 
-# Configure GraphicsUtilsTest executable
-add_executable(GraphicsUtilsTest ${TEST_HEADERS} ${TEST_SOURCES})
+# Configure gut_test executable
+add_executable(gut_test ${GUT_TEST_HEADERS} ${GUT_TEST_SOURCES})
 
-target_include_directories(GraphicsUtilsTest
+target_include_directories(gut_test
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        ${EIGEN3_INCLUDE_DIR})
+        ${EIGEN3_INCLUDE_DIR}
+)
 
-target_link_libraries(GraphicsUtilsTest
+target_link_libraries(gut_test
     PUBLIC
-        OpenGLUtils)
+        gut_opengl
+)

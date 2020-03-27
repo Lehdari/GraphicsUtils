@@ -8,10 +8,10 @@
 // with this source code package.
 //
 
-#include "OpenGLUtils/App.hpp"
-#include "OpenGLUtils/RenderContext.hpp"
-#include "Utils/VertexData.hpp"
-#include "Utils/LoadMesh.hpp"
+#include "gut_opengl/App.hpp"
+#include "gut_opengl/RenderContext.hpp"
+#include "gut_utils/VertexData.hpp"
+#include "gut_utils/LoadMesh.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
