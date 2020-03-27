@@ -1,0 +1,6 @@
+file(GLOB SUB_SOURCES "*.cpp")
+
+set(GUT_IMAGE_SOURCES
+    ${GUT_IMAGE_SOURCES}
+    ${SUB_SOURCES}
+    PARENT_SCOPE)
