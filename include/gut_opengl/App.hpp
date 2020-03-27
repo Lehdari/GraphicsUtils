@@ -20,8 +20,8 @@
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
 
-#include "Utils/MathUtils.hpp"
-#include "Utils/TypeUtils.hpp"
+#include "gut_utils/MathUtils.hpp"
+#include "gut_utils/TypeUtils.hpp"
 #include "RenderContext.hpp"
 
 

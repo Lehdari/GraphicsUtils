@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <glad/glad.h>
 
-#include "Utils/MathTypes.hpp"
+#include "gut_utils/MathTypes.hpp"
 
 #undef near
 #undef far

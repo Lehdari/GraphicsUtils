@@ -1,0 +1,6 @@
+file(GLOB SUB_HEADERS "*.hpp" "*.inl")
+
+set(GUT_UTILS_HEADERS
+    ${GUT_UTILS_HEADERS}
+    ${SUB_HEADERS}
+    PARENT_SCOPE)
