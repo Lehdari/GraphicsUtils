@@ -116,19 +116,10 @@ void Texture::loadFromFile(const std::string& fileName)
 
 void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat)
 {
-    // Load image using STB image
-    int nChannels;
-    unsigned char *data = stbi_load(fileName.c_str(), &_width, &_height, &nChannels, 0);
-
-    if (!data) {
-        fprintf(stderr, "Failed to load image %s\n", fileName.c_str());
-        return;
-    }
-
-    if (nChannels != 3 && nChannels != 4) {
-        fprintf(stderr, "Invalid number of channels on image %s: %d\n", fileName.c_str(), nChannels);
-        return;
-    }
+    Image img;
+    img.loadFromFile(fileName);
+    _width = img.width();
+    _height = img.height();
 
     _target = target;
     _internalFormat = internalFormat;
@@ -147,12 +138,12 @@ void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum in
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
-    switch (nChannels) {
-        case 3:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    switch (img.dataFormat()) {
+        case Image::DataFormat::RGB:
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data<uint8_t>());
             break;
-        case 4:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        case Image::DataFormat::RGBA:
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data<uint8_t>());
             break;
         default:
             break;
@@ -160,9 +151,6 @@ void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum in
     glGenerateMipmap(_target);
 
     glBindTexture(_target, 0);
-
-    // Release stb resources
-    stbi_image_free(data);
 }
 
 void Texture::setFiltering(GLenum minFilter, GLenum magFilter)

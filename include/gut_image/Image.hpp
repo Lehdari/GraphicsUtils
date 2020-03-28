@@ -12,14 +12,82 @@
 #define GRAPHICSUTILS_IMAGE_HPP
 
 
-#include <stb_image.h>
+#include <vector>
+#include <string>
+#include <cassert>
 
 
 namespace gut {
 
     class Image {
+    public:
+        enum class DataFormat {
+            RGB,
+            RGBA
+        };
 
+        enum class DataType {
+            INVALID,
+            U8,
+            U16,
+            F32
+        };
+
+        constexpr static int nChannels(DataFormat dataFormat);
+
+        template <typename T_Data>
+        constexpr static DataType dataTypeEnum();
+
+        explicit Image(
+            DataFormat dataFormat   = DataFormat::RGB,
+            DataType dataType       = DataType::U8);
+
+        Image(const Image& other);
+        Image(Image&& other) noexcept;
+        Image& operator=(const Image& other);
+        Image& operator=(Image&& other) noexcept;
+        ~Image();
+
+        /** @brief Create an empty image
+         *  @param width    Width of the image
+         *  @param height   Height of the image
+         */
+        void create(int width, int height);
+
+        /** @brief Load image from a file
+         *  @param fileName Name of the file to load the image from
+         */
+        void loadFromFile(const std::string& fileName);
+
+        DataFormat dataFormat() const noexcept;
+        DataType dataType() const noexcept;
+
+        int width() const noexcept;
+        int height() const noexcept;
+
+        /** @brief  Access the raw data array
+         *  @tparam T_Data  Image data type (uint8_t, uint16_t or float)
+         *  @return Read-only pointer to raw image data
+         *  @note   The function performs type checking (use dataType() to check)
+         */
+        template <typename T_Data>
+        const T_Data* data() const noexcept;
+
+    private:
+        DataFormat  _dataFormat;
+        DataType    _dataType;
+
+        int         _width;
+        int         _height;
+
+        void*       _data;
+        void        (*_deleter)(void*);
+
+        template <typename T_Data>
+        static void dataDeleter(void* data);
     };
+
+    #include "Image.inl"
 
 } // namespace gut
 
