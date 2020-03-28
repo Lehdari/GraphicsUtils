@@ -12,6 +12,9 @@
 #define GRAPHICSUTILS_IMAGE_HPP
 
 
+#include <stb_image.h>
+
+
 namespace gut {
 
     class Image {

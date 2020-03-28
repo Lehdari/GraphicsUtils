@@ -97,6 +97,7 @@ target_include_directories(gut_image
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_image
+        ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb
 )
 
 
