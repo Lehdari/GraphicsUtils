@@ -118,7 +118,6 @@ target_include_directories(gut_opengl
         ${SDL2_INCLUDE_DIR}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_opengl
-        ${CMAKE_CURRENT_SOURCE_DIR}/ext/stb
 )
 
 target_link_libraries(gut_opengl
