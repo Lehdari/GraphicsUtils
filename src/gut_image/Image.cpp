@@ -10,3 +10,6 @@
 
 #include "Image.hpp"
 
+// STB image implementation included in this compile unit
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>

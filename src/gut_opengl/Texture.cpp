@@ -9,7 +9,6 @@
 //
 
 #include "Texture.hpp"
-#include <stb_image.h>
 
 
 using namespace gut;

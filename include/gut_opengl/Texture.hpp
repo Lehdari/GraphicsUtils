@@ -14,6 +14,7 @@
 
 #include <string>
 #include <glad/glad.h>
+#include <gut_image/Image.hpp>
 
 
 namespace gut {
