@@ -1,3 +1,6 @@
 [submodule "ext/imgui"]
 	path = ext/imgui
 	url = git@github.com:ocornut/imgui.git
+[submodule "ext/stb"]
+	path = ext/stb
+	url = git@github.com:nothings/stb.git
