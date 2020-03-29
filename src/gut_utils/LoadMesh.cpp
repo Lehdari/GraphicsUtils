@@ -11,122 +11,175 @@
 #include "LoadMesh.hpp"
 #include "VertexData.hpp"
 
-#include <memory>
-#include <map>
-#include <array>
-
 
 using namespace gut;
 
 
+// Adapted from https://github.com/Anttifer/impromptu/blob/master/src/Mesh.cpp
 void gut::loadMeshFromOBJ(const std::string& fileName, VertexData& vertexData)
 {
-    Vector<Vec4f> positions;
-    Vector<Vec3f> normals;
-    Vector<unsigned> indices;
-
     FILE* f = fopen(fileName.c_str(), "rb");
-    if (!f) {
+    if (f == NULL) {
         fprintf(stderr, "ERROR: Cannot open file %s\n", fileName.c_str()); // TODO logging
         return;
     }
 
-    fseek(f, 0L, SEEK_END);
-    auto fs = ftell(f);
-    std::unique_ptr<char[]> bufUnique(new char[fs + 1]);
-    char* buffer = bufUnique.get();
-    fseek(f, 0L, SEEK_SET);
-    fread(buffer, sizeof(char), fs, f);
-    buffer[fs] = '\0';
-    fclose(f);
+    // Vectors to be stored into the VertexData object
+    Vector<Vec3f> positions;
+    Vector<Vec3f> normals;
+    Vector<Vec2f> texCoords;
+    Vector<unsigned> indices;
 
+    // Temporary objects for reading
     char lineHeader[32];
-    Vector<Vec4f> tempPositions;
-    Vector<Vec3f> tempNormals;
-    Vector<std::array<unsigned, 9>> tempIndexArrays;
+    lineHeader[31] = '\0';
+    bool readSuccessful = true;
+    unsigned currentLine = 0;
 
-    while(*buffer) {
-        if (isprint(*buffer)) {
-            if (sscanf(buffer, "%s", lineHeader) == 0)
-                return;
-        }
-        else {
-            ++buffer;
-            continue;
-        }
+    float data[3];
+    unsigned pIndices[3];
+    unsigned tIndices[3];
+    unsigned nIndices[3];
 
-        buffer += strlen(lineHeader)+1;
+    Vector<Vec3f> objPositions;
+    Vector<Vec3f> objNormals;
+    Vector<Vec2f> objTexCoords;
 
-        if (strcmp(lineHeader, "v") == 0) {
-            Vec4f position = {0.0f, 0.0f, 0.0f, 1.0f};
-            if (sscanf(buffer, "%f %f %f %f", &position[0], &position[1], &position[2], &position[3]) < 3)
-                throw "VertexData: invalid file!"; // TODO_EXCEPTION
-            tempPositions.push_back(std::move(position));
-        }
-        else if (strcmp(lineHeader, "vn") == 0) {
-            Vec3f normal = {0.0f, 0.0f, 0.0f};
-            if (sscanf(buffer, "%f %f %f", &normal[0], &normal[1], &normal[2]) < 3)
-                throw "VertexData: invalid file!"; // TODO_EXCEPTION
-            tempNormals.push_back(std::move(normal));
-        }
-        else if (strcmp(lineHeader, "f") == 0) {
-            std::array<unsigned, 9> index = {0, 0, 0,  0, 0, 0,  0, 0, 0};
-            if (sscanf(buffer, "%u %u %u", &index[0], &index[1], &index[2]) == 3 ||
-                sscanf(buffer, "%u//%u %u//%u %u//%u", &index[0], &index[6], &index[1], &index[7], &index[2], &index[8]) == 6 ||
-                sscanf(buffer, "%u/%u %u/%u %u/%u", &index[0], &index[3], &index[1], &index[4], &index[2], &index[5]) == 6 ||
-                sscanf(buffer, "%u/%u/%u %u/%u/%u %u/%u/%u", &index[0], &index[3], &index[6], &index[1], &index[4], &index[7], &index[2], &index[5], &index[8]) == 9)
-                tempIndexArrays.push_back(std::move(index));
-            else {
-                fprintf(stderr, "ERROR: Invalid file %s\n", fileName.c_str()); // TODO logging
-                return;
+    Vector<int> positionIndices;
+    Vector<int> normalIndices;
+    Vector<int> texCoordIndices;
+
+    while (fscanf(f, "%31s", lineHeader) != EOF) {
+        ++currentLine;
+        readSuccessful = true;
+
+        if (!strcmp(lineHeader, "v")) {
+            memset(data, 0, sizeof(data));
+
+            if (3 == fscanf(f, "%f %f %f", &data[0], &data[1], &data[2])) {
+                objPositions.emplace_back(data[0], data[1], data[2]);
+                positionIndices.push_back(-1);
             }
+            else
+                readSuccessful = false;
+        }
+        else if (!strcmp(lineHeader, "vt")) {
+            memset(data, 0, sizeof(data));
+
+            if (2 == fscanf(f, "%f %f", &data[0], &data[1])) {
+                objTexCoords.emplace_back(data[0], data[1]);
+                texCoordIndices.push_back(-1);
+            }
+            else
+                readSuccessful = false;
+        }
+        else if (!strcmp(lineHeader, "vn")) {
+            memset(data, 0, sizeof(data));
+
+            if (3 == fscanf(f, "%f %f %f", &data[0], &data[1], &data[2])) {
+                objNormals.emplace_back(data[0], data[1], data[2]);
+                normalIndices.push_back(-1);
+            }
+            else
+                readSuccessful = false;
+        }
+        else if (!strcmp(lineHeader, "f")) {
+            memset(pIndices, 0, sizeof(pIndices));
+            memset(tIndices, 0, sizeof(tIndices));
+            memset(nIndices, 0, sizeof(nIndices));
+
+            if (3 == fscanf(f, "%u %u %u", &pIndices[0], &pIndices[1], &pIndices[2]))
+            {
+                for (int i=0; i<3; ++i) {
+                    int pi = pIndices[i]-1;
+
+                    if (positionIndices[pi] < 0) { // value of this index is yet to be used
+                        positions.emplace_back(objPositions[pi]);
+                        positionIndices[pi] = positions.size()-1;
+                    }
+
+                    indices.push_back((unsigned)positionIndices[pi]);
+                }
+            }
+            else if (5 == fscanf(f, "/%u %u/%u %u/%u", &tIndices[0],
+                &pIndices[1], &tIndices[1],
+                &pIndices[2], &tIndices[2]))
+            {
+                for (int i=0; i<3; ++i) {
+                    int pi = pIndices[i]-1;
+                    int ti = tIndices[i]-1;
+
+                    if (positionIndices[pi] < 0 ||
+                        texCoordIndices[ti] < 0 ||
+                        positionIndices[pi] != texCoordIndices[pi])
+                    {
+                        positions.emplace_back(objPositions[pi]);
+                        positionIndices[pi] = positions.size()-1;
+                        texCoords.emplace_back(objTexCoords[ti]);
+                        texCoordIndices[ti] = texCoords.size()-1;
+                    }
+
+                    indices.push_back((unsigned)positionIndices[pi]);
+                }
+            }
+            else if (7 == fscanf(f, "/%u %u/%u/%u %u/%u/%u", &nIndices[0],
+                &pIndices[1], &tIndices[1], &nIndices[1],
+                &pIndices[2], &tIndices[2], &nIndices[2]))
+            {
+                for (int i=0; i<3; ++i) {
+                    int pi = pIndices[i]-1;
+                    int ti = tIndices[i]-1;
+                    int ni = nIndices[i]-1;
+
+                    if (positionIndices[pi] < 0 ||
+                        texCoordIndices[ti] < 0 ||
+                        normalIndices[ni] < 0 ||
+                        positionIndices[pi] != texCoordIndices[ti] ||
+                        positionIndices[pi] != normalIndices[ni])
+                    {
+                        positions.emplace_back(objPositions[pi]);
+                        positionIndices[pi] = positions.size()-1;
+                        texCoords.emplace_back(objTexCoords[ti]);
+                        texCoordIndices[ti] = texCoords.size()-1;
+                        normals.emplace_back(objNormals[ni]);
+                        normalIndices[ni] = normals.size()-1;
+                    }
+
+                    indices.push_back((unsigned)positionIndices[pi]);
+                }
+            }
+            else if (3 == fscanf(f, "/%u %u//%u", &nIndices[1],
+                &pIndices[2], &nIndices[2]))
+            {
+                for (int i=0; i<3; ++i) {
+                    int pi = pIndices[i]-1;
+                    int ni = nIndices[i]-1;
+
+                    if (positionIndices[pi] < 0 ||
+                        normalIndices[ni] < 0 ||
+                        positionIndices[pi] != normalIndices[ni])
+                    {
+                        positions.emplace_back(objPositions[pi]);
+                        positionIndices[pi] = positions.size()-1;
+                        normals.emplace_back(objNormals[ni]);
+                        normalIndices[ni] = normals.size()-1;
+                    }
+
+                    indices.push_back((unsigned)positionIndices[pi]);
+                }
+            }
+            else
+                readSuccessful = false;
         }
 
-        while (*buffer++ != 10)
-            if (*buffer == 0)
-                break;
+        if (!readSuccessful)
+            break;
     }
 
-    std::map<std::array<unsigned, 3>, unsigned> createdVertices;
-
-    bool usingNormals = tempNormals.size() > 0;
-
-    for (auto& indexArray : tempIndexArrays) {
-        if (usingNormals && (indexArray[6] == 0 || indexArray[7] == 0 || indexArray[8] == 0)){
-            fprintf(stderr, "ERROR: Invalid index data in %s\n", fileName.c_str()); // TODO logging
-            return;
-        }
-
-        std::array<unsigned, 3> v1 = { indexArray[0], indexArray[3], indexArray[6] };
-        std::array<unsigned, 3> v2 = { indexArray[1], indexArray[4], indexArray[7] };
-        std::array<unsigned, 3> v3 = { indexArray[2], indexArray[5], indexArray[8] };
-
-        if (createdVertices[v1] == 0) {
-            positions.push_back(tempPositions.at(indexArray[0]-1));
-            if (usingNormals)
-                normals.push_back(tempNormals.at(indexArray[6]-1));
-
-            createdVertices[v1] = positions.size()-1;
-        }
-        indices.push_back(createdVertices[v1]);
-
-        if (createdVertices[v2] == 0) {
-            positions.push_back(tempPositions.at(indexArray[1]-1));
-            if (usingNormals)
-                normals.push_back(tempNormals.at(indexArray[7]-1));
-
-            createdVertices[v2] = positions.size()-1;
-        }
-        indices.push_back(createdVertices[v2]);
-
-        if (createdVertices[v3] == 0) {
-            positions.push_back(tempPositions.at(indexArray[2]-1));
-            if (usingNormals)
-                normals.push_back(tempNormals.at(indexArray[8]-1));
-
-            createdVertices[v3] = positions.size()-1;
-        }
-        indices.push_back(createdVertices[v3]);
+    if (!readSuccessful) {
+        fprintf(stderr, "ERROR: %s failed at line %d\n",
+            fileName.c_str(), currentLine); // TODO logging
+        return;
     }
 
     if (!vertexData.getDataNames().empty()){
@@ -134,9 +187,12 @@ void gut::loadMeshFromOBJ(const std::string& fileName, VertexData& vertexData)
         return;
     }
 
-    vertexData.addDataVector<Vec4f>("position", std::move(positions));
-    if (usingNormals)
+    // Move the data vectors to the VertexData container
+    vertexData.addDataVector<Vec3f>("position", std::move(positions));
+    if (!normals.empty())
         vertexData.addDataVector<Vec3f>("normal", std::move(normals));
+    if (!texCoords.empty())
+        vertexData.addDataVector<Vec2f>("texCoord", std::move(texCoords));
     vertexData.setIndices(std::move(indices));
 
     if (!vertexData.validate())
