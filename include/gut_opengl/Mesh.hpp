@@ -45,10 +45,12 @@ namespace gut {
         GLuint      _vertexArrayObjectId;
         GLuint      _positionBufferId;
         GLuint      _normalBufferId;
+        GLuint      _texCoordBufferId;
         GLuint      _elementBufferId;
 
         uint64_t    _nIndices;
         bool        _usingNormals;
+        bool        _usingTexCoords;
 
         // Function for releasing the OpenGL handles
         void reset();
