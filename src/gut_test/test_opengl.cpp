@@ -12,6 +12,7 @@
 
 #include <gut_opengl/App.hpp>
 #include <gut_opengl/RenderContext.hpp>
+#include <gut_opengl/Texture.hpp>
 #include <gut_utils/VertexData.hpp>
 #include <gut_utils/LoadMesh.hpp>
 
@@ -75,20 +76,27 @@ int gut::testOpenGL()
     app.setRenderContext(&context);
 
     // Load shader
-    context.shader.load(std::string(RES_PATH)+"shaders/VS_Simple.glsl",
-        std::string(RES_PATH)+"shaders/FS_Simple.glsl");
+    context.shader.load(std::string(RES_PATH) + "shaders/VS_Simple.glsl",
+        std::string(RES_PATH) + "shaders/FS_Simple.glsl");
     context.shader.addUniform("objectToWorld");
     context.shader.addUniform("normalToWorld");
     context.shader.addUniform("worldToClip");
+    context.shader.addUniform("diffuse");
 
     // Load mesh
-    VertexData bunnyData;
-    loadMeshFromOBJ(std::string(RES_PATH)+"models/bunny.obj", bunnyData);
-    Mesh bunny;
-    bunny.loadFromVertexData(bunnyData);
-    context.meshes.push_back(std::move(bunny));
+    VertexData meshData;
+    loadMeshFromOBJ(std::string(RES_PATH) + "models/box/box.obj", meshData);
+    Mesh mesh;
+    mesh.loadFromVertexData(meshData);
+    context.meshes.push_back(std::move(mesh));
+
+    // Load texture
+    Texture texture;
+    texture.loadFromFile(std::string(RES_PATH) + "models/box/box.png");
+    texture.bind();
 
     // Enter application loop
     app.loop();
+
     return 0;
 }
