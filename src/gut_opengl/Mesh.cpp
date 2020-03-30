@@ -143,51 +143,6 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     glBindVertexArray(0);
 }
 
-void Mesh::loadFromRawData(
-    const float* positions,
-    uint64_t nPositions,
-    const float* normals,
-    uint64_t nNormals,
-    const uint32_t* indices,
-    uint64_t nIndices)
-{
-    if (positions == nullptr || indices == nullptr;
-        nPositions == 0 || nIndices == 0)
-        return;
-
-    // release the used resources
-    reset();
-
-    _nIndices = nIndices;
-    _usingNormals = nNormals > 0 && normals != nullptr;
-
-    //  create and bind the VAO
-    glGenVertexArrays(1, &_vertexArrayObjectId);
-    glBindVertexArray(_vertexArrayObjectId);
-
-    //  upload the vertex data to GPU and set up the vertex attribute arrays
-    glGenBuffers(1, &_positionBufferId);
-    glBindBuffer(GL_ARRAY_BUFFER, _positionBufferId);
-    glBufferData(GL_ARRAY_BUFFER, nPositions * sizeof(float) * 4, positions, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-
-    if (_usingNormals) {
-        glGenBuffers(1, &_normalBufferId);
-        glBindBuffer(GL_ARRAY_BUFFER, _normalBufferId);
-        glBufferData(GL_ARRAY_BUFFER, nNormals * sizeof(float) * 3, normals, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-    }
-
-    glGenBuffers(1, &_elementBufferId);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nIndices * sizeof(unsigned), indices, GL_STATIC_DRAW);
-
-    //  unbind the VAO so it won't be changed outside this function
-    glBindVertexArray(0);
-}
-
 void Mesh::render(
     const Shader& shader,
     const Camera& camera,
