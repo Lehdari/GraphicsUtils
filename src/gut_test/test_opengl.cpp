@@ -23,6 +23,7 @@
 
 using namespace gut;
 
+
 // Alias for the app type
 using A_App = App<RenderContext>;
 
@@ -57,9 +58,24 @@ void handleEvents(SDL_Event& event, A_App::Context& appContext)
 // Pipeline function for rendering
 void render(RenderContext& renderContext, A_App::Context& appContext)
 {
-    // Render geometry
+    static Vec3f cameraPos(0.0f, 1.0f, 5.0f);
+
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Render imgui
+    {
+        ImGui::Begin("Camera");
+        ImGui::SliderFloat("X", &cameraPos(0), -10.f, 10.f);
+        ImGui::SliderFloat("Y", &cameraPos(1), -10.f, 10.f);
+        ImGui::SliderFloat("Z", &cameraPos(2), -10.f, 10.f);
+        ImGui::End();
+    }
+
+    // Update camera
+    renderContext.camera.lookAt(cameraPos, Vec3f(0.0f, 0.5f, 0.0f), Vec3f(0.0f, 1.0f, 0.0f));
+
+    // Render geometry
     for (auto& mesh : renderContext.meshes) {
         mesh.render(renderContext.shader, renderContext.camera, Mat4f::Identity());
     }
