@@ -17,7 +17,8 @@ using namespace gut;
 Camera::Camera(void) :
     _worldToCamera(Mat4f::Identity()),
     _cameraToClip(Mat4f::Identity())
-{}
+{
+}
 
 Camera::Camera(const Settings& settings) :
     _worldToCamera(Mat4f::Identity()),
@@ -35,7 +36,8 @@ Camera::Camera(const Settings& settings) :
         settings.far);
 }
 
-void Camera::lookAt(const Vec3f& eye, const Vec3f& target, const Vec3f& up) {
+void Camera::lookAt(const Vec3f& eye, const Vec3f& target, const Vec3f& up)
+{
     // Right handed coordinate system
     Vec3f zAxis = (eye - target).normalized();
     Vec3f xAxis = up.cross(zAxis).normalized();
@@ -48,7 +50,8 @@ void Camera::lookAt(const Vec3f& eye, const Vec3f& target, const Vec3f& up) {
         0.0f    , 0.0f    , 0.0f    , 1.0f           ;
 }
 
-void Camera::projection(float fov, float aspectRatio, float near, float far) {
+void Camera::projection(float fov, float aspectRatio, float near, float far)
+{
     float r = tanf(fov / 2.0f) * near;
     float t = r / aspectRatio;
 
@@ -74,6 +77,7 @@ const Mat4f& Camera::cameraToClip() const noexcept
     return _cameraToClip;
 }
 
-Mat4f Camera::worldToClip(void) const {
+Mat4f Camera::worldToClip() const noexcept
+{
     return _cameraToClip * _worldToCamera;
 }
