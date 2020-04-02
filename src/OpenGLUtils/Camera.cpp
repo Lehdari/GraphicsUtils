@@ -57,6 +57,11 @@ void Camera::projection(float fov, float aspectRatio, float near, float far) {
         0.0f  , 0.0f  , -1.0f                 , 0.0f                     ;
 }
 
+void Camera::setWorldToCamera(const Mat4f& worldToCamera)
+{
+    _worldToCamera = worldToCamera;
+}
+
 Mat4f Camera::getWorldToClip(void) const {
     return _cameraToClip * _worldToCamera;
 }
