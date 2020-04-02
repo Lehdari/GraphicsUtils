@@ -59,7 +59,7 @@ namespace gut {
          */
         void setWorldToCamera(const Mat4f& worldToCamera);
 
-        Mat4f getWorldToClip(void) const;
+        Mat4f worldToClip(void) const;
 
     private:
         Mat4f _worldToCamera;
