@@ -72,6 +72,16 @@ namespace gut {
          */
         void setWorldToCamera(const Mat4f& worldToCamera);
 
+        /** @brief  Get world-to-camera matrix (camera transformation matrix)
+         *  @return World-to-camera matrix
+         */
+        const Mat4f& worldToCamera() const noexcept;
+
+        /** @brief  Get camera-to-clip matrix (camera projection matrix)
+         *  @return Camera-to-clip matrix
+         */
+        const Mat4f& cameraToClip() const noexcept;
+
         /** @brief  Get world-to-clip matrix (camera-to-clip matrix and world-to-camera matrix multiplied)
          *  @return World-to-clip matrix
          */
