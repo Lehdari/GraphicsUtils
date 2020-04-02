@@ -54,6 +54,11 @@ namespace gut {
 
         void projection(float fov, float aspectRatio, float near, float far);
 
+        /** @brief  Set world-to-camera matrix (camera transformation matrix) manually
+         *  @param  worldToCamera   World-to-camera matrix
+         */
+        void setWorldToCamera(const Mat4f& worldToCamera);
+
         Mat4f getWorldToClip(void) const;
 
     private:
