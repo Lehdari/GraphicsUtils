@@ -20,14 +20,16 @@ namespace gut {
 
     class Camera {
     public:
+        /** @brief  Camera settings struct for initializing a Camera object
+         */
         struct Settings {
-            Vec3f pos;
-            Vec3f target;
-            Vec3f up;
-            float fov;
-            float near;
-            float far;
-            float aspectRatio;
+            Vec3f pos;          ///< Camera origin
+            Vec3f target;       ///< Point to look at
+            Vec3f up;           ///< Upwards pointing vector in camera coordinates
+            float fov;          ///< Horizontal field of view (in radians)
+            float near;         ///< Distance of near-plane of view frustum from origin
+            float far;          ///< Distance of far-plane of view frustum from origin
+            float aspectRatio;  ///< Aspect ratio of the frustum (x/y)
 
             explicit Settings(
                 const Vec3f& pos    = Vec3f(0.f, 2.0f, 5.0f),
@@ -50,8 +52,19 @@ namespace gut {
         Camera(void);
         Camera(const Settings& settings);
 
+        /** @Brief Orient the camera using look-at-point method
+         *  @param eye      Camera origin position
+         *  @param target   Point to look at
+         *  @param up       Upwards pointing vector in camera coordinates
+         */
         void lookAt(const Vec3f& eye, const Vec3f& target, const Vec3f& up);
 
+        /** @brief Set the camera projection
+         *  @param fov          Horizontal field of view (in radians)
+         *  @param aspectRatio  Aspect ratio of the frustum (x/y)
+         *  @param near         Distance of near-plane of view frustum from origin
+         *  @param far          Distance of far-plane of view frustum from origin
+         */
         void projection(float fov, float aspectRatio, float near, float far);
 
         /** @brief  Set world-to-camera matrix (camera transformation matrix) manually
@@ -59,6 +72,9 @@ namespace gut {
          */
         void setWorldToCamera(const Mat4f& worldToCamera);
 
+        /** @brief  Get world-to-clip matrix (camera-to-clip matrix and world-to-camera matrix multiplied)
+         *  @return World-to-clip matrix
+         */
         Mat4f worldToClip(void) const;
 
     private:
