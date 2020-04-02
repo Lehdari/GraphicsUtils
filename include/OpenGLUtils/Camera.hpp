@@ -85,7 +85,7 @@ namespace gut {
         /** @brief  Get world-to-clip matrix (camera-to-clip matrix and world-to-camera matrix multiplied)
          *  @return World-to-clip matrix
          */
-        Mat4f worldToClip(void) const;
+        Mat4f worldToClip() const noexcept;
 
     private:
         Mat4f _worldToCamera;
