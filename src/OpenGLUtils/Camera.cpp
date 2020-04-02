@@ -64,6 +64,16 @@ void Camera::setWorldToCamera(const Mat4f& worldToCamera)
     _worldToCamera = worldToCamera;
 }
 
+const Mat4f& Camera::worldToCamera() const noexcept
+{
+    return _worldToCamera;
+}
+
+const Mat4f& Camera::cameraToClip() const noexcept
+{
+    return _cameraToClip;
+}
+
 Mat4f Camera::worldToClip(void) const {
     return _cameraToClip * _worldToCamera;
 }
