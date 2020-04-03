@@ -15,6 +15,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 
 using namespace gut;
 
@@ -201,6 +204,71 @@ void Image::loadFromFile(const std::string& fileName)
 
     // Free up resources
     stbi_image_free(imgData);
+}
+
+void Image::writeToFile(const std::string& fileName)
+{
+    std::string ext = fileName.substr(fileName.size()-3, 3);
+
+    if (ext == "png" || ext == "PNG") {
+        switch(_dataType) {
+            case DataType::U8:
+                stbi_write_png(fileName.c_str(), _width, _height, nChannels(_dataFormat),
+                    static_cast<std::vector<uint8_t>*>(_data)->data(), 0);
+                break;
+            case DataType::U16:
+                // This is here for the future 16-bit support in STB
+                fprintf(stderr, "ERROR: Unable to save PNG: 16-bit write not yet supported.\n"); // TODO logging
+                break;
+            default:
+                fprintf(stderr, "ERROR: Unable to save PNG: invalid data type.\n"); // TODO logging
+                return;
+        }
+    }
+    else if (ext == "bmp" || ext == "BMP") {
+        switch(_dataType) {
+            case DataType::U8:
+                stbi_write_bmp(fileName.c_str(), _width, _height, nChannels(_dataFormat),
+                    static_cast<std::vector<uint8_t>*>(_data)->data());
+                break;
+            default:
+                fprintf(stderr, "ERROR: Unable to save BMP: invalid data type.\n"); // TODO logging
+                return;
+        }
+    }
+    else if (ext == "jpg" || ext == "JPG") {
+        switch(_dataType) {
+            case DataType::U8:
+                stbi_write_jpg(fileName.c_str(), _width, _height, nChannels(_dataFormat),
+                    static_cast<std::vector<uint8_t>*>(_data)->data(), 100);
+                break;
+            default:
+                fprintf(stderr, "ERROR: Unable to save JPG: invalid data type.\n"); // TODO logging
+                return;
+        }
+    }
+    else if (ext == "tga" || ext == "TGA") {
+        switch(_dataType) {
+            case DataType::U8:
+                stbi_write_tga(fileName.c_str(), _width, _height, nChannels(_dataFormat),
+                    static_cast<std::vector<uint8_t>*>(_data)->data());
+                break;
+            default:
+                fprintf(stderr, "ERROR: Unable to save TGA: invalid data type.\n"); // TODO logging
+                return;
+        }
+    }
+    else if (ext == "hdr" || ext == "HDR") {
+        switch(_dataType) {
+            case DataType::F32:
+                stbi_write_hdr(fileName.c_str(), _width, _height, nChannels(_dataFormat),
+                    static_cast<std::vector<float>*>(_data)->data());
+                break;
+            default:
+                fprintf(stderr, "ERROR: Unable to save HDR: invalid data type.\n"); // TODO logging
+                return;
+        }
+    }
 }
 
 Image::DataFormat Image::dataFormat() const noexcept

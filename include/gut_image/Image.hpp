@@ -60,6 +60,18 @@ namespace gut {
          */
         void loadFromFile(const std::string& fileName);
 
+        /** @brief  Write image to a file
+         *  @param  fileName    Name of the file to write the image to
+         *  @note   File format is deduced from the extension, supported formats: png, bmp, jpg, tga, hdr
+         *  @note   Supported data types for formats:
+         *          PNG: U8
+         *          BMP: U8
+         *          JPG: U8
+         *          TGA: U8
+         *          HDR: F32
+         */
+        void writeToFile(const std::string& fileName);
+
         DataFormat dataFormat() const noexcept;
         DataType dataType() const noexcept;
 
