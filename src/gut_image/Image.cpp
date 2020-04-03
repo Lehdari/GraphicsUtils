@@ -22,6 +22,7 @@ using namespace gut;
 constexpr int Image::nChannels(Image::DataFormat dataFormat)
 {
     switch (dataFormat) {
+        case DataFormat::GRAY:  return 1;
         case DataFormat::RGB:   return 3;
         case DataFormat::RGBA:  return 4;
     }
@@ -166,7 +167,7 @@ void Image::loadFromFile(const std::string& fileName)
         return;
     }
 
-    if (imgChannels != 3 && imgChannels != 4) {
+    if (imgChannels != 1 && imgChannels != 3 && imgChannels != 4) {
         fprintf(stderr, "Failed to load image %s: unsupported format\n", fileName.c_str()); // TODO logging
         return;
     }
@@ -174,6 +175,9 @@ void Image::loadFromFile(const std::string& fileName)
     // Set data type and format
     _dataType = DataType::U8;
     switch (imgChannels) {
+        case 1:
+            _dataFormat = DataFormat::GRAY;
+            break;
         case 3:
             _dataFormat = DataFormat::RGB;
             break;

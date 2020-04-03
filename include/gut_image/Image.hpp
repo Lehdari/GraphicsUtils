@@ -22,6 +22,7 @@ namespace gut {
     class Image {
     public:
         enum class DataFormat {
+            GRAY,
             RGB,
             RGBA
         };
