@@ -145,6 +145,8 @@ target_include_directories(gut_test
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         ${EIGEN3_INCLUDE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_test
 )
 
 target_link_libraries(gut_test
