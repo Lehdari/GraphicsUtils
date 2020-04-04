@@ -12,9 +12,27 @@
 #include <gut_image/Image.hpp>
 
 
+using namespace gut;
+
+
 int gut::testImage()
 {
+    Image img(Image::DataFormat::RGBA, Image::DataType::U8);
+    img.create(4096, 4096);
 
+    // Output all RGB colors
+    auto* p = img.data<uint8_t>();
+    for (int y=0; y<4096; ++y) {
+        for (int x=0; x<4096; ++x) {
+            int i = (y*4096 + x)*4;
+            p[i] = x % 256;
+            p[i+1] = y % 256;
+            p[i+2] = (y/256)*16 + (x/256);
+            p[i+3] = 255;
+        }
+    }
+
+    img.writeToFile("test.png");
 
     return 0;
 }
