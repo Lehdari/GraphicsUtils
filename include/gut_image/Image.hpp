@@ -84,6 +84,14 @@ namespace gut {
          *  @note   The function performs type checking (use dataType() to check)
          */
         template <typename T_Data>
+        T_Data* data();
+
+        /** @brief  Access the raw data array
+         *  @tparam T_Data  Image data type (uint8_t, uint16_t or float)
+         *  @return Read-only pointer to raw image data
+         *  @note   The function performs type checking (use dataType() to check)
+         */
+        template <typename T_Data>
         const T_Data* data() const noexcept;
 
     private:

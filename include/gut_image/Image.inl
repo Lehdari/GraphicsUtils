@@ -34,6 +34,15 @@ constexpr Image::DataType Image::dataTypeEnum<float>()
 
 
 template <typename T_Data>
+T_Data* Image::data()
+{
+    // Check for data type
+    assert(_dataType == dataTypeEnum<T_Data>());
+
+    return static_cast<std::vector<T_Data>*>(_data)->data();
+}
+
+template <typename T_Data>
 const T_Data* Image::data() const noexcept
 {
     // Check for data type
