@@ -52,6 +52,7 @@ namespace gut {
         struct PixelRef {
         private:
             void*       data;
+            uint64_t    stride;
             uint64_t    rp;
             uint64_t    gp;
             uint64_t    bp;
@@ -59,11 +60,14 @@ namespace gut {
 
             friend class Image;
 
-            PixelRef(void* data, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap);
+            PixelRef(void* data, uint64_t stride, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap);
 
         public:
             template <typename T_Data>
             PixelRef& operator=(const Pixel<T_Data>& p);
+
+            PixelRef& operator++();
+            PixelRef operator++(int);
         };
 
         explicit Image(
