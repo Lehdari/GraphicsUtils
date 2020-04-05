@@ -307,3 +307,10 @@ int Image::height() const noexcept
 {
     return _height;
 }
+
+Image::PixelRef Image::operator()(int x, int y)
+{
+    std::size_t p = (y*_width + x)*nChannels(_dataFormat);
+    PixelRef pRef(_data, p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
+    return pRef;
+}

@@ -105,6 +105,8 @@ namespace gut {
         int width() const noexcept;
         int height() const noexcept;
 
+        PixelRef operator()(int x, int y);
+
         /** @brief  Access the raw data array
          *  @tparam T_Data  Image data type (uint8_t, uint16_t or float)
          *  @return Read-only pointer to raw image data
