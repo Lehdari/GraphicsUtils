@@ -39,6 +39,8 @@ namespace gut {
         template <typename T_Data>
         inline constexpr static DataType dataTypeEnum();
 
+        struct PixelRef;
+
         template <typename T_Data>
         struct Pixel {
             T_Data  r;
@@ -47,6 +49,9 @@ namespace gut {
             T_Data  a;
 
             Pixel(T_Data r, T_Data g, T_Data b, T_Data a);
+
+            Pixel(const PixelRef& pRef);
+            Pixel<T_Data>& operator=(const PixelRef& pRef);
         };
 
         struct PixelRef {
@@ -59,6 +64,8 @@ namespace gut {
             uint64_t    ap;
 
             friend class Image;
+            template <typename T_Data>
+            friend class Pixel;
 
             PixelRef(void* data, uint64_t stride, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap);
 

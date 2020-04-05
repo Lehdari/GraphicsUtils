@@ -53,6 +53,27 @@ Image::Pixel<T_Data>::Pixel(T_Data r, T_Data g, T_Data b, T_Data a) :
 }
 
 template<typename T_Data>
+Image::Pixel<T_Data>::Pixel(const Image::PixelRef& pRef)
+{
+    auto* d = static_cast<T_Data*>(pRef.data);
+    a = d[pRef.ap];
+    b = d[pRef.bp];
+    g = d[pRef.gp];
+    r = d[pRef.rp];
+}
+
+template<typename T_Data>
+Image::Pixel<T_Data>& Image::Pixel<T_Data>::operator=(const Image::PixelRef& pRef)
+{
+    auto* d = static_cast<T_Data*>(pRef.data);
+    a = d[pRef.ap];
+    b = d[pRef.bp];
+    g = d[pRef.gp];
+    r = d[pRef.rp];
+    return *this;
+}
+
+template<typename T_Data>
 Image::PixelRef& Image::PixelRef::operator=(const Image::Pixel<T_Data>& p)
 {
     auto* d = static_cast<T_Data*>(data);
