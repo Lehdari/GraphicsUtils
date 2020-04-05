@@ -107,6 +107,9 @@ namespace gut {
 
         PixelRef operator()(int x, int y);
 
+        template <typename T_Data>
+        void setPixel(int x, int y, const Pixel<T_Data>& p);
+
         /** @brief  Access the raw data array
          *  @tparam T_Data  Image data type (uint8_t, uint16_t or float)
          *  @return Read-only pointer to raw image data

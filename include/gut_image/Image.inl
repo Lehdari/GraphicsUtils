@@ -65,6 +65,17 @@ Image::PixelRef& Image::PixelRef::operator=(const Image::Pixel<T_Data>& p)
 
 
 // Image template member functions
+template<typename T_Data>
+void Image::setPixel(int x, int y, const Image::Pixel<T_Data>& p)
+{
+    auto* d = static_cast<std::vector<T_Data>*>(_data)->data();
+    std::size_t pos = (y*_width + x)*nChannels(_dataFormat);
+    d[pos+_interleave[0]] = p.r;
+    d[pos+_interleave[1]] = p.g;
+    d[pos+_interleave[2]] = p.b;
+    d[pos+_interleave[3]] = p.a;
+}
+
 template <typename T_Data>
 T_Data* Image::data()
 {
