@@ -18,6 +18,23 @@ using namespace gut;
 
 int gut::testImage()
 {
+    // Test image load, write and RO5
+    {
+        Image img;
+        img.loadFromFile(std::string(RES_PATH)+"images/lenna.png");
+        img.writeToFile("testImage_lenna1.png");
+        img.writeToFile("testImage_lenna1.jpg");
+        img.writeToFile("testImage_lenna1.bmp");
+        img.writeToFile("testImage_lenna1.tga");
+        Image img2(img);
+        Image img3(std::move(img2));
+        Image img4 = img3;
+        Image img5 = std::move(img4);
+        img.writeToFile("testImage_lenna2.png");
+        img3.writeToFile("testImage_lenna3.png");
+        img5.writeToFile("testImage_lenna4.png");
+    }
+
     uint64_t t1, t2, t3;
     // Test direct data pointer access
     {
