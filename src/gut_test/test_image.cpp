@@ -10,6 +10,7 @@
 
 #include "tests.hpp"
 #include <gut_image/Image.hpp>
+#include <gut_utils/Stopwatch.hpp>
 
 
 using namespace gut;
@@ -19,6 +20,9 @@ int gut::testImage()
 {
     Image img(Image::DataFormat::RGBA, Image::DataType::U8);
     img.create(4096, 4096);
+
+    Stopwatch sw;
+    sw.start();
 
     // Output all RGB colors
     auto* p = img.data<uint8_t>();
@@ -31,6 +35,9 @@ int gut::testImage()
             p[i+3] = 255;
         }
     }
+
+    uint64_t t = sw.stop();
+    printf("nCycles: %llu\n", t);
 
     img.writeToFile("test.png");
 
