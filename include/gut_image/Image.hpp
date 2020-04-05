@@ -39,6 +39,33 @@ namespace gut {
         template <typename T_Data>
         inline constexpr static DataType dataTypeEnum();
 
+        template <typename T_Data>
+        struct Pixel {
+            T_Data  r;
+            T_Data  g;
+            T_Data  b;
+            T_Data  a;
+
+            Pixel(T_Data r, T_Data g, T_Data b, T_Data a);
+        };
+
+        struct PixelRef {
+        private:
+            void*       v;
+            std::size_t rp;
+            std::size_t gp;
+            std::size_t bp;
+            std::size_t ap;
+
+            friend class Image;
+
+            PixelRef(void* v, std::size_t rp, std::size_t gp, std::size_t bp, std::size_t ap);
+
+        public:
+            template <typename T_Data>
+            PixelRef& operator=(const Pixel<T_Data>& p);
+        };
+
         explicit Image(
             DataFormat dataFormat   = DataFormat::RGB,
             DataType dataType       = DataType::U8);

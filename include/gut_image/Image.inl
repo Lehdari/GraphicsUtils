@@ -45,6 +45,26 @@ constexpr Image::DataType Image::dataTypeEnum<float>()
 }
 
 
+// Pixel and PixelRef template member functions
+template<typename T_Data>
+Image::Pixel<T_Data>::Pixel(T_Data r, T_Data g, T_Data b, T_Data a) :
+    r(r),   g(g),   b(b),   a(a)
+{
+}
+
+template<typename T_Data>
+Image::PixelRef& Image::PixelRef::operator=(const Image::Pixel<T_Data>& p)
+{
+    auto* d = static_cast<std::vector<T_Data>*>(v)->data();
+    d[rp] = p.r;
+    d[gp] = p.g;
+    d[bp] = p.b;
+    d[ap] = p.a;
+    return *this;
+}
+
+
+// Image template member functions
 template <typename T_Data>
 T_Data* Image::data()
 {
