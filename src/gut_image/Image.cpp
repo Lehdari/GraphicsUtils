@@ -26,9 +26,28 @@ using namespace gut;
 
 
 // Pixel and PixelRef member functions
-Image::PixelRef::PixelRef(void* data, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap) :
-    data(data), rp(rp), gp(gp), bp(bp), ap(ap)
+Image::PixelRef::PixelRef(void* data, uint64_t stride, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap) :
+    data(data), stride(stride), rp(rp), gp(gp), bp(bp), ap(ap)
 {
+}
+
+Image::PixelRef& Image::PixelRef::operator++()
+{
+    rp += stride;
+    gp += stride;
+    bp += stride;
+    ap += stride;
+    return *this;
+}
+
+Image::PixelRef Image::PixelRef::operator++(int)
+{
+    PixelRef r = *this;
+    rp += stride;
+    gp += stride;
+    bp += stride;
+    ap += stride;
+    return r;
 }
 
 
@@ -314,6 +333,7 @@ int Image::height() const noexcept
 Image::PixelRef Image::operator()(int x, int y)
 {
     uint64_t p = (y*_width + x)*nChannels(_dataFormat);
-    PixelRef pRef(_data, p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
+    PixelRef pRef(_data, nChannels(_dataFormat),
+        p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
     return pRef;
 }
