@@ -18,28 +18,76 @@ using namespace gut;
 
 int gut::testImage()
 {
-    Image img(Image::DataFormat::RGBA, Image::DataType::U8);
-    img.create(4096, 4096);
+    uint64_t t1, t2, t3;
+    // Test direct data pointer access
+    {
+        Image img(Image::DataFormat::RGBA, Image::DataType::U8);
+        img.create(4096, 4096);
 
-    Stopwatch sw;
-    sw.start();
+        Stopwatch sw;
+        sw.start();
 
-    // Output all RGB colors
-    auto* p = img.data<uint8_t>();
-    for (int y=0; y<4096; ++y) {
-        for (int x=0; x<4096; ++x) {
-            int i = (y*4096 + x)*4;
-            p[i] = x % 256;
-            p[i+1] = y % 256;
-            p[i+2] = (y/256)*16 + (x/256);
-            p[i+3] = 255;
+        // Output all RGB colors
+        auto* p = img.data<uint8_t>();
+        for (int y=0; y<4096; ++y) {
+            for (int x=0; x<4096; ++x) {
+                int i = (y*4096 + x)*4;
+                p[i] = x % 256;
+                p[i+1] = y % 256;
+                p[i+2] = (y/256)*16 + (x/256);
+                p[i+3] = 255;
+            }
         }
+
+        t1 = sw.stop();
+        printf("Direct data access: %llu\n", t1);
+
+        img.writeToFile("testImage_direct.png");
     }
 
-    uint64_t t = sw.stop();
-    printf("nCycles: %llu\n", t);
+    // Test pixel reference access
+    {
+        Image img(Image::DataFormat::RGBA, Image::DataType::U8);
+        img.create(4096, 4096);
 
-    img.writeToFile("test.png");
+        Stopwatch sw;
+        sw.start();
+
+        // Output all RGB colors
+        for (int y = 0; y < 4096; ++y) {
+            for (int x = 0; x < 4096; ++x) {
+                img(x, y) = Image::Pixel<uint8_t>(x%256, y%256, (y/256)*16+(x/256), 255);
+            }
+        }
+
+        t2 = sw.stop();
+        printf("Pixel reference:    %llu (", t2);
+        printf("%0.4f)\n", ((double)t2/(double)t1)*100.0);
+
+        img.writeToFile("testImage_pixelReference.png");
+    }
+
+    // Test setPixel access
+    {
+        Image img(Image::DataFormat::RGBA, Image::DataType::U8);
+        img.create(4096, 4096);
+
+        Stopwatch sw;
+        sw.start();
+
+        // Output all RGB colors
+        for (int y = 0; y < 4096; ++y) {
+            for (int x = 0; x < 4096; ++x) {
+                img.setPixel(x, y, Image::Pixel<uint8_t>(x%256, y%256, (y/256)*16+(x/256), 255));
+            }
+        }
+
+        t3 = sw.stop();
+        printf("setPixel:           %llu (", t3);
+        printf("%0.4f)\n", ((double)t3/(double)t1)*100.0);
+
+        img.writeToFile("testImage_setPixel.png");
+    }
 
     return 0;
 }
