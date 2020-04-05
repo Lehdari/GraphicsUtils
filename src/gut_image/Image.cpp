@@ -22,16 +22,6 @@
 using namespace gut;
 
 
-constexpr int Image::nChannels(Image::DataFormat dataFormat)
-{
-    switch (dataFormat) {
-        case DataFormat::GRAY:  return 1;
-        case DataFormat::RGB:   return 3;
-        case DataFormat::RGBA:  return 4;
-    }
-
-    return -1;
-}
 
 Image::Image(Image::DataFormat dataFormat, Image::DataType dataType) :
     _dataFormat (dataFormat),

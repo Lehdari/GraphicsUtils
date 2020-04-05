@@ -34,10 +34,10 @@ namespace gut {
             F32
         };
 
-        constexpr static int nChannels(DataFormat dataFormat);
+        inline constexpr static int nChannels(DataFormat dataFormat);
 
         template <typename T_Data>
-        constexpr static DataType dataTypeEnum();
+        inline constexpr static DataType dataTypeEnum();
 
         explicit Image(
             DataFormat dataFormat   = DataFormat::RGB,

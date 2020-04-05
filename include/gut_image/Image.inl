@@ -8,6 +8,18 @@
 // with this source code package.
 //
 
+// Constexpr functions
+constexpr int Image::nChannels(Image::DataFormat dataFormat)
+{
+    switch (dataFormat) {
+        case DataFormat::GRAY:  return 1;
+        case DataFormat::RGB:   return 3;
+        case DataFormat::RGBA:  return 4;
+    }
+
+    return -1;
+}
+
 template <typename T_Data>
 constexpr Image::DataType Image::dataTypeEnum()
 {
