@@ -18,21 +18,22 @@ using namespace gut;
 
 int gut::testImage()
 {
+
     // Test image load, write and RO5
     {
         Image img;
         img.loadFromFile(std::string(RES_PATH)+"images/lenna.png");
-        img.writeToFile("testImage_lenna1.png");
-        img.writeToFile("testImage_lenna1.jpg");
-        img.writeToFile("testImage_lenna1.bmp");
-        img.writeToFile("testImage_lenna1.tga");
+        img.writeToFile("output/testImage_lenna1.png");
+        img.writeToFile("output/testImage_lenna1.jpg");
+        img.writeToFile("output/testImage_lenna1.bmp");
+        img.writeToFile("output/testImage_lenna1.tga");
         Image img2(img);
         Image img3(std::move(img2));
         Image img4 = img3;
         Image img5 = std::move(img4);
-        img.writeToFile("testImage_lenna2.png");
-        img3.writeToFile("testImage_lenna3.png");
-        img5.writeToFile("testImage_lenna4.png");
+        img.writeToFile("output/testImage_lenna2.png");
+        img3.writeToFile("output/testImage_lenna3.png");
+        img5.writeToFile("output/testImage_lenna4.png");
     }
 
     uint64_t t1, t2, t3;
@@ -59,7 +60,7 @@ int gut::testImage()
         t1 = sw.stop();
         printf("Direct data access: %llu\n", t1);
 
-        img.writeToFile("testImage_direct.png");
+        img.writeToFile("output/testImage_direct.png");
     }
 
     // Test pixel reference access
@@ -81,7 +82,7 @@ int gut::testImage()
         printf("Pixel reference:    %llu (", t2);
         printf("%0.4f)\n", ((double)t2/(double)t1)*100.0);
 
-        img.writeToFile("testImage_pixelReference.png");
+        img.writeToFile("output/testImage_pixelReference.png");
     }
 
     // Test setPixel access
@@ -103,7 +104,7 @@ int gut::testImage()
         printf("setPixel:           %llu (", t3);
         printf("%0.4f)\n", ((double)t3/(double)t1)*100.0);
 
-        img.writeToFile("testImage_setPixel.png");
+        img.writeToFile("output/testImage_setPixel.png");
     }
 
     return 0;
