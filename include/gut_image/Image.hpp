@@ -12,9 +12,9 @@
 #define GRAPHICSUTILS_IMAGE_HPP
 
 
-#include <vector>
 #include <string>
 #include <cassert>
+#include <cstdint>
 
 
 namespace gut {
@@ -51,15 +51,15 @@ namespace gut {
 
         struct PixelRef {
         private:
-            void*       v;
-            std::size_t rp;
-            std::size_t gp;
-            std::size_t bp;
-            std::size_t ap;
+            void*       data;
+            uint64_t    rp;
+            uint64_t    gp;
+            uint64_t    bp;
+            uint64_t    ap;
 
             friend class Image;
 
-            PixelRef(void* v, std::size_t rp, std::size_t gp, std::size_t bp, std::size_t ap);
+            PixelRef(void* data, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap);
 
         public:
             template <typename T_Data>
