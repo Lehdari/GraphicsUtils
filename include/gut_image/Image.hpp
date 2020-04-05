@@ -103,6 +103,7 @@ namespace gut {
 
         void*       _data;
         void        (*_deleter)(void*);
+        int         _interleave[4]; // interleaved positions for R, G, B, A channels
 
         template <typename T_Data>
         static void dataDeleter(void* data);

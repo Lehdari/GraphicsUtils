@@ -31,6 +31,20 @@ Image::Image(Image::DataFormat dataFormat, Image::DataType dataType) :
     _data       (nullptr),
     _deleter    (nullptr)
 {
+    switch (_dataFormat) {
+        case DataFormat::GRAY: {
+            int interleave[4] = {0, 0, 0, 0};
+            memcpy(_interleave, interleave, 4*sizeof(int));
+        }   break;
+        case DataFormat::RGB: {
+            int interleave[4] = {0, 1, 2, 0};
+            memcpy(_interleave, interleave, 4*sizeof(int));
+        }   break;
+        case DataFormat::RGBA: {
+            int interleave[4] = {0, 1, 2, 3};
+            memcpy(_interleave, interleave, 4*sizeof(int));
+        }   break;
+    }
 }
 
 Image::Image(const Image& other) :
@@ -41,6 +55,8 @@ Image::Image(const Image& other) :
     _data       (nullptr),
     _deleter    (other._deleter)
 {
+    memcpy(_interleave, other._interleave, 4*sizeof(int));
+
     // make a copy of the data vector
     if (other._data != nullptr) {
         switch (_dataType) {
@@ -65,6 +81,8 @@ Image::Image(Image&& other) noexcept :
     _data       (other._data),
     _deleter    (other._deleter)
 {
+    memcpy(_interleave, other._interleave, 4*sizeof(int));
+
     other._width = 0;
     other._height = 0;
     other._data = nullptr;
@@ -79,6 +97,7 @@ Image& Image::operator=(const Image& other)
     _height     = other._height;
     _data       = nullptr;
     _deleter    = other._deleter;
+    memcpy(_interleave, other._interleave, 4*sizeof(int));
 
     // make a copy of the data vector
     if (other._data != nullptr) {
@@ -106,6 +125,7 @@ Image& Image::operator=(Image&& other) noexcept
     _height     = other._height;
     _data       = other._data;
     _deleter    = other._deleter;
+    memcpy(_interleave, other._interleave, 4*sizeof(int));
 
     other._width = 0;
     other._height = 0;
