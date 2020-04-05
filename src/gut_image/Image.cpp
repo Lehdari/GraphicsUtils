@@ -22,7 +22,14 @@
 using namespace gut;
 
 
+// Pixel and PixelRef member functions
+Image::PixelRef::PixelRef(void* v, std::size_t rp, std::size_t gp, std::size_t bp, std::size_t ap) :
+    v(v), rp(rp), gp(gp), bp(bp), ap(ap)
+{
+}
 
+
+// Image member functions
 Image::Image(Image::DataFormat dataFormat, Image::DataType dataType) :
     _dataFormat (dataFormat),
     _dataType   (dataType),
