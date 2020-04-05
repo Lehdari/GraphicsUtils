@@ -10,8 +10,6 @@
 
 #include "Image.hpp"
 
-#include <cstdint>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -19,12 +17,17 @@
 #include <stb_image_write.h>
 
 
+#define CREATE_ARRAY_COPY(TYPE, DST, SRC, SIZE) \
+    DST = new TYPE[SIZE]; \
+    memcpy(static_cast<TYPE*>(DST), static_cast<TYPE*>(SRC), (SIZE)*sizeof(TYPE));
+
+
 using namespace gut;
 
 
 // Pixel and PixelRef member functions
-Image::PixelRef::PixelRef(void* v, std::size_t rp, std::size_t gp, std::size_t bp, std::size_t ap) :
-    v(v), rp(rp), gp(gp), bp(bp), ap(ap)
+Image::PixelRef::PixelRef(void* data, uint64_t rp, uint64_t gp, uint64_t bp, uint64_t ap) :
+    data(data), rp(rp), gp(gp), bp(bp), ap(ap)
 {
 }
 
@@ -65,17 +68,20 @@ Image::Image(const Image& other) :
     memcpy(_interleave, other._interleave, 4*sizeof(int));
 
     // make a copy of the data vector
+    uint64_t s = other._width*other._height*nChannels(other._dataFormat);
     if (other._data != nullptr) {
         switch (_dataType) {
             case DataType::U8:
-                _data = new std::vector<uint8_t>(*static_cast<std::vector<uint8_t>*>(other._data));
+                CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
                 break;
             case DataType::U16:
-                _data = new std::vector<uint16_t>(*static_cast<std::vector<uint16_t>*>(other._data));
+                CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
                 break;
             case DataType::F32:
-                _data = new std::vector<float>(*static_cast<std::vector<float>*>(other._data));
+                CREATE_ARRAY_COPY(float, _data, other._data, s)
                 break;
+            default:
+                return;
         }
     }
 }
@@ -107,17 +113,20 @@ Image& Image::operator=(const Image& other)
     memcpy(_interleave, other._interleave, 4*sizeof(int));
 
     // make a copy of the data vector
+    uint64_t s = other._width*other._height*nChannels(other._dataFormat);
     if (other._data != nullptr) {
         switch (_dataType) {
             case DataType::U8:
-                _data = new std::vector<uint8_t>(*static_cast<std::vector<uint8_t>*>(other._data));
+            CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
                 break;
             case DataType::U16:
-                _data = new std::vector<uint16_t>(*static_cast<std::vector<uint16_t>*>(other._data));
+            CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
                 break;
             case DataType::F32:
-                _data = new std::vector<float>(*static_cast<std::vector<float>*>(other._data));
+            CREATE_ARRAY_COPY(float, _data, other._data, s)
                 break;
+            default:
+                return *this;
         }
     }
 
@@ -155,17 +164,19 @@ void Image::create(int width, int height)
         return;
     }
 
+    uint64_t s = width*height*nChannels(_dataFormat);
+
     switch (_dataType) {
         case DataType::U8:
-            _data = new std::vector<uint8_t>(width*height*nChannels(_dataFormat), 0);
+            _data = new uint8_t[s];
             _deleter = dataDeleter<uint8_t>;
             break;
         case DataType::U16:
-            _data = new std::vector<uint16_t>(width*height*nChannels(_dataFormat), 0);
+            _data = new uint16_t[s];
             _deleter = dataDeleter<uint16_t>;
             break;
         case DataType::F32:
-            _data = new std::vector<float>(width*height*nChannels(_dataFormat), 0.0f);
+            _data = new float[s];
             _deleter = dataDeleter<float>;
             break;
         default:
@@ -179,7 +190,7 @@ void Image::create(int width, int height)
 void Image::loadFromFile(const std::string& fileName)
 {
     int imgChannels;
-    uint8_t *imgData = stbi_load(fileName.c_str(), &_width, &_height, &imgChannels, 0);
+    auto* imgData = stbi_load(fileName.c_str(), &_width, &_height, &imgChannels, 0);
 
     // Check for errors
     if (imgData == nullptr) {
@@ -208,18 +219,10 @@ void Image::loadFromFile(const std::string& fileName)
             break;
     }
 
-    // Setup the data vector and copy the data
-    // TODO investigate possibility of directly loading image to vector to avoid copy
-    int64_t vSize = _width*_height*nChannels(_dataFormat);
-    _data = new std::vector<uint8_t>(vSize);
+    // Copy image data and release resources
+    CREATE_ARRAY_COPY(uint8_t, _data, imgData, _width*_height*imgChannels);
     _deleter = dataDeleter<uint8_t>;
 
-    auto& v = *static_cast<std::vector<uint8_t>*>(_data);
-    for (int64_t i=0; i<vSize; ++i) {
-        v[i] = imgData[i];
-    }
-
-    // Free up resources
     stbi_image_free(imgData);
 }
 
@@ -231,7 +234,7 @@ void Image::writeToFile(const std::string& fileName)
         switch(_dataType) {
             case DataType::U8:
                 stbi_write_png(fileName.c_str(), _width, _height, nChannels(_dataFormat),
-                    static_cast<std::vector<uint8_t>*>(_data)->data(), 0);
+                    static_cast<uint8_t*>(_data), 0);
                 break;
             case DataType::U16:
                 // This is here for the future 16-bit support in STB
@@ -246,7 +249,7 @@ void Image::writeToFile(const std::string& fileName)
         switch(_dataType) {
             case DataType::U8:
                 stbi_write_bmp(fileName.c_str(), _width, _height, nChannels(_dataFormat),
-                    static_cast<std::vector<uint8_t>*>(_data)->data());
+                    static_cast<uint8_t*>(_data));
                 break;
             default:
                 fprintf(stderr, "ERROR: Unable to save BMP: invalid data type.\n"); // TODO logging
@@ -257,7 +260,7 @@ void Image::writeToFile(const std::string& fileName)
         switch(_dataType) {
             case DataType::U8:
                 stbi_write_jpg(fileName.c_str(), _width, _height, nChannels(_dataFormat),
-                    static_cast<std::vector<uint8_t>*>(_data)->data(), 100);
+                    static_cast<uint8_t*>(_data), 100);
                 break;
             default:
                 fprintf(stderr, "ERROR: Unable to save JPG: invalid data type.\n"); // TODO logging
@@ -268,7 +271,7 @@ void Image::writeToFile(const std::string& fileName)
         switch(_dataType) {
             case DataType::U8:
                 stbi_write_tga(fileName.c_str(), _width, _height, nChannels(_dataFormat),
-                    static_cast<std::vector<uint8_t>*>(_data)->data());
+                    static_cast<uint8_t*>(_data));
                 break;
             default:
                 fprintf(stderr, "ERROR: Unable to save TGA: invalid data type.\n"); // TODO logging
@@ -279,7 +282,7 @@ void Image::writeToFile(const std::string& fileName)
         switch(_dataType) {
             case DataType::F32:
                 stbi_write_hdr(fileName.c_str(), _width, _height, nChannels(_dataFormat),
-                    static_cast<std::vector<float>*>(_data)->data());
+                    static_cast<float*>(_data));
                 break;
             default:
                 fprintf(stderr, "ERROR: Unable to save HDR: invalid data type.\n"); // TODO logging
@@ -310,7 +313,7 @@ int Image::height() const noexcept
 
 Image::PixelRef Image::operator()(int x, int y)
 {
-    std::size_t p = (y*_width + x)*nChannels(_dataFormat);
+    uint64_t p = (y*_width + x)*nChannels(_dataFormat);
     PixelRef pRef(_data, p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
     return pRef;
 }

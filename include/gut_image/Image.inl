@@ -55,7 +55,7 @@ Image::Pixel<T_Data>::Pixel(T_Data r, T_Data g, T_Data b, T_Data a) :
 template<typename T_Data>
 Image::PixelRef& Image::PixelRef::operator=(const Image::Pixel<T_Data>& p)
 {
-    auto* d = static_cast<std::vector<T_Data>*>(v)->data();
+    auto* d = static_cast<T_Data*>(data);
     d[rp] = p.r;
     d[gp] = p.g;
     d[bp] = p.b;
@@ -68,8 +68,8 @@ Image::PixelRef& Image::PixelRef::operator=(const Image::Pixel<T_Data>& p)
 template<typename T_Data>
 void Image::setPixel(int x, int y, const Image::Pixel<T_Data>& p)
 {
-    auto* d = static_cast<std::vector<T_Data>*>(_data)->data();
-    std::size_t pos = (y*_width + x)*nChannels(_dataFormat);
+    auto* d = static_cast<T_Data*>(_data);
+    uint64_t pos = (y*_width + x)*nChannels(_dataFormat);
     d[pos+_interleave[0]] = p.r;
     d[pos+_interleave[1]] = p.g;
     d[pos+_interleave[2]] = p.b;
@@ -82,7 +82,7 @@ T_Data* Image::data()
     // Check for data type
     assert(_dataType == dataTypeEnum<T_Data>());
 
-    return static_cast<std::vector<T_Data>*>(_data)->data();
+    return static_cast<T_Data*>(_data);
 }
 
 template <typename T_Data>
@@ -91,11 +91,11 @@ const T_Data* Image::data() const noexcept
     // Check for data type
     assert(_dataType == dataTypeEnum<T_Data>());
 
-    return static_cast<std::vector<T_Data>*>(_data)->data();
+    return static_cast<T_Data*>(_data);
 }
 
 template <typename T_Data>
 void Image::dataDeleter(void* data) {
     if (data != nullptr)
-        delete static_cast<std::vector<T_Data>*>(data);
+        delete[] static_cast<T_Data*>(data);
 }
