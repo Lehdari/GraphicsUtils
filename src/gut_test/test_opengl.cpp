@@ -94,10 +94,6 @@ int gut::testOpenGL()
     // Load shader
     context.shader.load(std::string(RES_PATH) + "shaders/VS_Simple.glsl",
         std::string(RES_PATH) + "shaders/FS_Simple.glsl");
-    context.shader.addUniform("objectToWorld");
-    context.shader.addUniform("normalToWorld");
-    context.shader.addUniform("worldToClip");
-    context.shader.addUniform("diffuse");
 
     // Load mesh
     VertexData meshData;
