@@ -1,4 +1,4 @@
-file(GLOB SUB_HEADERS "*.hpp")
+file(GLOB SUB_HEADERS "*.hpp" "*.inl")
 
 set(GUT_OPENGL_HEADERS
     ${GUT_OPENGL_HEADERS}
