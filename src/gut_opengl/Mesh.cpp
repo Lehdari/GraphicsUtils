@@ -171,7 +171,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
 }
 
 void Mesh::render(
-    const Shader& shader,
+    Shader& shader,
     const Camera& camera,
     const Mat4f& orientation) const
 {

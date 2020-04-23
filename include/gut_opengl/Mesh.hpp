@@ -37,7 +37,7 @@ namespace gut {
         void loadFromVertexData(const VertexData& vertexData);
 
         // Render the mesh
-        void render(const Shader& shader,
+        void render(Shader& shader,
                     const Camera& camera,
                     const Mat4f& orientation = Mat4f::Identity()) const;
 

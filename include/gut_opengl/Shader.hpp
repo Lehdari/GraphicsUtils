@@ -16,7 +16,9 @@
 #include <unordered_map>
 #include <glad/glad.h>
 
-#include "gut_utils/MathTypes.hpp"
+#include <gut_utils/MathTypes.hpp>
+
+#include "GLTypeUtils.hpp"
 
 #undef near
 #undef far
@@ -40,37 +42,58 @@ namespace gut {
         // Load shader from vertex and fragment shader files
         void load(const std::string& vsFileName, const std::string& fsFileName);
 
-        // Add new uniform (must be called before calling setUniforms);
-        void addUniform(const std::string& name);
-
-        void setUniform(const std::string& name, float uniform) const;
-        void setUniform(const std::string& name, const Vec3f& uniform) const;
-        void setUniform(const std::string& name, const Vec4f& uniform) const;
-        void setUniform(const std::string& name, const Mat3f& uniform) const;
-        void setUniform(const std::string& name, const Mat4f& uniform) const;
-        void setUniform(const std::string& name, int uniform) const;
-
-        template <std::size_t N>
-        void setUniform(const std::string& name, const std::array<float, N>& uniform) const;
-
         void use() const;
+
+        /** @brief  Set uniform variable using name
+         *  @tparam T_Uniform   Uniform type
+         *  @param  name        Uniform name
+         *  @param  uniform     Uniform value to be set
+         */
+        template <typename T_Uniform>
+        void setUniform(const std::string& name, const T_Uniform& uniform);
+
+        /** @brief  Set uniform variable using uniform location(@see getUniformLocation)
+         *  @tparam T_Uniform   Uniform type
+         *  @param  location    Uniform location returned by getUniformLocation
+         *  @param  uniform     Uniform value to be set
+         *  @note
+         *  @note   Faster than setting the uniform using name
+         */
+        template <typename T_Uniform>
+        void setUniform(GLint location, const T_Uniform& uniform);
+
+        /** @brief  Get uniform's location to be used with the location setUniform
+         *  @param  name    Uniform name
+         *  @return Uniform location (returns -1 if uniform does not exist)
+         */
+        GLint getUniformLocation(const std::string& name) const;
 
         // Dispatch for compute shaders
         void dispatch(GLuint nGroupsX, GLuint nGroupsY, GLuint nGroupsZ) const;
 
     private:
-        GLuint                                  _programId;
-        std::unordered_map<std::string, GLint>  _uniformPositions;
-        //flag indicating whether the sahder is compute shader
-        bool                                    _computeShader;
+        GLuint                                      _programId;
+        bool                                        _computeShader;
+
+        struct Uniform {
+            GLenum  type = GL_FALSE;
+            GLint   size = 0;
+            GLint   location = 0;
+        };
+
+        std::unordered_map<std::string, Uniform>    _uniforms;
+
+        // Fill the map above
+        void fetchShaderUniforms();
+
+        // Checks name and type of an uniform and returns pointer to it
+        template <typename T_Uniform>
+        Uniform* getUniform(const std::string& name);
     };
 
 
-    template <std::size_t N>
-    void Shader::setUniform(const std::string& name, const std::array<float, N>& uniform) const
-    {
-        glUniform1fv(_uniformPositions.at(name), N, uniform.data());
-    }
+    #include "Shader.inl"
+
 
 } // namespace gut
 
