@@ -9,6 +9,7 @@
 //
 
 #include "Texture.hpp"
+#include <gut_image/Image.hpp>
 
 
 using namespace gut;
@@ -118,8 +119,18 @@ void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum in
 {
     Image img;
     img.loadFromFile(fileName);
-    _width = img.width();
-    _height = img.height();
+    loadFromImage(img, target, internalFormat);
+}
+
+void Texture::loadFromImage(const Image& image)
+{
+    loadFromImage(image, _target, _internalFormat);
+}
+
+void Texture::loadFromImage(const Image& image, GLenum target, GLenum internalFormat)
+{
+    _width = image.width();
+    _height = image.height();
 
     _target = target;
     _internalFormat = internalFormat;
@@ -138,12 +149,13 @@ void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum in
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
-    switch (img.dataFormat()) {
+    // TODO support for floating point / 16bit image formats
+    switch (image.dataFormat()) {
         case Image::DataFormat::RGB:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data<uint8_t>());
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, image.data<uint8_t>());
             break;
         case Image::DataFormat::RGBA:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data<uint8_t>());
+            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data<uint8_t>());
             break;
         default:
             break;
