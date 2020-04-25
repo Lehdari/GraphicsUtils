@@ -14,10 +14,13 @@
 
 #include <string>
 #include <glad/glad.h>
-#include <gut_image/Image.hpp>
 
 
 namespace gut {
+
+
+    class Image;
+
 
     class Texture {
     public:
@@ -39,6 +42,19 @@ namespace gut {
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
         void loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat);
+
+        /** @brief  Load Texture from Image object
+         *  @param  image   Image object to load image file from
+         *  @note   Target and internal format defined in constructor are used
+         */
+        void loadFromImage(const Image& image);
+
+        /** @brief  Load Texture from Image object and set target and internal format
+         *  @param  image           Image object to load image file from
+         *  @param  target          Texture target (type)
+         *  @param  internalFormat  Internal color channel format
+         */
+        void loadFromImage(const Image& image, GLenum target, GLenum internalFormat);
 
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
