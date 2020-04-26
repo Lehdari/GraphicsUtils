@@ -46,12 +46,12 @@ namespace gut {
 
     inline void Stopwatch::start()
     {
-        _startTimeStamp = _rdtsc();
+        _startTimeStamp = __rdtsc();
     }
 
     inline uint64_t Stopwatch::stop()
     {
-        int64_t r = (int64_t)_rdtsc()-_startTimeStamp-_calibDiff;
+        int64_t r = (int64_t)__rdtsc()-_startTimeStamp-_calibDiff;
         return r < 0 ? 0 : (uint64_t)r;
     }
 
