@@ -31,9 +31,9 @@ namespace gut {
         Shader();
 
         Shader(const Shader&) = delete;
-        Shader(Shader&&) = delete;
-        Shader operator=(const Shader&) = delete;
-        Shader operator=(Shader&&) = delete;
+        Shader(Shader&&);
+        Shader& operator=(const Shader&) = delete;
+        Shader& operator=(Shader&&);
 
         ~Shader();
 

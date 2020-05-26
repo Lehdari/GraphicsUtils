@@ -23,6 +23,27 @@ Shader::Shader() :
 {
 }
 
+Shader::Shader(Shader&& other) :
+    _programId      (other._programId),
+    _computeShader  (other._computeShader),
+    _uniforms       (std::move(other._uniforms))
+{
+    other._programId = 0;
+    other._computeShader = false;
+}
+
+Shader& Shader::operator=(Shader&& other)
+{
+    _programId     = other._programId;
+    _computeShader = other._computeShader;
+    _uniforms      = std::move(other._uniforms);
+
+    other._programId = 0;
+    other._computeShader = false;
+
+    return *this;
+}
+
 Shader::~Shader()
 {
     glDeleteProgram(_programId);
