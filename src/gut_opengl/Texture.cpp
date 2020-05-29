@@ -15,10 +15,11 @@
 using namespace gut;
 
 
-Texture::Texture(GLenum target, GLenum internalFormat) :
+Texture::Texture(GLenum target, GLenum channelFormat, GLenum dataType) :
     _textureId      (0),
     _target         (target),
-    _internalFormat (internalFormat),
+    _channelFormat  (channelFormat),
+    _dataType       (dataType),
     _width          (0),
     _height         (0),
     _depth          (0)
@@ -45,15 +46,16 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 void Texture::create(int width, int height)
 {
-    create(width, height, _target, _internalFormat);
+    create(width, height, _target, _channelFormat, _dataType);
 }
 
-void Texture::create(int width, int height, GLenum target, GLenum internalFormat)
+void Texture::create(int width, int height, GLenum target, GLenum channelFormat, GLenum dataType)
 {
     _width = width;
     _height = height;
     _target = target;
-    _internalFormat = internalFormat;
+    _channelFormat = channelFormat;
+    _dataType = dataType;
 
     // Release the used resources
     reset();
@@ -69,7 +71,7 @@ void Texture::create(int width, int height, GLenum target, GLenum internalFormat
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
-    glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(_target, 0, _channelFormat, _width, _height, 0, GL_RGBA, _dataType, nullptr);
 
     glGenerateMipmap(_target);
 
@@ -78,16 +80,18 @@ void Texture::create(int width, int height, GLenum target, GLenum internalFormat
 
 void Texture::create(int width, int height, int depth)
 {
-    create(width, height, depth, _target, _internalFormat);
+    create(width, height, depth, _target, _channelFormat, _dataType);
 }
 
-void Texture::create(int width, int height, int depth, GLenum target, GLenum internalFormat)
+void Texture::create(int width, int height, int depth,
+    GLenum target, GLenum channelFormat, GLenum dataType)
 {
     _width = width;
     _height = height;
     _depth = depth;
     _target = target;
-    _internalFormat = internalFormat;
+    _channelFormat = channelFormat;
+    _dataType = dataType;
 
     // Release the used resources
     reset();
@@ -103,7 +107,7 @@ void Texture::create(int width, int height, int depth, GLenum target, GLenum int
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Transfer data to OpenGL and generate mipmaps
-    glTexImage3D(_target, 0, _internalFormat, _width, _height, _depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage3D(_target, 0, _channelFormat, _width, _height, _depth, 0, GL_RGBA, _dataType, nullptr);
 
     glGenerateMipmap(_target);
 
@@ -112,28 +116,29 @@ void Texture::create(int width, int height, int depth, GLenum target, GLenum int
 
 void Texture::loadFromFile(const std::string& fileName)
 {
-    loadFromFile(fileName, _target, _internalFormat);
+    loadFromFile(fileName, _target, _channelFormat);
 }
 
-void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat)
+void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum channelFormat)
 {
     Image img;
     img.loadFromFile(fileName);
-    loadFromImage(img, target, internalFormat);
+    loadFromImage(img, target, channelFormat);
 }
 
 void Texture::loadFromImage(const Image& image)
 {
-    loadFromImage(image, _target, _internalFormat);
+    loadFromImage(image, _target, _channelFormat);
 }
 
-void Texture::loadFromImage(const Image& image, GLenum target, GLenum internalFormat)
+void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFormat)
 {
     _width = image.width();
     _height = image.height();
 
     _target = target;
-    _internalFormat = internalFormat;
+    _channelFormat = channelFormat;
+    _dataType = GL_UNSIGNED_BYTE; // only 8-bit images supported for now
 
     // Release the used resources
     reset();
@@ -152,10 +157,10 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum internalFo
     // TODO support for floating point / 16bit image formats
     switch (image.dataFormat()) {
         case Image::DataFormat::RGB:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, image.data<uint8_t>());
+            glTexImage2D(_target, 0, _channelFormat, _width, _height, 0, GL_RGB, _dataType, image.data<uint8_t>());
             break;
         case Image::DataFormat::RGBA:
-            glTexImage2D(_target, 0, _internalFormat, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data<uint8_t>());
+            glTexImage2D(_target, 0, _channelFormat, _width, _height, 0, GL_RGBA, _dataType, image.data<uint8_t>());
             break;
         default:
             break;
@@ -192,9 +197,9 @@ void Texture::bind(GLenum textureUnit) const
 void Texture::bindImage(GLuint unit, GLint level, GLenum access) const
 {
     if (_depth > 0)
-        glBindImageTexture(unit, _textureId, level, GL_TRUE, 0, access, _internalFormat);
+        glBindImageTexture(unit, _textureId, level, GL_TRUE, 0, access, _channelFormat);
     else
-        glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _internalFormat);
+        glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _channelFormat);
 }
 
 int Texture::width() const

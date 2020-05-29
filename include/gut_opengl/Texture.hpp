@@ -24,7 +24,15 @@ namespace gut {
 
     class Texture {
     public:
-        Texture(GLenum target = GL_TEXTURE_2D, GLenum internalFormat = GL_RGBA);
+        /** \brief  Construct a Texture object
+         *  \param  target          Texture target (type)
+         *  \param  channelFormat   Internal color channel format
+         *  \param  dataType        Internal data type
+         */
+        Texture(
+            GLenum target = GL_TEXTURE_2D,
+            GLenum channelFormat = GL_RGBA,
+            GLenum dataType = GL_UNSIGNED_BYTE);
         ~Texture(void);
 
         Texture(const Texture& other) = delete;
@@ -34,27 +42,29 @@ namespace gut {
 
         // Create empty 2D texture
         void create(int width, int height);
-        void create(int width, int height, GLenum target, GLenum internalFormat);
+        void create(int width, int height,
+            GLenum target, GLenum channelFormat, GLenum dataType);
         // Create empty 3D texture
         void create(int width, int height, int depth);
-        void create(int width, int height, int depth, GLenum target, GLenum internalFormat);
+        void create(int width, int height, int depth,
+            GLenum target, GLenum channelFormat, GLenum dataType);
 
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
-        void loadFromFile(const std::string& fileName, GLenum target, GLenum internalFormat);
+        void loadFromFile(const std::string& fileName, GLenum target, GLenum channelFormat);
 
-        /** @brief  Load Texture from Image object
-         *  @param  image   Image object to load image file from
-         *  @note   Target and internal format defined in constructor are used
+        /** \brief  Load Texture from Image object
+         *  \param  image   Image object to load image file from
+         *  \note   Target and internal format defined in constructor are used
          */
         void loadFromImage(const Image& image);
 
-        /** @brief  Load Texture from Image object and set target and internal format
-         *  @param  image           Image object to load image file from
-         *  @param  target          Texture target (type)
-         *  @param  internalFormat  Internal color channel format
+        /** \brief  Load Texture from Image object and set target and internal format
+         *  \param  image           Image object to load image file from
+         *  \param  target          Texture target (type)
+         *  \param  channelFormat   Internal color channel format
          */
-        void loadFromImage(const Image& image, GLenum target, GLenum internalFormat);
+        void loadFromImage(const Image& image, GLenum target, GLenum channelFormat);
 
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
@@ -81,7 +91,8 @@ namespace gut {
     private:
         GLuint  _textureId;
         GLenum  _target;
-        GLenum  _internalFormat;
+        GLenum  _channelFormat;
+        GLenum  _dataType;
         int     _width;
         int     _height;
         int     _depth;
