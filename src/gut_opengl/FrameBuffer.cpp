@@ -48,7 +48,8 @@ void FrameBuffer::create()
 void FrameBuffer::bind() const noexcept
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferId);
-    glDrawBuffers(_attachments.size(), _attachments.data());
+    if (_attachments.size() > 0)
+        glDrawBuffers(_attachments.size(), _attachments.data());
 }
 
 void FrameBuffer::attachTexture(const Texture& texture, GLenum attachment)
