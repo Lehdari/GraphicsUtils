@@ -36,6 +36,8 @@ namespace gut {
 
         void attachTexture(const Texture& texture, GLenum attachment);
 
+        GLuint id() const noexcept;
+
     private:
         GLuint              _frameBufferId;
         std::vector<GLenum> _attachments;

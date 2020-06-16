@@ -73,6 +73,11 @@ void FrameBuffer::attachTexture(const Texture& texture, GLenum attachment)
     _attachments.push_back(attachment);
 }
 
+GLuint FrameBuffer::id() const noexcept
+{
+    return _frameBufferId;
+}
+
 void FrameBuffer::reset()
 {
     if (_frameBufferId != 0)
