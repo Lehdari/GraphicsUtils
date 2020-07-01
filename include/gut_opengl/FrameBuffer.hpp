@@ -32,6 +32,8 @@ namespace gut {
 
         void create();
 
+        void useDepthRenderbuffer(int width = -1, int height = -1);
+
         void bind() const noexcept;
 
         void attachTexture(const Texture& texture, GLenum attachment);
@@ -40,7 +42,10 @@ namespace gut {
 
     private:
         GLuint              _frameBufferId;
+        GLuint              _depthRenderbufferId;
         std::vector<GLenum> _attachments;
+        int                 _width;
+        int                 _height;
 
         void reset();
     };
