@@ -32,14 +32,33 @@ Texture::~Texture(void)
 }
 
 Texture::Texture(Texture&& other) noexcept :
-    _textureId  (other._textureId)
+    _textureId      (other._textureId),
+    _target         (other._target),
+    _channelFormat  (other._channelFormat),
+    _dataType       (other._dataType),
+    _width          (other._width),
+    _height         (other._height),
+    _depth          (other._depth)
 {
+    other._textureId = 0;
+    other._width = 0;
+    other._height = 0;
+    other._depth = 0;
 }
 
 Texture& Texture::operator=(Texture&& other) noexcept
 {
     _textureId = other._textureId;
+    _target = other._target;
+    _channelFormat = other._channelFormat;
+    _dataType = other._dataType;
+    _width = other._width;
+    _height = other._height;
+    _depth = other._depth;
     other._textureId = 0;
+    other._width = 0;
+    other._height = 0;
+    other._depth = 0;
 
     return *this;
 }
