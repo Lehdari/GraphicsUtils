@@ -41,6 +41,9 @@ namespace gut {
                     const Camera& camera,
                     const Mat4f& orientation = Mat4f::Identity()) const;
 
+        // Render the mesh without camera or orientation
+        void render(Shader& shader) const;
+
     private:
         GLuint      _vertexArrayObjectId;
         GLuint      _positionBufferId;

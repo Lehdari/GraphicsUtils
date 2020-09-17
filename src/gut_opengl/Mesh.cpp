@@ -188,6 +188,15 @@ void Mesh::render(
     glBindVertexArray(0);
 }
 
+void Mesh::render(Shader& shader) const
+{
+    shader.use();
+
+    glBindVertexArray(_vertexArrayObjectId);
+    glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
+    glBindVertexArray(0);
+}
+
 void Mesh::reset()
 {
     if (_vertexArrayObjectId != 0)
