@@ -80,6 +80,9 @@ namespace gut {
         // Access data container (return nullptr if container with such name does not exist)
         const Container* accessData(const std::string& name) const noexcept;
 
+        // Access data container (return nullptr if container with such name does not exist)
+        Container* accessData(const std::string& name) noexcept;
+
         // Set the indices vector
         void setIndices(const Vector<unsigned>& indices);
         void setIndices(Vector<unsigned>&& indices);

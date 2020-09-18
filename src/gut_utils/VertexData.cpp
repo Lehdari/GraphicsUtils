@@ -118,6 +118,15 @@ const VertexData::Container* VertexData::accessData(const std::string& name) con
     return nullptr;
 }
 
+VertexData::Container* VertexData::accessData(const std::string& name) noexcept
+{
+    for (auto& c : _containers)
+        if (c.name == name)
+            return &c;
+
+    return nullptr;
+}
+
 void VertexData::setIndices(const Vector<unsigned>& indices)
 {
     _indices = indices;
