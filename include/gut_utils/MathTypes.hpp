@@ -30,5 +30,12 @@ using Mat2d = Eigen::Matrix2d;
 using Mat3d = Eigen::Matrix3d;
 using Mat4d = Eigen::Matrix4d;
 
+using Vec2i = Eigen::Vector2i;
+using Vec3i = Eigen::Vector3i;
+using Vec4i = Eigen::Vector4i;
+using Mat2i = Eigen::Matrix2i;
+using Mat3i = Eigen::Matrix3i;
+using Mat4i = Eigen::Matrix4i;
+
 
 #endif //GRAPHICSUTILS_MATHTYPES_HPP

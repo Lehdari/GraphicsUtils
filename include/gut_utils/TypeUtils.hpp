@@ -17,40 +17,38 @@
 #include <Eigen/StdVector>
 
 
+#define GUT_ALIGNED_VECTOR_EIGEN(TYPE) template <>\
+struct VectorType<TYPE> {\
+    static std::vector<TYPE, Eigen::aligned_allocator<TYPE>> value;\
+};
+
+
 template <typename T>
 struct VectorType {
     static std::vector<T> value;
 };
 
-template <>
-struct VectorType<Vec2f> {
-    static std::vector<Vec2f, Eigen::aligned_allocator<Vec2f>> value;
-};
+// Specializations for vector types
+GUT_ALIGNED_VECTOR_EIGEN(Vec2f);
+GUT_ALIGNED_VECTOR_EIGEN(Vec3f);
+GUT_ALIGNED_VECTOR_EIGEN(Vec4f);
+GUT_ALIGNED_VECTOR_EIGEN(Mat2f);
+GUT_ALIGNED_VECTOR_EIGEN(Mat3f);
+GUT_ALIGNED_VECTOR_EIGEN(Mat4f);
 
-template <>
-struct VectorType<Vec3f> {
-    static std::vector<Vec3f, Eigen::aligned_allocator<Vec3f>> value;
-};
+GUT_ALIGNED_VECTOR_EIGEN(Vec2d);
+GUT_ALIGNED_VECTOR_EIGEN(Vec3d);
+GUT_ALIGNED_VECTOR_EIGEN(Vec4d);
+GUT_ALIGNED_VECTOR_EIGEN(Mat2d);
+GUT_ALIGNED_VECTOR_EIGEN(Mat3d);
+GUT_ALIGNED_VECTOR_EIGEN(Mat4d);
 
-template <>
-struct VectorType<Vec4f> {
-    static std::vector<Vec4f, Eigen::aligned_allocator<Vec4f>> value;
-};
-
-template <>
-struct VectorType<Mat2f> {
-    static std::vector<Mat2f, Eigen::aligned_allocator<Mat2f>> value;
-};
-
-template <>
-struct VectorType<Mat3f> {
-    static std::vector<Mat3f, Eigen::aligned_allocator<Mat3f>> value;
-};
-
-template <>
-struct VectorType<Mat4f> {
-    static std::vector<Mat4f, Eigen::aligned_allocator<Mat4f>> value;
-};
+GUT_ALIGNED_VECTOR_EIGEN(Vec2i);
+GUT_ALIGNED_VECTOR_EIGEN(Vec3i);
+GUT_ALIGNED_VECTOR_EIGEN(Vec4i);
+GUT_ALIGNED_VECTOR_EIGEN(Mat2i);
+GUT_ALIGNED_VECTOR_EIGEN(Mat3i);
+GUT_ALIGNED_VECTOR_EIGEN(Mat4i);
 
 
 template <typename T>
