@@ -209,7 +209,15 @@ void Image::create(int width, int height)
 void Image::loadFromFile(const std::string& fileName)
 {
     int imgChannels;
-    auto* imgData = stbi_load(fileName.c_str(), &_width, &_height, &imgChannels, 0);
+    void* imgData = nullptr;
+    if (stbi_is_16_bit(fileName.c_str())) {
+        _dataType = DataType::U16;
+        imgData = stbi_load_16(fileName.c_str(), &_width, &_height, &imgChannels, 0);
+    }
+    else {
+        _dataType = DataType::U8;
+        imgData = stbi_load(fileName.c_str(), &_width, &_height, &imgChannels, 0);
+    }
 
     // Check for errors
     if (imgData == nullptr) {
@@ -223,7 +231,6 @@ void Image::loadFromFile(const std::string& fileName)
     }
 
     // Set data type and format
-    _dataType = DataType::U8;
     switch (imgChannels) {
         case 1:
             _dataFormat = DataFormat::GRAY;
@@ -239,10 +246,19 @@ void Image::loadFromFile(const std::string& fileName)
     }
 
     // Copy image data and release resources
-    CREATE_ARRAY_COPY(uint8_t, _data, imgData, _width*_height*imgChannels);
-    _deleter = dataDeleter<uint8_t>;
+    switch (_dataType) {
+        case DataType::U8:
+            CREATE_ARRAY_COPY(uint8_t, _data, imgData, _width * _height * imgChannels);
+            _deleter = dataDeleter<uint8_t>;
+            stbi_image_free((stbi_uc*)imgData);
+            break;
+        case DataType::U16:
+        CREATE_ARRAY_COPY(uint16_t, _data, imgData, _width * _height * imgChannels);
+            _deleter = dataDeleter<uint16_t>;
+            stbi_image_free((stbi_us*)imgData);
+            break;
+    }
 
-    stbi_image_free(imgData);
 }
 
 void Image::writeToFile(const std::string& fileName)
