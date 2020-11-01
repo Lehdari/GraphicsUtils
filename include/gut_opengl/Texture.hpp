@@ -66,6 +66,12 @@ namespace gut {
          */
         void loadFromImage(const Image& image, GLenum target, GLenum channelFormat);
 
+        /** \brief  Update Texture from Image object
+         *  \param  image   Image object to update image file from
+         *  \note   Target and internal format defined in constructor are used
+         */
+        void updateFromImage(const Image& image);
+
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
 
