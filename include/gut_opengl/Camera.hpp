@@ -72,6 +72,11 @@ namespace gut {
          */
         void setWorldToCamera(const Mat4f& worldToCamera);
 
+        /** @brief  Set camera-to-clip matrix (camera intrinsic matrix) manually
+         *  @param  cameraToClip    World-to-camera matrix
+         */
+        void setCameraToClip(const Mat4f& cameraToClip);
+
         /** @brief  Get world-to-camera matrix (camera transformation matrix)
          *  @return World-to-camera matrix
          */
