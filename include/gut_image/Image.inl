@@ -92,8 +92,12 @@ void Image::setPixel(int x, int y, const Image::Pixel<T_Data>& p)
     auto* d = static_cast<T_Data*>(_data);
     uint64_t pos = (y*_width + x)*nChannels(_dataFormat);
     d[pos+_interleave[0]] = p.r;
+    if (_dataFormat == DataFormat::GRAY)
+        return;
     d[pos+_interleave[1]] = p.g;
     d[pos+_interleave[2]] = p.b;
+    if (_dataFormat == DataFormat::RGB)
+        return;
     d[pos+_interleave[3]] = p.a;
 }
 
