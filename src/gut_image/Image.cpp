@@ -123,6 +123,9 @@ Image::Image(Image&& other) noexcept :
 
 Image& Image::operator=(const Image& other)
 {
+    if (_deleter)
+        _deleter(_data);
+
     _dataFormat = other._dataFormat;
     _dataType   = other._dataType;
     _width      = other._width;
@@ -154,6 +157,9 @@ Image& Image::operator=(const Image& other)
 
 Image& Image::operator=(Image&& other) noexcept
 {
+    if (_deleter)
+        _deleter(_data);
+
     _dataFormat = other._dataFormat;
     _dataType   = other._dataType;
     _width      = other._width;
