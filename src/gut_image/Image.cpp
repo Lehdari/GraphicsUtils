@@ -353,3 +353,11 @@ Image::PixelRef Image::operator()(int x, int y)
         p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
     return pRef;
 }
+
+const Image::PixelRef Image::operator()(int x, int y) const
+{
+    uint64_t p = (y*_width + x)*nChannels(_dataFormat);
+    PixelRef pRef(_data, nChannels(_dataFormat),
+        p+_interleave[0], p+_interleave[1], p+_interleave[2], p+_interleave[3]);
+    return pRef;
+}

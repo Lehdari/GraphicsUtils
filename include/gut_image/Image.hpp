@@ -160,6 +160,14 @@ namespace gut {
          */
         PixelRef operator()(int x, int y);
 
+        /** @brief  Access a pixel at location
+         *  @param  x   x-coordinate of the pixel to be accessed
+         *  @param  y   y-coordinate of the pixel to be accessed
+         *  @return Pixel at given location
+         *  @note   This operator does not perform boundary checks to allow for maximum performance
+         */
+        const PixelRef operator()(int x, int y) const;
+
         /** @brief  Set a pixel at location
          *  @param  x   x-coordinate of the pixel to be set
          *  @param  y   y-coordinate of the pixel to be set
