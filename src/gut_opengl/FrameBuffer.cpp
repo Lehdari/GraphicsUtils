@@ -111,6 +111,11 @@ void FrameBuffer::attachTexture(const Texture& texture, GLenum attachment)
     glFramebufferTexture2D(
         GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture._textureId, 0);
 
+    if (attachment == GL_DEPTH_ATTACHMENT ||
+        attachment == GL_STENCIL_ATTACHMENT ||
+        attachment == GL_DEPTH_STENCIL_ATTACHMENT)
+        return;
+
     _attachments.push_back(attachment);
 }
 
