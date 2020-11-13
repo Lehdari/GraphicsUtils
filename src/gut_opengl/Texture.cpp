@@ -90,8 +90,13 @@ void Texture::create(int width, int height, GLenum target, GLenum channelFormat,
     glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    GLenum format = GL_RGBA;
+    if (channelFormat == GL_DEPTH_COMPONENT ||
+        channelFormat == GL_DEPTH_STENCIL)
+        format = channelFormat;
+
     // Transfer data to OpenGL and generate mipmaps
-    glTexImage2D(_target, 0, _channelFormat, _width, _height, 0, GL_RGBA, _dataType, nullptr);
+    glTexImage2D(_target, 0, _channelFormat, _width, _height, 0, format, _dataType, nullptr);
 
     glGenerateMipmap(_target);
 
