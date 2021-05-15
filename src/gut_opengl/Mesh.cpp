@@ -30,10 +30,12 @@ Mesh::Mesh(void) :
     _positionBufferId       (0),
     _normalBufferId         (0),
     _texCoordBufferId       (0),
+    _colorBufferId          (0),
     _elementBufferId        (0),
     _nIndices               (0),
     _usingNormals           (false),
-    _usingTexCoords         (false)
+    _usingTexCoords         (false),
+    _usingColors            (false)
 {}
 
 Mesh::Mesh(Mesh&& other) noexcept :
@@ -41,18 +43,23 @@ Mesh::Mesh(Mesh&& other) noexcept :
     _positionBufferId       (other._positionBufferId),
     _normalBufferId         (other._normalBufferId),
     _texCoordBufferId       (other._texCoordBufferId),
+    _colorBufferId          (other._colorBufferId),
     _elementBufferId        (other._elementBufferId),
     _nIndices               (other._nIndices),
-    _usingNormals           (other._usingNormals)
+    _usingNormals           (other._usingNormals),
+    _usingTexCoords         (other._usingTexCoords),
+    _usingColors            (other._usingColors)
 {
     other._vertexArrayObjectId = 0;
     other._positionBufferId = 0;
     other._normalBufferId = 0;
     other._texCoordBufferId = 0;
+    other._colorBufferId = 0;
     other._elementBufferId = 0;
     other._nIndices = 0;
     other._usingNormals = false;
     other._usingTexCoords = false;
+    other._usingColors = false;
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
@@ -61,18 +68,23 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     _positionBufferId       = other._positionBufferId;
     _normalBufferId         = other._normalBufferId;
     _texCoordBufferId       = other._texCoordBufferId;
+    _colorBufferId          = other._colorBufferId;
     _elementBufferId        = other._elementBufferId;
     _nIndices               = other._nIndices;
     _usingNormals           = other._usingNormals;
+    _usingTexCoords         = other._usingTexCoords;
+    _usingColors            = other._usingColors;
 
     other._vertexArrayObjectId = 0;
     other._positionBufferId = 0;
     other._normalBufferId = 0;
     other._texCoordBufferId = 0;
+    other._colorBufferId = 0;
     other._elementBufferId = 0;
     other._nIndices = 0;
     other._usingNormals = false;
     other._usingTexCoords = false;
+    other._usingColors = false;
 
     return *this;
 }
@@ -119,6 +131,16 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
         usingTexCoords = true;
     }
 
+    auto* colorContainer = vertexData.accessData("color");
+    bool usingColors = false;
+    if (colorContainer != nullptr) {
+        if (colorContainer->type != VertexData::DataType::VEC3F) {
+            fprintf(stderr, "ERROR: Invalid data type for color data\n"); // TODO logging
+            return;
+        }
+        usingColors = true;
+    }
+
     auto& indices = vertexData.getIndices();
     auto& positions = *static_cast<Vector<Vec3f>*>(positionContainer->v);
     Vector<Vec3f>* normals = nullptr;
@@ -127,6 +149,9 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     Vector<Vec2f>* texCoords = nullptr;
     if (usingTexCoords)
         texCoords = static_cast<Vector<Vec2f>*>(texCoordContainer->v);
+    Vector<Vec3f>* colors = nullptr;
+    if (usingColors)
+        colors = static_cast<Vector<Vec3f>*>(colorContainer->v);
 
     // release the used resources
     reset();
@@ -134,6 +159,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     _nIndices = indices.size();
     _usingNormals = usingNormals;
     _usingTexCoords = usingTexCoords;
+    _usingColors = usingColors;
 
     //  create and bind the VAO
     glGenVertexArrays(1, &_vertexArrayObjectId);
@@ -160,6 +186,14 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
         glBufferData(GL_ARRAY_BUFFER, texCoords->size() * sizeof(Vec2f), texCoords->data(), GL_STATIC_DRAW);
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+    }
+
+    if (_usingColors) {
+        glGenBuffers(1, &_colorBufferId);
+        glBindBuffer(GL_ARRAY_BUFFER, _colorBufferId);
+        glBufferData(GL_ARRAY_BUFFER, colors->size() * sizeof(Vec3f), colors->data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
     }
 
     glGenBuffers(1, &_elementBufferId);

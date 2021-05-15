@@ -50,11 +50,13 @@ namespace gut {
         GLuint      _positionBufferId;
         GLuint      _normalBufferId;
         GLuint      _texCoordBufferId;
+        GLuint      _colorBufferId;
         GLuint      _elementBufferId;
 
         uint64_t    _nIndices;
         bool        _usingNormals;
         bool        _usingTexCoords;
+        bool        _usingColors;
 
         // Function for releasing the OpenGL handles
         void reset();
