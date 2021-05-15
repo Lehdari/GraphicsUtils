@@ -173,7 +173,8 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
 void Mesh::render(
     Shader& shader,
     const Camera& camera,
-    const Mat4f& orientation) const
+    const Mat4f& orientation,
+    GLenum mode) const
 {
     shader.use();
     shader.setUniform("objectToWorld", orientation);
@@ -183,17 +184,17 @@ void Mesh::render(
 
     glBindVertexArray(_vertexArrayObjectId);
 
-    glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
+    glDrawElements(mode, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
 
     glBindVertexArray(0);
 }
 
-void Mesh::render(Shader& shader) const
+void Mesh::render(Shader& shader, GLenum mode) const
 {
     shader.use();
 
     glBindVertexArray(_vertexArrayObjectId);
-    glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
+    glDrawElements(mode, _nIndices, GL_UNSIGNED_INT, (GLvoid*)0);
     glBindVertexArray(0);
 }
 

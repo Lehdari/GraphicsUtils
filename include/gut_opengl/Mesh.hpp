@@ -39,10 +39,11 @@ namespace gut {
         // Render the mesh
         void render(Shader& shader,
                     const Camera& camera,
-                    const Mat4f& orientation = Mat4f::Identity()) const;
+                    const Mat4f& orientation = Mat4f::Identity(),
+                    GLenum mode = GL_TRIANGLES) const;
 
         // Render the mesh without camera or orientation
-        void render(Shader& shader) const;
+        void render(Shader& shader, GLenum mode = GL_TRIANGLES) const;
 
     private:
         GLuint      _vertexArrayObjectId;
