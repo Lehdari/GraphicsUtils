@@ -193,6 +193,24 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFor
 
     // Transfer data to OpenGL and generate mipmaps
     switch (image.dataFormat()) {
+        case Image::DataFormat::GRAY:
+            switch (image.dataType()) {
+                case Image::DataType::U8:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<uint8_t>());
+                    break;
+                case Image::DataType::U16:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<uint16_t>());
+                    break;
+                case Image::DataType::F32:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<float>());
+                    break;
+                default:
+                    throw std::runtime_error("ERROR: Texture::loadFromImage(): Invalid image data type");
+            }
+            break;
         case Image::DataFormat::RGB:
             switch (image.dataType()) {
                 case Image::DataType::U8:
@@ -253,13 +271,31 @@ void Texture::updateFromImage(const Image& image)
             _dataType = GL_FLOAT;
             break;
         default:
-            throw std::runtime_error("ERROR: Texture::loadFromImage(): Invalid image data type");
+            throw std::runtime_error("ERROR: Texture::updateFromImage(): Invalid image data type");
     }
 
     glBindTexture(_target, _textureId);
 
     // Transfer data to OpenGL and generate mipmaps
     switch (image.dataFormat()) {
+        case Image::DataFormat::GRAY:
+            switch (image.dataType()) {
+                case Image::DataType::U8:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<uint8_t>());
+                    break;
+                case Image::DataType::U16:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<uint16_t>());
+                    break;
+                case Image::DataType::F32:
+                    glTexImage2D(_target, 0, _channelFormat, _width, _height,
+                        0, GL_RED, _dataType, image.data<float>());
+                    break;
+                default:
+                    throw std::runtime_error("ERROR: Texture::updateFromImage(): Invalid image data type");
+            }
+            break;
         case Image::DataFormat::RGB:
             switch (image.dataType()) {
                 case Image::DataType::U8:
@@ -275,7 +311,7 @@ void Texture::updateFromImage(const Image& image)
                         0, GL_RGB, _dataType, image.data<float>());
                     break;
                 default:
-                    throw std::runtime_error("ERROR: Texture::loadFromImage(): Invalid image data type");
+                    throw std::runtime_error("ERROR: Texture::updateFromImage(): Invalid image data type");
             }
             break;
         case Image::DataFormat::RGBA:
@@ -293,7 +329,7 @@ void Texture::updateFromImage(const Image& image)
                         0, GL_RGBA, _dataType, image.data<float>());
                     break;
                 default:
-                    throw std::runtime_error("ERROR: Texture::loadFromImage(): Invalid image data type");
+                    throw std::runtime_error("ERROR: Texture::updateFromImage(): Invalid image data type");
             }
             break;
         default:
