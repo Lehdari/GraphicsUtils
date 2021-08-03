@@ -118,8 +118,8 @@ void Image::setPixel(int x, int y, const Image::Pixel<T_Data>& p)
 template <typename T_Data>
 T_Data* Image::data()
 {
-    // Check for data type
-    assert(_dataType == dataTypeEnum<T_Data>());
+    // Check for data type (void allowed for raw access, needed in GL calls etc.)
+    assert(_dataType == dataTypeEnum<T_Data>() || (std::is_same<T_Data, void>::value));
 
     return static_cast<T_Data*>(_data);
 }
@@ -127,8 +127,8 @@ T_Data* Image::data()
 template <typename T_Data>
 const T_Data* Image::data() const noexcept
 {
-    // Check for data type
-    assert(_dataType == dataTypeEnum<T_Data>());
+    // Check for data type (void allowed for raw access, needed in GL calls etc.)
+    assert(_dataType == dataTypeEnum<T_Data>() || (std::is_same<T_Data, void>::value));
 
     return static_cast<T_Data*>(_data);
 }
