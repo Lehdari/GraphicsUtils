@@ -46,6 +46,12 @@ namespace gut {
         template <typename T_Data>
         inline constexpr static DataType dataTypeEnum();
 
+        /** @brief  Get size of a image data type in bytes
+         *  @param  dataType    Data type to get the size for
+         *  @return Image data type size in bytes
+         */
+        inline static size_t dataTypeSize(Image::DataType dataType);
+
         struct PixelRef;
 
         /** @brief  Pixel struct to be used to modify image data

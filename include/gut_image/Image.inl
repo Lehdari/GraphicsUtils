@@ -44,6 +44,20 @@ constexpr Image::DataType Image::dataTypeEnum<float>()
     return DataType::F32;
 }
 
+size_t Image::dataTypeSize(Image::DataType dataType)
+{
+    switch (dataType) {
+        case Image::DataType::U8:
+            return sizeof(uint8_t);
+        case Image::DataType::U16:
+            return sizeof(uint16_t);
+        case Image::DataType::F32:
+            return sizeof(float);
+        default:
+            return 0;
+    }
+}
+
 
 // Pixel and PixelRef template member functions
 template<typename T_Data>
