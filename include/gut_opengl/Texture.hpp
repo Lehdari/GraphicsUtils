@@ -72,6 +72,12 @@ namespace gut {
          */
         void updateFromImage(const Image& image);
 
+        /** \brief  Read the texture from the GPU and copy it to an image
+         *  \param  image   Target Image object
+         *  \param  level   Level of texture to copy
+         */
+        void copyToImage(Image& image, GLint level = 0) const;
+
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
 

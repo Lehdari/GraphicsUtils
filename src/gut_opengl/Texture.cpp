@@ -10,6 +10,7 @@
 
 #include "Texture.hpp"
 #include <gut_image/Image.hpp>
+#include <gut_opengl/GLTypeUtils.hpp>
 #include <stdexcept>
 
 
@@ -338,6 +339,23 @@ void Texture::updateFromImage(const Image& image)
     glGenerateMipmap(_target);
 
     glBindTexture(_target, 0);
+}
+
+void Texture::copyToImage(Image& image, GLint level) const
+{
+    glBindTexture(_target, _textureId);
+
+    // copy dimensions, depending on the mipmap level
+    int wCopy = _width >> level;
+    int hCopy = _height >> level;
+
+    image.create(wCopy, hCopy);
+
+    glGetnTexImage(_target, level,
+        imageDataFormatToGLEnum(image.dataFormat()),
+        imageDataTypeToGLEnum(image.dataType()),
+        wCopy*hCopy*Image::nChannels(image.dataFormat())*Image::dataTypeSize(image.dataType()),
+        image.data<void>());
 }
 
 void Texture::setFiltering(GLenum minFilter, GLenum magFilter)
