@@ -184,11 +184,21 @@ Image::~Image()
 
 void Image::create(int width, int height)
 {
+    // do nothing in case width or height has not changed
+    if (width == _width && height == _height)
+        return;
+
+    // check for invalid dimensions
     if (width < 0 || height < 0) {
         fprintf(stderr, "Failed to create image: Invalid dimensions\n"); // TODO logging
         return;
     }
 
+    // free previous data
+    if (_deleter)
+        _deleter(_data);
+
+    // data size
     uint64_t s = width*height*nChannels(_dataFormat);
 
     switch (_dataType) {

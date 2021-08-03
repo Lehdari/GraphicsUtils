@@ -116,9 +116,10 @@ namespace gut {
         Image& operator=(Image&& other) noexcept;
         ~Image();
 
-        /** @brief Create an empty image
-         *  @param width    Width of the image
-         *  @param height   Height of the image
+        /** @brief  Create an empty image
+         *  @param  width    Width of the image
+         *  @param  height   Height of the image
+         *  @note   If dimensions remain unchanged, no operation is performed. (Data is left intact)
          */
         void create(int width, int height);
 
