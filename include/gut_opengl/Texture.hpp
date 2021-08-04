@@ -24,10 +24,10 @@ namespace gut {
 
     class Texture {
     public:
-        /** \brief  Construct a Texture object
-         *  \param  target          Texture target (type)
-         *  \param  channelFormat   Internal color channel format
-         *  \param  dataType        Internal data type
+        /** @brief  Construct a Texture object
+         *  @param  target          Texture target (type)
+         *  @param  channelFormat   Internal color channel format
+         *  @param  dataType        Internal data type
          */
         Texture(
             GLenum target = GL_TEXTURE_2D,
@@ -53,28 +53,28 @@ namespace gut {
         void loadFromFile(const std::string& fileName);
         void loadFromFile(const std::string& fileName, GLenum target, GLenum channelFormat);
 
-        /** \brief  Load Texture from Image object
-         *  \param  image   Image object to load image file from
-         *  \note   Target and internal format defined in constructor are used
+        /** @brief  Load Texture from Image object
+         *  @param  image   Image object to load image file from
+         *  @note   Target and internal format defined in constructor are used
          */
         void loadFromImage(const Image& image);
 
-        /** \brief  Load Texture from Image object and set target and internal format
-         *  \param  image           Image object to load image file from
-         *  \param  target          Texture target (type)
-         *  \param  channelFormat   Internal color channel format
+        /** @brief  Load Texture from Image object and set target and internal format
+         *  @param  image           Image object to load image file from
+         *  @param  target          Texture target (type)
+         *  @param  channelFormat   Internal color channel format
          */
         void loadFromImage(const Image& image, GLenum target, GLenum channelFormat);
 
-        /** \brief  Update Texture from Image object
-         *  \param  image   Image object to update image file from
-         *  \note   Target and internal format defined in constructor are used
+        /** @brief  Update Texture from Image object
+         *  @param  image   Image object to update image file from
+         *  @note   Target and internal format defined in constructor are used
          */
         void updateFromImage(const Image& image);
 
-        /** \brief  Read the texture from the GPU and copy it to an image
-         *  \param  image   Target Image object
-         *  \param  level   Level of texture to copy
+        /** @brief  Read the texture from the GPU and copy it to an image
+         *  @param  image   Target Image object
+         *  @param  level   Level of texture to copy
          */
         void copyToImage(Image& image, GLint level = 0) const;
 
