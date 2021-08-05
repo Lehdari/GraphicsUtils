@@ -174,6 +174,15 @@ void Texture::loadFromFile(const std::string& fileName)
     loadFromFile(fileName, _target, _channelFormat);
 }
 
+void Texture::loadFromFile(const std::string& fileName, GLenum dataType)
+{
+    Image img;
+    img.loadFromFile(fileName);
+    _dataType = dataType;
+    img.convertDataType(glEnumToImageDataType(_dataType));
+    loadFromImage(img, _target, _channelFormat);
+}
+
 void Texture::loadFromFile(const std::string& fileName, GLenum target, GLenum channelFormat)
 {
     Image img;

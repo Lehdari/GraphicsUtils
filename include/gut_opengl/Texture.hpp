@@ -70,6 +70,7 @@ namespace gut {
 
         // Load texture from an image file
         void loadFromFile(const std::string& fileName);
+        void loadFromFile(const std::string& fileName, GLenum dataType);
         void loadFromFile(const std::string& fileName, GLenum target, GLenum channelFormat);
 
         /** @brief  Load Texture from Image object
