@@ -39,6 +39,12 @@ namespace gut {
      */
     GLenum imageDataTypeToGLEnum(Image::DataType dataType);
 
+    /** @brief  Get corresponding image data type for a OpenGL enumeration
+     *  @param  dataType    OpenGL enumeration to get the corresponding data type for
+     *  @return Image data type corresponding to the OpenGL enumeration
+     */
+    Image::DataType glEnumToImageDataType(GLenum dataType);
+
 
     #include "GLTypeUtils.inl"
 

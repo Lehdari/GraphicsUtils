@@ -43,3 +43,18 @@ GLenum gut::imageDataTypeToGLEnum(Image::DataType dataType)
     // should never be reached, maybe new data types were added?
     throw std::runtime_error("ERROR: imageDataTypeToGLEnum(): image data type to GLEnum conversion failed");
 }
+
+Image::DataType gut::glEnumToImageDataType(GLenum dataType)
+{
+    switch (dataType) {
+        case GL_UNSIGNED_BYTE:
+            return Image::DataType::U8;
+        case GL_UNSIGNED_SHORT:
+            return Image::DataType::U16;
+        case GL_FLOAT:
+            return Image::DataType::F32;
+    }
+
+    // should never be reached, maybe new data types were added?
+    throw std::runtime_error("ERROR: glEnumToImageDataType(): GLEnum conversion to image data type failed");
+}
