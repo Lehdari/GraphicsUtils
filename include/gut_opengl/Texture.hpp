@@ -40,12 +40,31 @@ namespace gut {
         Texture& operator=(const Texture& other) = delete;
         Texture& operator=(Texture&& other) noexcept;
 
-        // Create empty 2D texture
-        void create(int width, int height);
+        /** @brief  Create an empty texture with the current channel format and data type
+         *  @param  width   Desired width of the texture
+         *  @param  height  Desired height of the texture
+         *  @param  depth   Desired depth of the texture (0 in case of a 2D texture)
+         */
+        void create(int width, int height, int depth = 0);
+
+        /** @brief  Create an empty 2D texture
+         *  @param  width           Desired width of the texture
+         *  @param  height          Desired height of the texture
+         *  @param  target          OpenGL texture target
+         *  @param  channelFormat   Internal color channel format
+         *  @param  dataType        Internal data type
+         */
         void create(int width, int height,
             GLenum target, GLenum channelFormat, GLenum dataType);
-        // Create empty 3D texture
-        void create(int width, int height, int depth);
+
+        /** @brief  Create an empty 3D texture
+         *  @param  width           Desired width of the texture
+         *  @param  height          Desired height of the texture
+         *  @param  depth           Desired depth of the texture
+         *  @param  target          OpenGL texture target
+         *  @param  channelFormat   Internal color channel format
+         *  @param  dataType        Internal data type
+         */
         void create(int width, int height, int depth,
             GLenum target, GLenum channelFormat, GLenum dataType);
 
@@ -78,6 +97,15 @@ namespace gut {
          */
         void copyToImage(Image& image, GLint level = 0) const;
 
+        /** @brief  Enable double buffering on the texture. Useful when the texture is being
+         *          modified by for example, compute shaders
+         */
+        void enableDoubleBuffering();
+
+        /** @brief  Generate mipmaps
+         */
+        void generateMipMaps();
+
         // Set filtering
         void setFiltering(GLenum minFilter, GLenum magFilter);
 
@@ -87,30 +115,40 @@ namespace gut {
         // Bind texture to texture unit
         void bind(GLenum textureUnit = GL_TEXTURE0) const;
 
+        /** @brief  Swap buffers (in case the texture is double buffered)
+         */
+        void swap();
+
         // Bind texture to image unit
-        void bindImage(GLuint unit, GLint level = 0, GLenum access = GL_WRITE_ONLY) const;
+        void bindImage(GLuint unit, GLint level = 0, GLenum access = GL_WRITE_ONLY,
+            bool active = true) const;
 
         // Get dimensions
         int width() const;
         int height() const;
         int depth() const;
 
-        // Get texture ID
+        /** @brief  Get texture ID
+         *  @return OpenGL ID of the texture
+         *  @note   When the texture is double buffered, id of the active texture is returned
+         */
         GLuint id() const noexcept;
 
         friend class FrameBuffer;
 
     private:
-        GLuint  _textureId;
+        int     _activeId; // index in _textureIds array, required when double buffering
+        GLuint  _textureIds[2];
         GLenum  _target;
         GLenum  _channelFormat;
         GLenum  _dataType;
         int     _width;
         int     _height;
         int     _depth;
+        bool    _doubleBuffered;
 
         // Release OpenGL handles and reset Texture state
-        void reset(void);
+        void reset(int id = -1);
     };
 
 } // namespace gut

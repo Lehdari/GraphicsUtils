@@ -18,13 +18,15 @@ using namespace gut;
 
 
 Texture::Texture(GLenum target, GLenum channelFormat, GLenum dataType) :
-    _textureId      (0),
-    _target         (target),
-    _channelFormat  (channelFormat),
-    _dataType       (dataType),
-    _width          (0),
-    _height         (0),
-    _depth          (0)
+    _activeId           (0), // always point to first texture id in case double buffering is disabled
+    _textureIds         {0, 0},
+    _target             (target),
+    _channelFormat      (channelFormat),
+    _dataType           (dataType),
+    _width              (0),
+    _height             (0),
+    _depth              (0),
+    _doubleBuffered     (false)
 {
 }
 
@@ -34,40 +36,54 @@ Texture::~Texture(void)
 }
 
 Texture::Texture(Texture&& other) noexcept :
-    _textureId      (other._textureId),
+    _activeId       (other._activeId),
+    _textureIds     {other._textureIds[0], other._textureIds[1]},
     _target         (other._target),
     _channelFormat  (other._channelFormat),
     _dataType       (other._dataType),
     _width          (other._width),
     _height         (other._height),
-    _depth          (other._depth)
+    _depth          (other._depth),
+    _doubleBuffered (other._doubleBuffered)
 {
-    other._textureId = 0;
+    other._activeId = 0;
+    other._textureIds[0] = 0;
+    other._textureIds[1] = 0;
     other._width = 0;
     other._height = 0;
     other._depth = 0;
+    other._doubleBuffered = false;
 }
 
 Texture& Texture::operator=(Texture&& other) noexcept
 {
-    _textureId = other._textureId;
+    _activeId = other._activeId;
+    _textureIds[0] = other._textureIds[0];
+    _textureIds[1] = other._textureIds[1];
     _target = other._target;
     _channelFormat = other._channelFormat;
     _dataType = other._dataType;
     _width = other._width;
     _height = other._height;
     _depth = other._depth;
-    other._textureId = 0;
+    _doubleBuffered = other._doubleBuffered;
+    other._activeId = 0;
+    other._textureIds[0] = 0;
+    other._textureIds[1] = 0;
     other._width = 0;
     other._height = 0;
     other._depth = 0;
-
+    other._doubleBuffered = false;
+    
     return *this;
 }
 
-void Texture::create(int width, int height)
+void Texture::create(int width, int height, int depth)
 {
-    create(width, height, _target, _channelFormat, _dataType);
+    if (depth == 0)
+        create(width, height, _target, _channelFormat, _dataType);
+    else
+        create(width, height, depth, _target, _channelFormat, _dataType);
 }
 
 void Texture::create(int width, int height, GLenum target, GLenum channelFormat, GLenum dataType)
@@ -78,12 +94,12 @@ void Texture::create(int width, int height, GLenum target, GLenum channelFormat,
     _channelFormat = channelFormat;
     _dataType = dataType;
 
-    // Release the used resources
-    reset();
+    // Release the used resources (both in case double buffering is in use)
+    reset(_doubleBuffered ? -1 : _activeId);
 
     // Generate new texture
-    glGenTextures(1, &_textureId);
-    glBindTexture(_target, _textureId);
+    glGenTextures(1, &_textureIds[_activeId]);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Set filtering and wrapping
     glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -102,11 +118,15 @@ void Texture::create(int width, int height, GLenum target, GLenum channelFormat,
     glGenerateMipmap(_target);
 
     glBindTexture(_target, 0);
-}
 
-void Texture::create(int width, int height, int depth)
-{
-    create(width, height, depth, _target, _channelFormat, _dataType);
+    // Initialize the other texture also in case double buffering is used
+    if (_doubleBuffered) {
+        _doubleBuffered = false;
+        _activeId ^= 1;
+        create(_width, _height, _depth);
+        _doubleBuffered = true;
+        _activeId ^= 1;
+    }
 }
 
 void Texture::create(int width, int height, int depth,
@@ -119,12 +139,12 @@ void Texture::create(int width, int height, int depth,
     _channelFormat = channelFormat;
     _dataType = dataType;
 
-    // Release the used resources
-    reset();
+    // Release the used resources (both in case double buffering is in use)
+    reset(_doubleBuffered ? -1 : _activeId);
 
     // Generate new texture
-    glGenTextures(1, &_textureId);
-    glBindTexture(_target, _textureId);
+    glGenTextures(1, &_textureIds[_activeId]);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Set filtering and wrapping
     glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -138,6 +158,15 @@ void Texture::create(int width, int height, int depth,
     glGenerateMipmap(_target);
 
     glBindTexture(_target, 0);
+
+    // Initialize the other texture also in case double buffering is used
+    if (_doubleBuffered) {
+        _doubleBuffered = false;
+        _activeId ^= 1;
+        create(_width, _height, _depth);
+        _doubleBuffered = true;
+        _activeId ^= 1;
+    }
 }
 
 void Texture::loadFromFile(const std::string& fileName)
@@ -161,6 +190,7 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFor
 {
     _width = image.width();
     _height = image.height();
+    _depth = 0;
 
     _target = target;
     _channelFormat = channelFormat;
@@ -179,12 +209,12 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFor
             throw std::runtime_error("ERROR: Texture::loadFromImage(): Invalid image data type");
     }
 
-    // Release the used resources
-    reset();
+    // Release the used resources (both in case double buffering is in use)
+    reset(_doubleBuffered ? -1 : _activeId);
 
     // Generate new texture
-    glGenTextures(1, &_textureId);
-    glBindTexture(_target, _textureId);
+    glGenTextures(1, &_textureIds[_activeId]);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Set filtering and wrapping
     glTexParameteri(_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -254,6 +284,15 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFor
     glGenerateMipmap(_target);
 
     glBindTexture(_target, 0);
+
+    // Initialize the other texture also in case double buffering is used
+    if (_doubleBuffered) {
+        _doubleBuffered = false;
+        _activeId ^= 1;
+        create(_width, _height, _depth);
+        _doubleBuffered = true;
+        _activeId ^= 1;
+    }
 }
 
 void Texture::updateFromImage(const Image& image)
@@ -275,7 +314,7 @@ void Texture::updateFromImage(const Image& image)
             throw std::runtime_error("ERROR: Texture::updateFromImage(): Invalid image data type");
     }
 
-    glBindTexture(_target, _textureId);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Transfer data to OpenGL and generate mipmaps
     switch (image.dataFormat()) {
@@ -343,7 +382,7 @@ void Texture::updateFromImage(const Image& image)
 
 void Texture::copyToImage(Image& image, GLint level) const
 {
-    glBindTexture(_target, _textureId);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // copy dimensions, depending on the mipmap level
     int wCopy = _width >> level;
@@ -358,36 +397,82 @@ void Texture::copyToImage(Image& image, GLint level) const
         image.data<void>());
 }
 
+void Texture::enableDoubleBuffering()
+{
+    if (_doubleBuffered)
+        return;
+
+    _activeId ^= 1;
+    create(_width, _height, _depth);
+    _activeId ^= 1;
+
+    _doubleBuffered = true;
+}
+
+void Texture::generateMipMaps()
+{
+    glBindTexture(_target, _textureIds[_activeId]);
+    glGenerateMipmap(_target);
+}
+
 void Texture::setFiltering(GLenum minFilter, GLenum magFilter)
 {
-    glBindTexture(_target, _textureId);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Set filtering
     glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, minFilter);
     glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, magFilter);
+
+    if (_doubleBuffered) {
+        glBindTexture(_target, _textureIds[_activeId^1]);
+
+        // Set filtering
+        glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, minFilter);
+        glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, magFilter);
+    }
 }
 
 void Texture::setWrapping(GLenum sWrap, GLenum tWrap)
 {
-    glBindTexture(_target, _textureId);
+    glBindTexture(_target, _textureIds[_activeId]);
 
     // Set filtering
     glTexParameteri(_target, GL_TEXTURE_WRAP_S, sWrap);
     glTexParameteri(_target, GL_TEXTURE_WRAP_T, tWrap);
+
+    if (_doubleBuffered) {
+        glBindTexture(_target, _textureIds[_activeId^1]);
+
+        // Set filtering
+        glTexParameteri(_target, GL_TEXTURE_WRAP_S, sWrap);
+        glTexParameteri(_target, GL_TEXTURE_WRAP_T, tWrap);
+    }
 }
 
 void Texture::bind(GLenum textureUnit) const
 {
     glActiveTexture(textureUnit);
-    glBindTexture(_target, _textureId);
+    glBindTexture(_target, _textureIds[_activeId]);
 }
 
-void Texture::bindImage(GLuint unit, GLint level, GLenum access) const
+void Texture::swap()
 {
-    if (_depth > 0)
-        glBindImageTexture(unit, _textureId, level, GL_TRUE, 0, access, _channelFormat);
-    else
-        glBindImageTexture(unit, _textureId, level, GL_FALSE, 0, access, _channelFormat);
+    if (!_doubleBuffered)
+        throw std::runtime_error("Trying to swap texture with no double buffering");
+
+    _activeId ^= 1;
+}
+
+void Texture::bindImage(GLuint unit, GLint level, GLenum access, bool active) const
+{
+    if (_depth > 0) {
+        glBindImageTexture(unit, _textureIds[active ? _activeId : _activeId^1],
+            level, GL_TRUE, 0, access, _channelFormat);
+    }
+    else {
+        glBindImageTexture(unit, _textureIds[active ? _activeId : _activeId^1],
+            level, GL_FALSE, 0, access, _channelFormat);
+    }
 }
 
 int Texture::width() const
@@ -407,11 +492,19 @@ int Texture::depth() const
 
 GLuint Texture::id() const noexcept
 {
-    return _textureId;
+    return _textureIds[_activeId];
 }
 
-void Texture::reset(void)
+void Texture::reset(int id)
 {
-    if (_textureId != 0)
-        glDeleteTextures(1, &_textureId);
+    if (id < 0) {
+        if (_textureIds[0] != 0)
+            glDeleteTextures(1, &_textureIds[0]);
+        if (_textureIds[1] != 0)
+            glDeleteTextures(1, &_textureIds[1]);
+    }
+    else {
+        if (_textureIds[id] != 0)
+            glDeleteTextures(1, &_textureIds[id]);
+    }
 }
