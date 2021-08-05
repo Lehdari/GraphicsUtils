@@ -9,6 +9,7 @@
 //
 
 #include "Image.hpp"
+#include <stdexcept>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -21,8 +22,60 @@
     DST = new TYPE[SIZE]; \
     memcpy(static_cast<TYPE*>(DST), static_cast<TYPE*>(SRC), (SIZE)*sizeof(TYPE));
 
+#define CREATE_ARRAY_COPY_CONVERT(DST_TYPE, DST, SRC_TYPE, SRC, SIZE)                       \
+    DST = new DST_TYPE[SIZE];                                                               \
+    for (int i=0; i<SIZE; ++i) {                                                            \
+        convertPixelValue<SRC_TYPE, DST_TYPE>(                                              \
+        (static_cast<SRC_TYPE*>(SRC))[i], (static_cast<DST_TYPE*>(DST))[i]);                \
+    }
+
 
 using namespace gut;
+
+
+namespace {
+
+    template <typename T_Src, typename T_Dest>
+    inline __attribute__((always_inline)) void convertPixelValue(T_Src& src, T_Dest& dest) {
+        throw std::runtime_error("Could not convert pixel value, unknown type");
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, uint8_t& dest) {
+        dest = src;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, uint16_t& dest) {
+        dest = src;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(float& src, float& dest) {
+        dest = src;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, uint16_t& dest) {
+        dest = ((uint16_t)src) << 8;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, float& dest) {
+        dest = (float)src*0.0039215686f;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, uint8_t& dest) {
+        dest = src >> 8;
+    }
+
+    template <>
+    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, float& dest) {
+        dest = (float)src*0.000015259021893f;
+    }
+
+};
 
 
 // Pixel and PixelRef member functions
@@ -139,13 +192,13 @@ Image& Image::operator=(const Image& other)
     if (other._data != nullptr) {
         switch (_dataType) {
             case DataType::U8:
-            CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
+                CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
                 break;
             case DataType::U16:
-            CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
+                CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
                 break;
             case DataType::F32:
-            CREATE_ARRAY_COPY(float, _data, other._data, s)
+                CREATE_ARRAY_COPY(float, _data, other._data, s)
                 break;
             default:
                 return *this;
@@ -269,7 +322,7 @@ void Image::loadFromFile(const std::string& fileName)
             stbi_image_free((stbi_uc*)imgData);
             break;
         case DataType::U16:
-        CREATE_ARRAY_COPY(uint16_t, _data, imgData, _width * _height * imgChannels);
+            CREATE_ARRAY_COPY(uint16_t, _data, imgData, _width * _height * imgChannels);
             _deleter = dataDeleter<uint16_t>;
             stbi_image_free((stbi_us*)imgData);
             break;
@@ -340,6 +393,69 @@ void Image::writeToFile(const std::string& fileName)
                 return;
         }
     }
+}
+
+void Image::convertDataType(Image::DataType dataType)
+{
+    if (_data == nullptr)
+        return;
+
+    void* newData;
+    int s = _width*_height* nChannels(_dataFormat);
+    switch (dataType) {
+        case DataType::U8:
+            switch (_dataType) {
+                case DataType::U8:
+                    return;
+                case DataType::U16:
+                    CREATE_ARRAY_COPY_CONVERT(uint8_t, newData, uint16_t, _data, s)
+                    break;
+                case DataType::F32:
+                    CREATE_ARRAY_COPY_CONVERT(uint8_t, newData, float, _data, s)
+                    break;
+                default:
+                    return;
+            }
+            _deleter(_data);
+            _deleter = dataDeleter<uint8_t>;
+            break;
+        case DataType::U16:
+            switch (_dataType) {
+                case DataType::U8:
+                    CREATE_ARRAY_COPY_CONVERT(uint16_t, newData, uint8_t, _data, s)
+                    break;
+                case DataType::U16:
+                    return;
+                case DataType::F32:
+                    CREATE_ARRAY_COPY_CONVERT(uint16_t, newData, float, _data, s)
+                    break;
+                default:
+                    return;
+            }
+            _deleter(_data);
+            _deleter = dataDeleter<uint16_t>;
+            break;
+        case DataType::F32:
+            switch (_dataType) {
+                case DataType::U8:
+                    CREATE_ARRAY_COPY_CONVERT(float, newData, uint8_t, _data, s)
+                    break;
+                case DataType::U16:
+                    CREATE_ARRAY_COPY_CONVERT(float, newData, uint16_t, _data, s)
+                    break;
+                case DataType::F32:
+                    return;
+                default:
+                    return;
+            }
+            _deleter(_data);
+            _deleter = dataDeleter<float>;
+            break;
+        default:
+            return;
+    }
+    _data = newData;
+    _dataType = dataType;
 }
 
 Image::DataFormat Image::dataFormat() const noexcept

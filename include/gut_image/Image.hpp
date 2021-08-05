@@ -140,6 +140,10 @@ namespace gut {
          */
         void writeToFile(const std::string& fileName);
 
+        /** @brief  Convert image to a new data type
+         */
+        void convertDataType(Image::DataType dataType);
+
         /** @brief  Get pixel data format of the image
          *  @return Pixel data format of the image
          */
