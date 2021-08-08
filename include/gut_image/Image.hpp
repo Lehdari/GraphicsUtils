@@ -205,6 +205,8 @@ namespace gut {
         template <typename T_Data>
         const T_Data* data() const noexcept;
 
+        friend class Texture;
+
     private:
         DataFormat  _dataFormat;
         DataType    _dataType;
