@@ -145,12 +145,15 @@ Image::Image(const Image& other) :
         switch (_dataType) {
             case DataType::U8:
                 CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<uint8_t>;
                 break;
             case DataType::U16:
                 CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<uint16_t>;
                 break;
             case DataType::F32:
                 CREATE_ARRAY_COPY(float, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<float>;
                 break;
             default:
                 return;
@@ -193,12 +196,15 @@ Image& Image::operator=(const Image& other)
         switch (_dataType) {
             case DataType::U8:
                 CREATE_ARRAY_COPY(uint8_t, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<uint8_t>;
                 break;
             case DataType::U16:
                 CREATE_ARRAY_COPY(uint16_t, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<uint16_t>;
                 break;
             case DataType::F32:
                 CREATE_ARRAY_COPY(float, _data, other._data, s)
+                if (_deleter == nullptr) _deleter = dataDeleter<float>;
                 break;
             default:
                 return *this;
