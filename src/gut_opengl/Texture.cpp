@@ -26,7 +26,8 @@ Texture::Texture(GLenum target, GLenum channelFormat, GLenum dataType) :
     _width              (0),
     _height             (0),
     _depth              (0),
-    _doubleBuffered     (false)
+    _doubleBuffered     (false),
+    _pboId              (0)
 {
 }
 
@@ -44,7 +45,8 @@ Texture::Texture(Texture&& other) noexcept :
     _width          (other._width),
     _height         (other._height),
     _depth          (other._depth),
-    _doubleBuffered (other._doubleBuffered)
+    _doubleBuffered (other._doubleBuffered),
+    _pboId          (other._pboId)
 {
     other._activeId = 0;
     other._textureIds[0] = 0;
@@ -53,6 +55,7 @@ Texture::Texture(Texture&& other) noexcept :
     other._height = 0;
     other._depth = 0;
     other._doubleBuffered = false;
+    other._pboId = 0;
 }
 
 Texture& Texture::operator=(Texture&& other) noexcept
@@ -67,6 +70,8 @@ Texture& Texture::operator=(Texture&& other) noexcept
     _height = other._height;
     _depth = other._depth;
     _doubleBuffered = other._doubleBuffered;
+    _pboId = other._pboId;
+
     other._activeId = 0;
     other._textureIds[0] = 0;
     other._textureIds[1] = 0;
@@ -74,6 +79,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
     other._height = 0;
     other._depth = 0;
     other._doubleBuffered = false;
+    other._pboId = 0;
     
     return *this;
 }
@@ -406,6 +412,53 @@ void Texture::copyToImage(Image& image, GLint level) const
         image.data<void>());
 }
 
+const gut::Image& Texture::mapToImage()
+{
+    glBindTexture(_target, _textureIds[_activeId]);
+
+    // supported only for 2D textures
+    if (_target != GL_TEXTURE_2D)
+        throw std::runtime_error("mapToImage is only supported for GL_TEXTURE_2D target");
+
+    // initialize image
+    _mappedImage = gut::Image(
+        glEnumToImageDataFormat(_channelFormat),
+        glEnumToImageDataType(_dataType));
+
+    // initialize PBOs in case they're uninitialized
+    if (_pboId == 0) {
+        size_t pboSize = _width*_height*glDataTypeSize(_dataType)*glNumberOfChannels(_channelFormat);
+        glGenBuffers(1, &_pboId);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, _pboId);
+        glBufferData(GL_PIXEL_PACK_BUFFER, pboSize, NULL, GL_STREAM_READ);
+    }
+
+    // Transfer the pixel data using a PBO
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, _pboId);
+    glBindTexture(GL_TEXTURE_2D, _textureIds[_activeId]);
+    glGetTexImage(GL_TEXTURE_2D, 0, imageDataFormatToGLEnum(_mappedImage._dataFormat), _dataType, nullptr);
+
+    // Map the texture to an image
+    void* ptr = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+    _mappedImage._data = ptr;
+    _mappedImage._width = _width;
+    _mappedImage._height = _height;
+
+    return _mappedImage;
+}
+
+void Texture::unmap()
+{
+    // reset the mapped image
+    _mappedImage._data = nullptr;
+    _mappedImage._width = 0;
+    _mappedImage._height = 0;
+
+    // unmap
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+}
+
 void Texture::enableDoubleBuffering()
 {
     if (_doubleBuffered)
@@ -516,4 +569,7 @@ void Texture::reset(int id)
         if (_textureIds[id] != 0)
             glDeleteTextures(1, &_textureIds[id]);
     }
+
+    if (_pboId != 0)
+        glDeleteBuffers(1, &_pboId);
 }

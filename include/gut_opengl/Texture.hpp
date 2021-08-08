@@ -14,6 +14,7 @@
 
 #include <string>
 #include <glad/glad.h>
+#include <gut_image/Image.hpp>
 
 
 namespace gut {
@@ -98,6 +99,18 @@ namespace gut {
          */
         void copyToImage(Image& image, GLint level = 0) const;
 
+        /** @brief  Map the texture to an image via PBO
+         *  @return Image object with the mapped pixels
+         *  @note   unmap() must be called once operations on the image are done and return
+         *          to normal GL pixel operations is required
+         */
+        const gut::Image& mapToImage();
+
+        /** @brief  Unmap the the texture from the image and return to normal GL
+         *          pixel operations
+         */
+        void unmap();
+
         /** @brief  Enable double buffering on the texture. Useful when the texture is being
          *          modified by for example, compute shaders
          */
@@ -138,15 +151,17 @@ namespace gut {
         friend class FrameBuffer;
 
     private:
-        int     _activeId; // index in _textureIds array, required when double buffering
-        GLuint  _textureIds[2];
-        GLenum  _target;
-        GLenum  _channelFormat;
-        GLenum  _dataType;
-        int     _width;
-        int     _height;
-        int     _depth;
-        bool    _doubleBuffered;
+        int         _activeId; // index in _textureIds array, required when double buffering
+        GLuint      _textureIds[2];
+        GLenum      _target;
+        GLenum      _channelFormat;
+        GLenum      _dataType;
+        int         _width;
+        int         _height;
+        int         _depth;
+        bool        _doubleBuffered;
+        GLuint      _pboId;
+        gut::Image  _mappedImage;
 
         // Release OpenGL handles and reset Texture state
         void reset(int id = -1);
