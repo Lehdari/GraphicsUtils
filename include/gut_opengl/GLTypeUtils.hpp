@@ -39,11 +39,29 @@ namespace gut {
      */
     GLenum imageDataTypeToGLEnum(Image::DataType dataType);
 
+    /** @brief  Get corresponding image data format for a OpenGL enumeration
+     *  @param  channelFormat  OpenGL enumeration to get the corresponding data format for
+     *  @return Image data format corresponding to the OpenGL enumeration
+     */
+    Image::DataFormat glEnumToImageDataFormat(GLenum channelFormat);
+
     /** @brief  Get corresponding image data type for a OpenGL enumeration
      *  @param  dataType    OpenGL enumeration to get the corresponding data type for
      *  @return Image data type corresponding to the OpenGL enumeration
      */
     Image::DataType glEnumToImageDataType(GLenum dataType);
+
+    /** @brief  Get size of a GL data type in bytes
+     *  @param  dataType    OpenGL enumeration for data type to get the size of
+     *  @return Data type size in bytes
+     */
+    size_t glDataTypeSize(GLenum dataType);
+
+    /** @brief  Get number of channels for a channel format
+     *  @param  channelFormat   OpenGL enumeration to get the number of channels for
+     *  @return Number of channels for the given format
+     */
+    int glNumberOfChannels(GLenum channelFormat);
 
 
     #include "GLTypeUtils.inl"
