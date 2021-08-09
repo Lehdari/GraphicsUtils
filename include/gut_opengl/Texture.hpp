@@ -99,12 +99,18 @@ namespace gut {
          */
         void copyToImage(Image& image, GLint level = 0) const;
 
-        /** @brief  Map the texture to an image via PBO
-         *  @return Image object with the mapped pixels
-         *  @note   unmap() must be called once operations on the image are done and return
-         *          to normal GL pixel operations is required
+        /** @brief  Initiate pixel transfer from GPU via PBO for mapToImage(). Non-blocking operation.
          */
-        const gut::Image& mapToImage();
+        void initiateMapping();
+
+        /** @brief  Map the texture to an image via PBO
+         *  @param  access  Access policy, supports GL_READ_ONLY and GL_READ_WRITE
+         *  @return Image object with the mapped pixels
+         *  @note   Consider calling initiateMapping() earlier to enable asynchronous pixel transfer
+         *  @note   unmap() must be called once operations on the image are done and return
+         *          to normal GL pixel operations is required.
+         */
+        gut::Image& mapToImage(GLenum access = GL_READ_WRITE);
 
         /** @brief  Unmap the the texture from the image and return to normal GL
          *          pixel operations
@@ -162,6 +168,7 @@ namespace gut {
         bool        _doubleBuffered;
         GLuint      _pboId;
         gut::Image  _mappedImage;
+        GLenum      _mappedImageAccess;
 
         // Release OpenGL handles and reset Texture state
         void reset(int id = -1);

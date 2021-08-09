@@ -27,7 +27,8 @@ Texture::Texture(GLenum target, GLenum channelFormat, GLenum dataType) :
     _height             (0),
     _depth              (0),
     _doubleBuffered     (false),
-    _pboId              (0)
+    _pboId              (0),
+    _mappedImageAccess  (GL_READ_WRITE)
 {
 }
 
@@ -37,16 +38,17 @@ Texture::~Texture(void)
 }
 
 Texture::Texture(Texture&& other) noexcept :
-    _activeId       (other._activeId),
-    _textureIds     {other._textureIds[0], other._textureIds[1]},
-    _target         (other._target),
-    _channelFormat  (other._channelFormat),
-    _dataType       (other._dataType),
-    _width          (other._width),
-    _height         (other._height),
-    _depth          (other._depth),
-    _doubleBuffered (other._doubleBuffered),
-    _pboId          (other._pboId)
+    _activeId           (other._activeId),
+    _textureIds         {other._textureIds[0], other._textureIds[1]},
+    _target             (other._target),
+    _channelFormat      (other._channelFormat),
+    _dataType           (other._dataType),
+    _width              (other._width),
+    _height             (other._height),
+    _depth              (other._depth),
+    _doubleBuffered     (other._doubleBuffered),
+    _pboId              (other._pboId),
+    _mappedImageAccess  (other._mappedImageAccess)
 {
     other._activeId = 0;
     other._textureIds[0] = 0;
@@ -56,6 +58,7 @@ Texture::Texture(Texture&& other) noexcept :
     other._depth = 0;
     other._doubleBuffered = false;
     other._pboId = 0;
+    other._mappedImageAccess = GL_READ_WRITE;
 }
 
 Texture& Texture::operator=(Texture&& other) noexcept
@@ -71,6 +74,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
     _depth = other._depth;
     _doubleBuffered = other._doubleBuffered;
     _pboId = other._pboId;
+    _mappedImageAccess = other._mappedImageAccess;
 
     other._activeId = 0;
     other._textureIds[0] = 0;
@@ -80,6 +84,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
     other._depth = 0;
     other._doubleBuffered = false;
     other._pboId = 0;
+    other._mappedImageAccess = GL_READ_WRITE;
     
     return *this;
 }
@@ -412,7 +417,7 @@ void Texture::copyToImage(Image& image, GLint level) const
         image.data<void>());
 }
 
-const gut::Image& Texture::mapToImage()
+void Texture::initiateMapping()
 {
     glBindTexture(_target, _textureIds[_activeId]);
 
@@ -437,9 +442,21 @@ const gut::Image& Texture::mapToImage()
     glBindBuffer(GL_PIXEL_PACK_BUFFER, _pboId);
     glBindTexture(GL_TEXTURE_2D, _textureIds[_activeId]);
     glGetTexImage(GL_TEXTURE_2D, 0, imageDataFormatToGLEnum(_mappedImage._dataFormat), _dataType, nullptr);
+}
+
+gut::Image& Texture::mapToImage(GLenum access)
+{
+    // check that GL_PIXEL_PACK_BUFFER is bound
+    GLint boundBufferId = 0;
+    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &boundBufferId);
+    if (boundBufferId == 0) {
+        // not bound, do just-in-time pixel transfer
+        initiateMapping();
+    }
 
     // Map the texture to an image
-    void* ptr = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+    _mappedImageAccess = access;
+    void* ptr = glMapBuffer(GL_PIXEL_PACK_BUFFER, _mappedImageAccess);
     _mappedImage._data = ptr;
     _mappedImage._width = _width;
     _mappedImage._height = _height;
@@ -457,6 +474,15 @@ void Texture::unmap()
     // unmap
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+
+    // upload pixel data in case of read/write mapping
+    if (_mappedImageAccess == GL_READ_WRITE) {
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, _pboId);
+        glBindTexture(GL_TEXTURE_2D, _textureIds[_activeId]);
+        glTexImage2D(GL_TEXTURE_2D, 0, _channelFormat, _width, _height, 0,
+            imageDataFormatToGLEnum(_mappedImage._dataFormat), _dataType, 0);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    }
 }
 
 void Texture::enableDoubleBuffering()
