@@ -432,7 +432,8 @@ void Image::convertDataType(Image::DataType dataType)
                 default:
                     return;
             }
-            _deleter(_data);
+            if (_deleter)
+                _deleter(_data);
             _deleter = dataDeleter<uint8_t>;
             break;
         case DataType::U16:
@@ -448,7 +449,8 @@ void Image::convertDataType(Image::DataType dataType)
                 default:
                     return;
             }
-            _deleter(_data);
+            if (_deleter)
+                _deleter(_data);
             _deleter = dataDeleter<uint16_t>;
             break;
         case DataType::F32:
@@ -464,7 +466,8 @@ void Image::convertDataType(Image::DataType dataType)
                 default:
                     return;
             }
-            _deleter(_data);
+            if (_deleter)
+                _deleter(_data);
             _deleter = dataDeleter<float>;
             break;
         default:
