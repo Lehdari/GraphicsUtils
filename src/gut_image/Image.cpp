@@ -285,11 +285,16 @@ void Image::loadFromFile(const std::string& fileName)
 {
     int imgChannels;
     void* imgData = nullptr;
-    if (stbi_is_16_bit(fileName.c_str())) {
+
+    if (stbi_is_16_bit(fileName.c_str())) { // 16 bit image
         _dataType = DataType::U16;
         imgData = stbi_load_16(fileName.c_str(), &_width, &_height, &imgChannels, 0);
     }
-    else {
+    else if (stbi_is_hdr(fileName.c_str())) { // HDR image
+        _dataType = DataType::F32;
+        imgData = stbi_loadf(fileName.c_str(), &_width, &_height, &imgChannels, 0);
+    }
+    else { // 8 bit image
         _dataType = DataType::U8;
         imgData = stbi_load(fileName.c_str(), &_width, &_height, &imgChannels, 0);
     }
@@ -331,6 +336,11 @@ void Image::loadFromFile(const std::string& fileName)
             CREATE_ARRAY_COPY(uint16_t, _data, imgData, _width * _height * imgChannels);
             _deleter = dataDeleter<uint16_t>;
             stbi_image_free((stbi_us*)imgData);
+            break;
+        case DataType::F32:
+            CREATE_ARRAY_COPY(float, _data, imgData, _width * _height * imgChannels);
+            _deleter = dataDeleter<float>;
+            stbi_image_free((float*)imgData);
             break;
     }
 
