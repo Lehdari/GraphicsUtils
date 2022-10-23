@@ -35,7 +35,7 @@ public:
 
 private:
     Mat4f           _t; // transformation relative to parent node
-    int64_t         _meshId;
+    Vector<size_t>  _meshIds;
     Vector<Node>    _children;
 };
 
