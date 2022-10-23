@@ -44,3 +44,7 @@ if(WIN32)
         WINDOWS_EXPORT_ALL_SYMBOLS ON
     )
 endif()
+
+
+# nlohmann's JSON library
+add_subdirectory(json)
