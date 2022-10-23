@@ -105,12 +105,15 @@ void GLTFLoader::loadFromFile(const std::string& filename)
     auto& nodes = json["nodes"];
     _nodes.reserve(nodes.size());
     for (auto& node : nodes) {
-        // TODO handle scale / rotation
         _nodes.emplace_back(
             node.contains("children") ? node["children"].get<Vector<size_t>>() : Vector<size_t>(),
             node.contains("mesh") ? node["mesh"].get<size_t>() : -1,
             node.contains("translation") ? Vec3f(node["translation"].get<Vector<float>>().data()) :
-                Vec3f(0.0, 0.0, 0.0)
+                Vec3f(0.0f, 0.0f, 0.0f),
+            node.contains("rotation") ? Quatf(node["rotation"].get<Vector<float>>().data()) :
+                Quatf(1.0f, 0.0f, 0.0f, 0.0f),
+            node.contains("scale") ? Vec3f(node["scale"].get<Vector<float>>().data()) :
+                Vec3f(1.0f, 1.0f, 1.0f)
         );
     }
     printf("---- PARSED %lu NODES ----\n", _nodes.size()); // TODO remove debug print
