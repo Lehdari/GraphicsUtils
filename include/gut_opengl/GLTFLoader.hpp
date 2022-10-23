@@ -58,6 +58,8 @@ private:
         Vector<size_t>  children;
         size_t          mesh;
         Vec3f           translation;
+        Quatf           rotation;
+        Vec3f           scale;
     };
 
     struct Mesh {
@@ -94,9 +96,10 @@ private:
 
 Mat4f GLTFLoader::createNodeTransfomation(const Node& node)
 {
+    // T * R * S
     Mat4f t;
-    t<< Mat3f::Identity(),          node.translation,
-        Vec3f::Zero().transpose(),  1.0f;
+    t<< node.scale.asDiagonal().toDenseMatrix() * node.rotation.matrix(),   node.translation,
+        Vec3f::Zero().transpose(),                                          1.0f;
     return t;
 }
 
