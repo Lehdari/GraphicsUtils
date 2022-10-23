@@ -17,21 +17,26 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
+#include "Node.hpp"
 
 
 namespace gut {
 
-    struct RenderContext {
-        Camera          camera;
-        Shader          shader;
-        Vector<Mesh>    meshes;
+// TODO refactor:
+// - move shader to material
+// - reference to materials in mesh primitives
+// - multiple cameras
+// - change to class, method based interface
+struct RenderContext {
+    Camera          camera;
+    Shader          shader;
+    Vector<Mesh>    meshes;
+    Node            root;
 
-        RenderContext(
-            const Camera& camera    = Camera(Camera::Settings())
-            ) :
-            camera  (camera)
-        {}
-    };
+    RenderContext(const Camera& camera = Camera(Camera::Settings()));
+
+    void render();
+};
 
 } // namespace gut
 
