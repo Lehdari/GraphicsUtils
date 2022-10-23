@@ -18,8 +18,7 @@ using namespace gut;
 
 
 Node::Node(const Mat4f& t, int64_t meshId) :
-    _t      (t),
-    _meshId (meshId)
+    _t      (t)
 {
 }
 
@@ -27,8 +26,8 @@ void Node::render(const Mat4f& tParent, const Vector<Mesh>& meshes, Shader& shad
 {
     Mat4f t = tParent * _t;
 
-    if (_meshId >= 0)
-        meshes.at(_meshId).render(shader, camera, t, GL_TRIANGLES); // TODO mode from mesh primitive
+    for (auto& meshId : _meshIds)
+        meshes.at(meshId).render(shader, camera, t, GL_TRIANGLES); // TODO mode from mesh primitive
 
     for (auto& child : _children)
         child.render(t, meshes, shader, camera);

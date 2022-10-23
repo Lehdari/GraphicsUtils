@@ -35,7 +35,7 @@ public:
     void loadFromFile(const std::string& filename);
 
     // Construct objects from deserialized data and place them into containers provided
-    void constructObjects(gut::Node& root, Vector<gut::Mesh>& meshes) const;
+    void constructObjects(gut::Node& root, Vector<gut::Mesh>& meshes);
 
 private:
     struct BufferView {
@@ -56,7 +56,7 @@ private:
 
     struct Node {
         Vector<size_t>  children;
-        size_t          mesh;
+        int64_t         mesh;
         Vec3f           translation;
         Quatf           rotation;
         Vec3f           scale;
@@ -84,11 +84,13 @@ private:
     Vector<Mesh>            _meshes;
     Vector<Scene>           _scenes;
 
+    Vector<Vector<size_t>>  _meshPrimitiveFlattenedIds; // mesh primitives are turned into gut::Meshes, so their ID's need to be flattened
+
     // clear internal state
     void clear();
     void createNodeChildren(gut::Node& parent, const Vector<size_t>& children) const;
-    void createVertexDataFromMeshPrimitives(
-        gut::VertexData& vertexData, const Vector<Mesh::Primitive>& primitives) const;
+    void createVertexDataFromMeshPrimitive(
+        gut::VertexData& vertexData, const Mesh::Primitive& primitive) const;
 
     inline static Mat4f createNodeTransfomation(const Node& node);
 };
