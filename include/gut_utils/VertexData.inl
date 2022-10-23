@@ -60,8 +60,9 @@ inline bool VertexData::addDataVector(const std::string& name)
     // Check if container with same name exists
     for (auto& c : _containers) {
         if (c.name == name) {
-            fprintf(stderr, "ERROR: Vertex data container with name %s already exists\n",
-                    name.c_str());
+            // TODO either add a method for checking data vector existence or delete this print altogether
+            //fprintf(stderr, "ERROR: Vertex data container with name %s already exists\n",
+            //        name.c_str());
             return false;
         }
     }
