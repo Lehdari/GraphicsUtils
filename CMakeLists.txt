@@ -125,6 +125,7 @@ target_link_libraries(gut_opengl
         gut_utils
         gut_image
         imgui
+        nlohmann_json
         ${SDL2_LIBRARY}
 )
 
