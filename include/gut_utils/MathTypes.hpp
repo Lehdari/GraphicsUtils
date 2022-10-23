@@ -37,5 +37,8 @@ using Mat2i = Eigen::Matrix2i;
 using Mat3i = Eigen::Matrix3i;
 using Mat4i = Eigen::Matrix4i;
 
+using Quatf = Eigen::Quaternionf;
+using Quatd = Eigen::Quaterniond;
+
 
 #endif //GRAPHICSUTILS_MATHTYPES_HPP
