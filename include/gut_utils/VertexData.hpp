@@ -15,30 +15,21 @@
 #include <cassert>
 
 #include "TypeUtils.hpp"
+#include "MathTypeReflection.hpp"
 
 
 namespace gut {
 
     class VertexData {
     public:
-        // Vertex data type identifier
-        enum class DataType {
-            INVALID,
-            FLOAT,
-            DOUBLE,
-            VEC2F,
-            VEC3F,
-            VEC4F
-        };
-
         // Container struct storing the vertex data
         struct Container {
-            std::string name;
-            DataType    type;
-            int64_t     size; // size of the vector below (to be used in non-type-aware contexts)
-            void*       v; // pointer to data vector
-            void        (*deleter)(void*); // data vector deleter function
-            void*       (*copier)(void*); // data vector copier function
+            std::string     name;
+            MathTypeEnum    type;
+            int64_t         size; // size of the vector below (to be used in non-type-aware contexts)
+            void*           v; // pointer to data vector
+            void            (*deleter)(void*); // data vector deleter function
+            void*           (*copier)(void*); // data vector copier function
 
             template <typename T_Data>
             Container(const std::string& name, T_Data* p); // pointer for type deduction
@@ -56,10 +47,6 @@ namespace gut {
         // Check if given type is valid vertex data type
         template <typename T_Data>
         constexpr static bool isValidDataType();
-
-        // Generate data type identifier from type (returns INVALID for unsupported types)
-        template <typename T_Data>
-        constexpr static DataType getDataTypeId();
 
         // Add vertex data vector
         // Returns flag indicating whether the vector creation was successful

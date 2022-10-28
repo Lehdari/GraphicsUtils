@@ -106,7 +106,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
         return;
     }
     // Check position data type
-    if (positionContainer->type != VertexData::DataType::VEC3F) {
+    if (positionContainer->type != MathTypeEnum::VEC3F) {
         fprintf(stderr, "ERROR: Invalid data type for position data\n"); // TODO logging
         return;
     }
@@ -114,7 +114,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     auto* normalContainer = vertexData.accessData("normal");
     bool usingNormals = false;
     if (normalContainer != nullptr) {
-        if (normalContainer->type != VertexData::DataType::VEC3F) {
+        if (normalContainer->type != MathTypeEnum::VEC3F) {
             fprintf(stderr, "ERROR: Invalid data type for normal data\n"); // TODO logging
             return;
         }
@@ -124,7 +124,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     auto* texCoordContainer = vertexData.accessData("texCoord");
     bool usingTexCoords = false;
     if (texCoordContainer != nullptr) {
-        if (texCoordContainer->type != VertexData::DataType::VEC2F) {
+        if (texCoordContainer->type != MathTypeEnum::VEC2F) {
             fprintf(stderr, "ERROR: Invalid data type for texture coordinate data\n"); // TODO logging
             return;
         }
@@ -134,7 +134,7 @@ void Mesh::loadFromVertexData(const VertexData& vertexData)
     auto* colorContainer = vertexData.accessData("color");
     bool usingColors = false;
     if (colorContainer != nullptr) {
-        if (colorContainer->type != VertexData::DataType::VEC3F) {
+        if (colorContainer->type != MathTypeEnum::VEC3F) {
             fprintf(stderr, "ERROR: Invalid data type for color data\n"); // TODO logging
             return;
         }

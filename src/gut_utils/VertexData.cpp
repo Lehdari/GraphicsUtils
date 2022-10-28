@@ -25,7 +25,7 @@ VertexData::Container::Container(const VertexData::Container& other) :
     // Check for corrupted object
     if (deleter == nullptr || copier == nullptr) {
         name = "";
-        type = DataType::INVALID;
+        type = MathTypeEnum::FLOAT;
         size = 0;
         deleter = nullptr;
         copier = nullptr;
@@ -44,7 +44,6 @@ VertexData::Container::Container(VertexData::Container&& other) noexcept :
     copier  (other.copier)
 {
     other.name.clear();
-    other.type = DataType::INVALID;
     other.v = nullptr;
     other.deleter = nullptr;
     other.copier = nullptr;
@@ -62,7 +61,6 @@ VertexData::Container& VertexData::Container::operator=(const VertexData::Contai
     // Check for corrupted object
     if (deleter == nullptr || copier == nullptr) {
         name = "";
-        type = DataType::INVALID;
         size = 0;
         deleter = nullptr;
         copier = nullptr;
@@ -83,7 +81,6 @@ VertexData::Container& VertexData::Container::operator=(VertexData::Container&& 
     copier = other.copier;
 
     other.name.clear();
-    other.type = DataType::INVALID;
     other.size = 0;
     other.v = nullptr;
     other.deleter = nullptr;
