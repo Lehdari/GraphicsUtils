@@ -8,24 +8,13 @@
 // with this source code package.
 //
 
-
-// Macro for adding a valid vertex data type
-#define GUT_ADD_VALID_DATA_TYPE(TYPE, ID)\
-    template <>\
-    constexpr bool VertexData::isValidDataType<TYPE>()\
-    { return true; }\
-    template <>\
-    constexpr VertexData::DataType VertexData::getDataTypeId<TYPE>()\
-    { return DataType::ID; }
-
-
 template<typename T_Data>
 inline VertexData::Container::Container(
     const std::string& name,
     T_Data* p
 ) :
     name    (name),
-    type    (getDataTypeId<T_Data>()),
+    type    (MathTypeReflection<T_Data>::typeEnum),
     size    (0),
     v       (new Vector<T_Data>),
     deleter (&VertexData::vectorDeleter<T_Data>),
@@ -46,16 +35,10 @@ constexpr bool VertexData::isValidDataType()
 }
 
 template <typename T_Data>
-constexpr VertexData::DataType VertexData::getDataTypeId()
-{
-    return DataType::INVALID;
-}
-
-template <typename T_Data>
 inline bool VertexData::addDataVector(const std::string& name)
 {
     // Check data type validity
-    static_assert(isValidDataType<T_Data>(), "Not a valid vertex data type\n");
+    static_assert(MathTypeReflection<T_Data>::typeString != "", "Not a valid vertex data type\n");
 
     // Check if container with same name exists
     for (auto& c : _containers) {
@@ -79,7 +62,7 @@ template <typename T_Data>
 inline bool VertexData::addDataVector(const std::string& name, Vector<T_Data>&& v)
 {
     // Check data type validity
-    static_assert(isValidDataType<T_Data>(), "Not a valid vertex data type\n");
+    static_assert(MathTypeReflection<T_Data>::typeString != "", "Not a valid vertex data type\n");
 
     // Check if container with same name exists
     for (auto& c : _containers) {
@@ -108,7 +91,7 @@ inline void VertexData::addData(const std::string& name, const Vector<T_Data>& v
     for (auto& c : _containers) {
         if (c.name == name) {
             // Check for correct data type
-            assert(c.type == getDataTypeId<T_Data>());
+            assert(c.type == MathTypeReflection<T_Data>::typeEnum);
             
             // Add data to back of the vector
             auto& cv = *static_cast<Vector<T_Data>*>(c.v);
@@ -138,13 +121,3 @@ inline void* VertexData::vectorCopier(void* v)
 
     return r;
 }
-
-// Add all valid types
-GUT_ADD_VALID_DATA_TYPE(float, FLOAT)
-GUT_ADD_VALID_DATA_TYPE(double, DOUBLE)
-GUT_ADD_VALID_DATA_TYPE(Vec2f, VEC2F)
-GUT_ADD_VALID_DATA_TYPE(Vec3f, VEC3F)
-GUT_ADD_VALID_DATA_TYPE(Vec4f, VEC4F)
-
-
-#undef GUT_ADD_VALID_DATA_TYPE
