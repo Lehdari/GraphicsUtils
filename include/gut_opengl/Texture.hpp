@@ -13,8 +13,11 @@
 
 
 #include <string>
+
 #include <glad/glad.h>
+
 #include <gut_image/Image.hpp>
+#include <gut_opengl/GLTypeUtils.hpp>
 
 
 namespace gut {
@@ -92,6 +95,17 @@ namespace gut {
          *  @note   Target and internal format defined in constructor are used
          */
         void updateFromImage(const Image& image);
+
+        /** @brief  Update Texture from a raw data buffer
+         *  @tparam T_Data  Buffer data type, must be supported by typeToGLEnum()
+         *  @param  buffer  Buffer to copy the texture data from
+         *  @param  format  Buffer color channel format
+         *  @param  width   Width of the texture stored in the buffer
+         *  @param  height  Height of the texture stored in the buffer
+         *  @note   Target and internal format defined in constructor or create() are used
+         */
+        template <typename T_Data>
+        void updateFromBuffer(const T_Data* buffer, GLenum format, int width=-1, int height=-1);
 
         /** @brief  Read the texture from the GPU and copy it to an image
          *  @param  image   Target Image object
@@ -173,6 +187,9 @@ namespace gut {
         // Release OpenGL handles and reset Texture state
         void reset(int id = -1);
     };
+
+
+    #include "Texture.inl"
 
 } // namespace gut
 
