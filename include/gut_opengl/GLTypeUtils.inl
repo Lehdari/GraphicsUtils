@@ -19,6 +19,10 @@ constexpr GLenum typeToGLEnum()
 // typeToGLEnum specializations
 template<> constexpr GLenum typeToGLEnum<float>() { return GL_FLOAT; }
 template<> constexpr GLenum typeToGLEnum<double>() { return GL_DOUBLE; }
+template<> constexpr GLenum typeToGLEnum<int8_t>() { return GL_BYTE; }
+template<> constexpr GLenum typeToGLEnum<uint8_t>() { return GL_UNSIGNED_BYTE; }
+template<> constexpr GLenum typeToGLEnum<short>() { return GL_SHORT; }
+template<> constexpr GLenum typeToGLEnum<unsigned short>() { return GL_UNSIGNED_SHORT; }
 template<> constexpr GLenum typeToGLEnum<int>() { return GL_INT; }
 template<> constexpr GLenum typeToGLEnum<unsigned int>() { return GL_UNSIGNED_INT; }
 template<> constexpr GLenum typeToGLEnum<bool>() { return GL_BOOL; }
