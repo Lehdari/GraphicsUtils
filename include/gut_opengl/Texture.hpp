@@ -185,7 +185,7 @@ namespace gut {
         GLenum      _mappedImageAccess;
 
         // Release OpenGL handles and reset Texture state
-        void reset(int id = -1);
+        void reset();
     };
 
 

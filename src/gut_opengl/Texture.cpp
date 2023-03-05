@@ -106,7 +106,7 @@ void Texture::create(int width, int height, GLenum target, GLenum channelFormat,
     _dataType = dataType;
 
     // Release the used resources (both in case double buffering is in use)
-    reset(_doubleBuffered ? -1 : _activeId);
+    reset();
 
     // Generate new texture
     glGenTextures(1, &_textureIds[_activeId]);
@@ -151,7 +151,7 @@ void Texture::create(int width, int height, int depth,
     _dataType = dataType;
 
     // Release the used resources (both in case double buffering is in use)
-    reset(_doubleBuffered ? -1 : _activeId);
+    reset();
 
     // Generate new texture
     glGenTextures(1, &_textureIds[_activeId]);
@@ -230,7 +230,7 @@ void Texture::loadFromImage(const Image& image, GLenum target, GLenum channelFor
     }
 
     // Release the used resources (both in case double buffering is in use)
-    reset(_doubleBuffered ? -1 : _activeId);
+    reset();
 
     // Generate new texture
     glGenTextures(1, &_textureIds[_activeId]);
@@ -583,17 +583,17 @@ GLuint Texture::id() const noexcept
     return _textureIds[_activeId];
 }
 
-void Texture::reset(int id)
+void Texture::reset()
 {
-    if (id < 0) {
+    if (_doubleBuffered) {
         if (_textureIds[0] != 0)
             glDeleteTextures(1, &_textureIds[0]);
         if (_textureIds[1] != 0)
             glDeleteTextures(1, &_textureIds[1]);
     }
     else {
-        if (_textureIds[id] != 0)
-            glDeleteTextures(1, &_textureIds[id]);
+        if (_textureIds[_activeId] != 0)
+            glDeleteTextures(1, &_textureIds[_activeId]);
     }
 
     if (_pboId != 0)
