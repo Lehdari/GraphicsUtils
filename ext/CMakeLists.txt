@@ -1,3 +1,7 @@
+# eigen3 linear algebra library
+add_subdirectory(eigen)
+
+
 # glad OpenGL extension loader library
 add_subdirectory(glad)
 

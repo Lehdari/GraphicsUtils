@@ -39,18 +39,6 @@ set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
 
-# Find Eigen
-if (UNIX)
-    find_package(Eigen3 REQUIRED)
-else()
-    set(EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
-endif()
-
-if(NOT EIGEN3_INCLUDE_DIR)
-    message(FATAL_ERROR "Please set EIGEN3_INCLUDE_DIR environment variable to point to Eigen 3 installation directory.")
-endif()
-
-
 # Add absolute path to resource directory
 add_definitions(-DRES_PATH="${CMAKE_CURRENT_LIST_DIR}/res/")
 
@@ -75,9 +63,13 @@ target_include_directories(gut_utils
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        ${EIGEN3_INCLUDE_DIR}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_utils
+)
+
+target_link_libraries(gut_utils
+    PUBLIC
+        Eigen3::Eigen
 )
 
 
@@ -145,7 +137,6 @@ target_include_directories(gut_test
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        ${EIGEN3_INCLUDE_DIR}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/gut_test
 )
