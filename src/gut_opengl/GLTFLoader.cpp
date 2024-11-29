@@ -53,8 +53,8 @@ void GLTFLoader::loadFromFile(const std::string& filename)
         // Add new buffer of size byteLength
         _buffers.emplace_back(byteLength);
 
-        printf("Reading buffer %lu from %s, size %lu... ", _buffers.size()-1, fullPath.c_str(), byteLength); // TODO remove debug print
-        FILE* f = fopen(fullPath.c_str(), "rb");
+        printf("Reading buffer %lu from %s, size %lu... ", _buffers.size()-1, fullPath.string().c_str(), byteLength); // TODO remove debug print
+        FILE* f = fopen(fullPath.string().c_str(), "rb");
         if (!f) {
             clear();
             fclose(f);
