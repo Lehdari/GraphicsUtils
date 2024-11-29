@@ -18,6 +18,13 @@
 #include <stb_image_write.h>
 
 
+#ifdef __GNUG__
+#define INLINE inline __attribute__((always_inline))
+#else
+#define INLINE inline
+#endif
+
+
 #define CREATE_ARRAY_COPY(TYPE, DST, SRC, SIZE) \
     DST = new TYPE[SIZE]; \
     memcpy(static_cast<TYPE*>(DST), static_cast<TYPE*>(SRC), (SIZE)*sizeof(TYPE));
@@ -36,42 +43,42 @@ using namespace gut;
 namespace {
 
     template <typename T_Src, typename T_Dest>
-    inline __attribute__((always_inline)) void convertPixelValue(T_Src& src, T_Dest& dest) {
+    INLINE void convertPixelValue(T_Src& src, T_Dest& dest) {
         throw std::runtime_error("Could not convert pixel value, unknown type");
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, uint8_t& dest) {
+    INLINE void convertPixelValue(uint8_t& src, uint8_t& dest) {
         dest = src;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, uint16_t& dest) {
+    INLINE void convertPixelValue(uint16_t& src, uint16_t& dest) {
         dest = src;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(float& src, float& dest) {
+    INLINE void convertPixelValue(float& src, float& dest) {
         dest = src;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, uint16_t& dest) {
+    INLINE void convertPixelValue(uint8_t& src, uint16_t& dest) {
         dest = ((uint16_t)src) << 8;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint8_t& src, float& dest) {
+    INLINE void convertPixelValue(uint8_t& src, float& dest) {
         dest = (float)src*0.0039215686f;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, uint8_t& dest) {
+    INLINE void convertPixelValue(uint16_t& src, uint8_t& dest) {
         dest = src >> 8;
     }
 
     template <>
-    inline __attribute__((always_inline)) void convertPixelValue(uint16_t& src, float& dest) {
+    INLINE void convertPixelValue(uint16_t& src, float& dest) {
         dest = (float)src*0.000015259021893f;
     }
 
